@@ -116,7 +116,7 @@ function problem1(){
 }
 window.answerP1 = n => {
   if(n===6){
-    feedback('正解。2ずつ増えています。<br>2、4、6、8、10は<ruby>偶数<rt>ぐうすう</rt></ruby>ともいいます。',"ok");
+    feedback('正解。2ずつ増えています。<br>2、4、6、8、10は、どれも<ruby>偶数<rt>ぐうすう</rt></ruby>です。偶数はこの先も続きます。',"ok");
     document.getElementById("p1next").classList.remove("hidden");
   } else feedback("もう一度。前後の差を見てみましょう。","ng");
 };
@@ -156,28 +156,7 @@ function swapDay(i,button){
   }
 }
 
-function problem3(){
-  setProgress(3);
-  screen.innerHTML = `
-    <h2>なぜ7ずつ増えている？</h2>
-    <div class="row seq"><span>3</span><span>10</span><span>17</span><span>24</span></div>
-    <div class="row">
-      <button class="choice" onclick="answerP3(1)">1<ruby>週間<rt>しゅうかん</rt></ruby>が7日だから</button>
-      <button class="choice" onclick="answerP3(2)">1か月が7日だから</button>
-      <button class="choice" onclick="answerP3(3)">時計が7まであるから</button>
-    </div>
-    <div class="feedback">カレンダーの同じ曜日に注目します。</div>
-    <div class="actions"><button id="p3next" class="primary hidden" onclick="next()">次へ</button></div>
-  `;
-}
-window.answerP3 = n => {
-  if(n===1){
-    feedback("正解。同じ曜日は7日後に来ます。","ok");
-    document.getElementById("p3next").classList.remove("hidden");
-  } else feedback("もう一度。曜日は何日で一周するでしょう。","ng");
-};
-
-function discovery(){
+function problem3(){\n  setProgress(3);\n  screen.innerHTML = `\n    <h2>□に入る数は？</h2>\n    <div class="row seq"><span>3</span><span>10</span><span>17</span><span>□</span></div>\n    <div class="row">\n      <button class="choice" onclick="answerP3(23)">23</button>\n      <button class="choice" onclick="answerP3(24)">24</button>\n      <button class="choice" onclick="answerP3(25)">25</button>\n    </div>\n    <div class="feedback">ヒント：カレンダーを見てみよう。同じ<ruby>曜日<rt>ようび</rt></ruby>の数字は、どう並んでいる？</div>\n    <div class="actions"><button id="p3next" class="primary hidden" onclick="next()">次へ</button></div>\n  `;\n}\nwindow.answerP3 = n => {\n  if(n===24){\n    feedback("正解。7ずつ増えています。<br>同じ曜日は7日後に来るので、カレンダーでは同じ曜日の数字が7ずつ増えます。","ok");\n    document.getElementById("p3next").classList.remove("hidden");\n  } else feedback("もう一度。3→10→17で、いくつずつ増えているか見てみましょう。","ng");\n};\nfunction discovery(){
   setProgress(4);
   screen.innerHTML = `
     <div class="discovery">
@@ -192,33 +171,7 @@ function discovery(){
 const basisOptions=["名前の順","好きな順","よく読む順","大きさ","そのほか"];
 const reasonOptions=["探しやすいから","取りやすいから","好きだから","見た目がそろうから","自分で説明する"];
 
-function column(which){
-  const s=which==="A"?state.columnA:state.columnB;
-  setProgress(which==="A"?5:6);
-  screen.innerHTML = `
-    <h2>コラム：並べ方を考える</h2>
-    <p>同じ3冊を、違う<ruby>基準<rt>きじゅん</rt></ruby>でも並べてみます。</p>
-    <div class="step">
-      <strong>STEP 1　どう並べた？</strong>
-      <p class="small">カードを押すと右隣と入れかわります。</p>
-      <div id="bookswap" class="swap-area"></div>
-    </div>
-    <div class="step">
-      <strong>STEP 2　何を基準にした？</strong>
-      <div id="basis" class="basis"></div>
-    </div>
-    <div class="step">
-      <strong>STEP 3　どうして？</strong>
-      <div id="reason" class="basis"></div>
-    </div>
-    <div class="actions"><button id="colnext" class="primary hidden" onclick="next()">次へ</button></div>
-  `;
-  drawBooks(which);
-  drawOptions("basis",basisOptions,s.basis,v=>{s.basis=v; column(which);});
-  drawOptions("reason",reasonOptions,s.reason,v=>{s.reason=v; column(which);});
-  if(s.basis && s.reason) document.getElementById("colnext").classList.remove("hidden");
-}
-function drawBooks(which){
+function column(which){\n  const s=which==="A"?state.columnA:state.columnB;\n  setProgress(which==="A"?5:6);\n  const isB = which==="B";\n  const prev = state.columnA;\n  const intro = isB\n    ? '<div class="summary"><strong>1つ目はこうなりました</strong><br>並び：' + prev.order.join(' → ') + '<br>基準：' + prev.basis + '<br>理由：' + prev.reason + '</div><p><strong>今度は、別の基準で</strong>もう1つ考えてみましょう。</p>'\n    : '<p>まず1つ目の並べ方を考えます。</p>';\n  screen.innerHTML = `\n    <h2>コラム：\${isB ? "2つ目" : "1つ目"}の並べ方</h2>\n    \${intro}\n    <div class="step">\n      <strong>STEP 1　並びを作る</strong>\n      <p class="small">カードを押すと右隣と入れかわります。</p>\n      <div id="bookswap" class="swap-area"></div>\n    </div>\n    <div class="step">\n      <strong>STEP 2　何を<ruby>基準<rt>きじゅん</rt></ruby>にした？</strong>\n      <div id="basis" class="basis"></div>\n    </div>\n    <div class="step">\n      <strong>STEP 3　その理由は？</strong>\n      <div id="reason" class="basis"></div>\n    </div>\n    <div class="actions"><button id="colnext" class="primary hidden" onclick="next()">\${isB ? "まとめを見る" : "2つ目を考える"}</button></div>\n  `;\n  drawBooks(which);\n  drawOptions("basis",basisOptions,s.basis,v=>{s.basis=v; column(which);});\n  drawOptions("reason",reasonOptions,s.reason,v=>{s.reason=v; column(which);});\n  if(s.basis && s.reason) document.getElementById("colnext").classList.remove("hidden");\n}\nfunction drawBooks(which){
   const s=which==="A"?state.columnA:state.columnB;
   const el=document.getElementById("bookswap");
   s.order.forEach((v,i)=>{
