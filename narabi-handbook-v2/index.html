@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>並び図鑑</title>
+<style>
+  :root{
+    --bg:#f7f4ee;
+    --panel:#fffdf8;
+    --ink:#20313a;
+    --muted:#667780;
+    --line:#d9dfdf;
+    --accent:#2f7d78;
+    --accent2:#e5f2ef;
+    --ok:#e7f4e8;
+    --ng:#f6e8e5;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI","Hiragino Sans","Yu Gothic",sans-serif;background:var(--bg);color:var(--ink)}
+  button{font:inherit}
+  .app{max-width:760px;margin:0 auto;min-height:100vh;padding:20px}
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+  .brand{font-weight:800;letter-spacing:.03em}
+  .progress{font-size:.9rem;color:var(--muted)}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;box-shadow:0 8px 24px rgba(38,55,62,.06)}
+  h1,h2{margin:0 0 16px;line-height:1.35}
+  h1{font-size:clamp(2rem,8vw,3.4rem)}
+  h2{font-size:clamp(1.5rem,5vw,2.2rem)}
+  p{line-height:1.8}
+  ruby rt{font-size:.55em}
+  .lead{font-size:1.15rem;color:var(--muted)}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;justify-content:center;margin:26px 0}
+  .seq{font-size:clamp(1.8rem,8vw,3rem);font-weight:800;letter-spacing:.08em}
+  .choice,.primary,.secondary,.card{
+    border:1px solid var(--line);border-radius:16px;background:white;color:var(--ink);padding:14px 18px;cursor:pointer;
+  }
+  .choice:hover,.card:hover{border-color:var(--accent)}
+  .primary{background:var(--accent);color:white;border-color:var(--accent);font-weight:700}
+  .secondary{background:transparent}
+  .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;margin-top:24px}
+  .feedback{min-height:52px;border-radius:14px;padding:12px 14px;margin-top:16px;background:#f3f6f5;line-height:1.7}
+  .feedback.ok{background:var(--ok)}
+  .feedback.ng{background:var(--ng)}
+  .swap-area{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:26px 0}
+  .swap-card{
+    min-width:92px;padding:22px 16px;border-radius:18px;border:2px solid var(--line);background:white;
+    font-size:1.35rem;font-weight:800;cursor:pointer;transition:transform .15s ease,border-color .15s ease;
+  }
+  .swap-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+  .hint{font-size:.95rem;color:var(--muted);text-align:center}
+  .discovery{border-left:5px solid var(--accent);padding-left:18px}
+  .tag{display:inline-block;background:var(--accent2);padding:7px 10px;border-radius:999px;margin:4px}
+  .step{padding:14px 0;border-top:1px solid var(--line)}
+  .step:first-of-type{border-top:0}
+  .basis{display:flex;gap:8px;flex-wrap:wrap}
+  .basis button[aria-pressed="true"]{background:var(--accent2);border-color:var(--accent)}
+  .summary{background:#f3f6f5;border-radius:16px;padding:16px;margin:12px 0}
+  .hidden{display:none!important}
+  .small{font-size:.9rem;color:var(--muted)}
+  @media (max-width:560px){
+    .app{padding:12px}
+    .panel{padding:20px}
+    .swap-card{min-width:78px;padding:18px 12px}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand">並び図鑑</div>
+    <div id="progress" class="progress"></div>
+  </div>
+
+  <main id="screen" class="panel"></main>
+</div>
+
+<script>
+const screen = document.getElementById('screen');
+const progress = document.getElementById('progress');
+
+const state = {
+  page:0,
+  order:["水","月","火"],
+  columnA:{order:["動物図鑑","宇宙図鑑","昆虫図鑑"],basis:"",reason:""},
+  columnB:{order:["動物図鑑","宇宙図鑑","昆虫図鑑"],basis:"",reason:""}
+};
+
+function setProgress(n,total=8){ progress.textContent = n ? n + " / " + total : ""; }
+function next(){ state.page++; render(); }
+function feedback(text,kind=""){ const el=document.querySelector(".feedback"); if(el){el.className="feedback "+kind; el.innerHTML=text;} }
+
+function home(){
+  setProgress(0);
+  screen.innerHTML = `
+    <h1>並び図鑑</h1>
+    <p class="lead">その並びには「理由」がある。</p>
+    <p>数、曜日、手順、ものの配置。並びの中にある決まりを見つけます。</p>
+    <div class="actions"><button class="primary" onclick="next()">はじめる</button></div>
+  `;
+}
+
+function problem1(){
+  setProgress(1);
+  screen.innerHTML = `
+    <h2>次に入る数は？</h2>
+    <div class="row seq"><span>2</span><span>4</span><span>□</span><span>8</span><span>10</span></div>
+    <div class="row">
+      <button class="choice" onclick="answerP1(5)">5</button>
+      <button class="choice" onclick="answerP1(6)">6</button>
+      <button class="choice" onclick="answerP1(7)">7</button>
+    </div>
+    <div class="feedback">並びの決まりを見つけてください。</div>
+    <div class="actions"><button id="p1next" class="primary hidden" onclick="next()">次へ</button></div>
+  `;
+}
+window.answerP1 = n => {
+  if(n===6){
+    feedback('正解。2ずつ増えています。<br>2、4、6、8、10は、どれも<ruby>偶数<rt>ぐうすう</rt></ruby>です。偶数はこの先も続きます。',"ok");
+    document.getElementById("p1next").classList.remove("hidden");
+  } else feedback("もう一度。前後の差を見てみましょう。","ng");
+};
+
+function problem2(){
+  setProgress(2);
+  screen.innerHTML = `
+    <h2><ruby>曜日<rt>ようび</rt></ruby>を順番に並べよう</h2>
+    <p class="hint">カードを押すと、右のカードと入れかわります。</p>
+    <div id="swap" class="swap-area"></div>
+    <div class="feedback">月 → 火 → 水 にしてください。</div>
+    <div class="actions"><button id="p2next" class="primary hidden" onclick="next()">次へ</button></div>
+  `;
+  drawSwap();
+}
+function drawSwap(){
+  const el=document.getElementById("swap");
+  el.innerHTML="";
+  state.order.forEach((v,i)=>{
+    const b=document.createElement("button");
+    b.className="swap-card";
+    b.textContent=v;
+    b.onclick=()=>swapDay(i,b);
+    el.appendChild(b);
+  });
+}
+function swapDay(i,button){
+  if(i>=state.order.length-1){
+    button.animate([{transform:"translateX(0)"},{transform:"translateX(5px)"},{transform:"translateX(-5px)"},{transform:"translateX(0)"}],{duration:180});
+    return;
+  }
+  [state.order[i],state.order[i+1]]=[state.order[i+1],state.order[i]];
+  drawSwap();
+  if(state.order.join(",")==="月,火,水"){
+    feedback("正解。曜日には決まった順番があります。","ok");
+    document.getElementById("p2next").classList.remove("hidden");
+  }
+}
+
+function problem3(){
+  setProgress(3);
+  screen.innerHTML = `
+    <h2>□に入る数は？</h2>
+    <div class="row seq"><span>3</span><span>10</span><span>17</span><span>□</span></div>
+    <div class="row">
+      <button class="choice" onclick="answerP3(23)">23</button>
+      <button class="choice" onclick="answerP3(24)">24</button>
+      <button class="choice" onclick="answerP3(25)">25</button>
+    </div>
+    <div class="feedback">ヒント：カレンダーを見てみよう。同じ<ruby>曜日<rt>ようび</rt></ruby>の数字は、どう並んでいる？</div>
+    <div class="actions"><button id="p3next" class="primary hidden" onclick="next()">次へ</button></div>
+  `;
+}
+window.answerP3 = n => {
+  if(n===24){
+    feedback("正解。7ずつ増えています。<br>同じ曜日は7日後に来るので、カレンダーでは同じ曜日の数字が7ずつ増えます。","ok");
+    document.getElementById("p3next").classList.remove("hidden");
+  } else feedback("もう一度。3→10→17で、いくつずつ増えているか見てみましょう。","ng");
+};
+function discovery(){
+  setProgress(4);
+  screen.innerHTML = `
+    <div class="discovery">
+      <h2>7の<ruby>周期<rt>しゅうき</rt></ruby></h2>
+      <p>曜日は7つで一周します。カレンダーの同じ曜日は7ずつ増えます。</p>
+      <span class="tag">曜日</span><span class="tag">+7</span><span class="tag">周期</span>
+    </div>
+    <div class="actions"><button class="primary" onclick="next()">コラムを見る</button></div>
+  `;
+}
+
+const basisOptions=["名前の順","好きな順","よく読む順","大きさ","そのほか"];
+const reasonOptions=["探しやすいから","取りやすいから","好きだから","見た目がそろうから","自分で説明する"];
+
+function column(which){
+  const s=which==="A"?state.columnA:state.columnB;
+  setProgress(which==="A"?5:6);
+  const isB = which==="B";
+  const prev = state.columnA;
+  const intro = isB
+    ? '<div class="summary"><strong>1つ目はこうなりました</strong><br>並び：' + prev.order.join(' → ') + '<br>基準：' + prev.basis + '<br>理由：' + prev.reason + '</div><p><strong>今度は、別の基準で</strong>もう1つ考えてみましょう。</p>'
+    : '<p>まず1つ目の並べ方を考えます。</p>';
+  screen.innerHTML = `
+    <h2>コラム：${isB ? "2つ目" : "1つ目"}の並べ方</h2>
+    ${intro}
+    <div class="step">
+      <strong>STEP 1　並びを作る</strong>
+      <p class="small">カードを押すと右隣と入れかわります。</p>
+      <div id="bookswap" class="swap-area"></div>
+    </div>
+    <div class="step">
+      <strong>STEP 2　何を<ruby>基準<rt>きじゅん</rt></ruby>にした？</strong>
+      <div id="basis" class="basis"></div>
+    </div>
+    <div class="step">
+      <strong>STEP 3　その理由は？</strong>
+      <div id="reason" class="basis"></div>
+    </div>
+    <div class="actions"><button id="colnext" class="primary hidden" onclick="next()">${isB ? "まとめを見る" : "2つ目を考える"}</button></div>
+  `;
+  drawBooks(which);
+  drawOptions("basis",basisOptions,s.basis,v=>{s.basis=v; column(which);});
+  drawOptions("reason",reasonOptions,s.reason,v=>{s.reason=v; column(which);});
+  if(s.basis && s.reason) document.getElementById("colnext").classList.remove("hidden");
+}
+function drawBooks(which){
+  const s=which==="A"?state.columnA:state.columnB;
+  const el=document.getElementById("bookswap");
+  s.order.forEach((v,i)=>{
+    const b=document.createElement("button");
+    b.className="swap-card";
+    b.textContent=v.replace("図鑑","");
+    b.onclick=()=>{
+      if(i<s.order.length-1){
+        [s.order[i],s.order[i+1]]=[s.order[i+1],s.order[i]];
+        column(which);
+      }
+    };
+    el.appendChild(b);
+  });
+}
+function drawOptions(id,options,current,onPick){
+  const el=document.getElementById(id);
+  options.forEach(v=>{
+    const b=document.createElement("button");
+    b.className="choice";
+    b.textContent=v;
+    b.setAttribute("aria-pressed",String(v===current));
+    b.onclick=()=>onPick(v);
+    el.appendChild(b);
+  });
+}
+
+function present(){
+  setProgress(7);
+  const A=state.columnA, B=state.columnB;
+  screen.innerHTML = `
+    <h2>考えたことを説明してみよう</h2>
+    <p>同じものでも、基準が変わると並び方が変わります。</p>
+    <div class="summary">
+      <strong>Aの並び</strong><br>
+      並び：${A.order.join(" → ")}<br>
+      基準：${A.basis}<br>
+      理由：${A.reason}
+    </div>
+    <div class="summary">
+      <strong>Bの並び</strong><br>
+      並び：${B.order.join(" → ")}<br>
+      基準：${B.basis}<br>
+      理由：${B.reason}
+    </div>
+    <p>どうしてこの並びにしたのか、おうちの人に説明してみましょう。</p>
+    <div class="actions">
+      <button class="secondary" onclick="restart()">最初から</button>
+      <button class="primary" onclick="finish()">説明した</button>
+    </div>
+  `;
+}
+
+function finish(){
+  setProgress(8);
+  screen.innerHTML = `
+    <h2>ここまで</h2>
+    <p>問題では答えを見つけ、コラムでは自分の基準と理由を考えました。</p>
+    <div class="actions"><button class="primary" onclick="restart()">もう一度</button></div>
+  `;
+}
+function restart(){
+  state.page=0;
+  state.order=["水","月","火"];
+  state.columnA={order:["動物図鑑","宇宙図鑑","昆虫図鑑"],basis:"",reason:""};
+  state.columnB={order:["動物図鑑","宇宙図鑑","昆虫図鑑"],basis:"",reason:""};
+  render();
+}
+
+function render(){
+  if(state.page===0) home();
+  else if(state.page===1) problem1();
+  else if(state.page===2) problem2();
+  else if(state.page===3) problem3();
+  else if(state.page===4) discovery();
+  else if(state.page===5) column("A");
+  else if(state.page===6) column("B");
+  else if(state.page===7) present();
+  else finish();
+}
+render();
+</script>
+</body>
+</html>
