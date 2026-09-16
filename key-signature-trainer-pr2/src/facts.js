@@ -33,6 +33,11 @@ function makeKey(signature, mode, values) {
     id: `${enPitch}-${mode}`,
     signature,
     mode,
+    jaPitch,
+    enPitch,
+    dePitch,
+    enPitchRuby: enReading,
+    dePitchRuby: deReading,
     ja: `${jaPitch}${mode === "major" ? "長調" : "短調"}`,
     en: `${enPitch} ${mode}`,
     de: `${dePitch}-${mode === "major" ? "Dur" : "Moll"}`,
@@ -52,6 +57,15 @@ export const KEY_OPTIONS = Object.freeze({
   minor: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "minor")),
 });
 
+export const TONIC_OPTIONS = Object.freeze([...new Map([...KEY_OPTIONS.major, ...KEY_OPTIONS.minor].map((key) => [key.enPitch, Object.freeze({
+  id: key.enPitch,
+  ja: key.jaPitch,
+  en: key.enPitch,
+  de: key.dePitch,
+  enRuby: key.enPitchRuby,
+  deRuby: key.dePitchRuby,
+})])).values()]);
+
 export function keyDisplayParts(key, displayMode = "ja") {
   if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby };
   if (displayMode === "de-ruby") return { label: key.de, ruby: key.deRuby };
@@ -63,6 +77,42 @@ export function keyDisplayParts(key, displayMode = "ja") {
 export function keyDisplayText(key, displayMode = "ja") {
   const parts = keyDisplayParts(key, displayMode);
   return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
+}
+
+export function tonicDisplayParts(tonic, displayMode = "ja") {
+  if (displayMode === "en-ruby") return { label: tonic.en, ruby: tonic.enRuby };
+  if (displayMode === "de-ruby") return { label: tonic.de, ruby: tonic.deRuby };
+  if (displayMode === "en") return { label: tonic.en, ruby: "" };
+  if (displayMode === "de") return { label: tonic.de, ruby: "" };
+  return { label: tonic.ja, ruby: "" };
+}
+
+export function tonicDisplayText(tonic, displayMode = "ja") {
+  const parts = tonicDisplayParts(tonic, displayMode);
+  return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
+}
+
+export function modeDisplayText(mode, displayMode = "ja") {
+  if (displayMode.startsWith("en")) return mode;
+  if (displayMode.startsWith("de")) return mode === "major" ? "Dur" : "Moll";
+  return mode === "major" ? "長調" : "短調";
+}
+
+export function composeKey(tonicId, mode) {
+  return KEY_NAME_OPTIONS.find((key) => key.enPitch === tonicId && key.mode === mode) ?? null;
+}
+
+export function relatedKeyNeighborhood(targetKey) {
+  const sameMode = (signature) => KEY_BY_SIGNATURE_MODE.get(`${signature}:${targetKey.mode}`) ?? null;
+  const oppositeMode = targetKey.mode === "major" ? "minor" : "major";
+  const parallel = KEY_NAME_OPTIONS.find((key) => key.enPitch === targetKey.enPitch && key.mode === oppositeMode) ?? null;
+  return Object.freeze([
+    Object.freeze({ relation: "下属調", key: sameMode(targetKey.signature - 1) }),
+    Object.freeze({ relation: "平行調", key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature}:${oppositeMode}`) ?? null }),
+    Object.freeze({ relation: "主調", key: targetKey, target: true }),
+    Object.freeze({ relation: "同主調", key: parallel }),
+    Object.freeze({ relation: "属調", key: sameMode(targetKey.signature + 1) }),
+  ].filter((item) => item.key));
 }
 
 function keyFor(signature, mode) {
@@ -79,7 +129,7 @@ export const FACTS = Object.freeze([
   accidental: Object.freeze({ type, count }),
   major: keyFor(signature, "major"),
   minor: keyFor(signature, "minor"),
-  notation: Object.freeze({ renderer: "svg-theory-renderer-v0.6", clef: "treble" }),
+  notation: Object.freeze({ recipe: "templateTheoryTrebleClef1500", clef: "treble" }),
 })));
 
 export const FACT_BY_ID = new Map(FACTS.map((fact) => [fact.id, fact]));

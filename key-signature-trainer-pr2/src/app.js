@@ -1,4 +1,4 @@
-import { DISPLAY_MODES, KEY_BY_ID, KEY_OPTIONS, keyDisplayParts, keyDisplayText, signatureLabel } from "./facts.js";
+import { DISPLAY_MODES, KEY_BY_ID, TONIC_OPTIONS, composeKey, keyDisplayText, modeDisplayText, relatedKeyNeighborhood, signatureLabel, tonicDisplayText } from "./facts.js";
 import { renderKeySignatureSvg } from "./signature-renderer.js";
 import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, saveCompletedSession } from "./core.js";
 
@@ -7,7 +7,7 @@ const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
 const ui = {
   timer: $("#session-timer"), start: $("#start-button"), mode: $("#practice-mode"), display: $("#display-mode"),
   title: $("#question-title"), progress: $("#progress-text"), retry: $("#retry-badge"), preview: $("#notation-preview"), label: $("#notation-label"),
-  keyArea: $("#key-answer-area"), keyOptions: $("#key-options"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
+  back: $("#back-to-settings"), keyArea: $("#key-answer-area"), tonic: $("#tonic-select"), modeOptions: $("#mode-options"), composedKey: $("#composed-key-name"), composerStatus: $("#composer-status"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
   down: $("#signature-down"), up: $("#signature-up"), signatureStatus: $("#signature-status"), signatureCommit: $("#signature-commit"),
   feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
   metrics: $("#result-metrics"), review: $("#exam-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
@@ -16,6 +16,7 @@ const ui = {
 let session;
 let questionStartedMs = 0;
 let selectedKeyId = null;
+let selectedKeyMode = null;
 let selectedSignature = 0;
 let visibilityInterrupted = false;
 let timerHandle;
@@ -36,31 +37,27 @@ function setNotation(signature) {
   ui.preview.innerHTML = renderKeySignatureSvg(signature, { idPrefix: `notation-${signature < 0 ? `m${-signature}` : signature}`, title: `${label}のト音記号譜表` });
   ui.label.textContent = label;
 }
-function renderKeyLabel(container, key) {
-  const { label, ruby } = keyDisplayParts(key, currentDisplayMode());
-  container.replaceChildren();
-  if (!ruby) { container.textContent = label; return; }
-  const rubyNode = document.createElement("ruby");
-  rubyNode.append(label, Object.assign(document.createElement("rt"), { textContent: ruby }));
-  container.append(rubyNode);
-}
 function answerLabel(question, value) {
   const detail = describeQuestion(question);
   return detail.direction === "key_to_signature" ? signatureLabel(value) : keyDisplayText(KEY_BY_ID.get(value), currentDisplayMode());
 }
-function renderKeyOptions(mode) {
-  ui.keyOptions.replaceChildren();
-  for (const key of KEY_OPTIONS[mode]) {
-    const button = document.createElement("button");
-    button.type = "button"; button.className = "key-option"; button.dataset.keyId = key.id; button.setAttribute("aria-pressed", "false");
-    renderKeyLabel(button, key);
-    button.addEventListener("click", () => {
-      selectedKeyId = key.id;
-      [...ui.keyOptions.children].forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-      ui.keyCommit.disabled = false;
-    });
-    ui.keyOptions.append(button);
-  }
+function updateKeyComposer() {
+  const key = ui.tonic.value && selectedKeyMode ? composeKey(ui.tonic.value, selectedKeyMode) : null;
+  selectedKeyId = key?.id ?? null;
+  ui.composedKey.textContent = key ? keyDisplayText(key, currentDisplayMode()) : "—";
+  ui.composerStatus.textContent = ui.tonic.value && selectedKeyMode && !key ? "この組み合わせは現在の調号範囲外です。" : "";
+  ui.keyCommit.disabled = !key;
+}
+function renderKeyComposer() {
+  ui.tonic.replaceChildren(new Option("主音を選ぶ", ""), ...TONIC_OPTIONS.map((tonic) => new Option(tonicDisplayText(tonic, currentDisplayMode()), tonic.id)));
+  ui.tonic.disabled = false;
+  selectedKeyMode = null; selectedKeyId = null;
+  ui.modeOptions.querySelectorAll("button").forEach((button) => {
+    button.disabled = false;
+    button.setAttribute("aria-pressed", "false");
+    button.textContent = modeDisplayText(button.dataset.keyMode, currentDisplayMode());
+  });
+  updateKeyComposer();
 }
 function updateSignatureSelector() {
   selectedSignature = clampSignature(selectedSignature);
@@ -77,10 +74,10 @@ function renderQuestion() {
   ui.feedback.className = "feedback hidden";
   ui.keyArea.classList.toggle("hidden", detail.direction !== "signature_to_key");
   ui.signatureArea.classList.toggle("hidden", detail.direction !== "key_to_signature");
-  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; selectedKeyId = null; selectedSignature = 0;
+  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; selectedKeyId = null; selectedKeyMode = null; selectedSignature = 0;
   if (detail.direction === "signature_to_key") {
     ui.title.textContent = detail.mode === "major" ? "この調号の長調は？" : "この調号の短調は？";
-    setNotation(detail.fact.signature); renderKeyOptions(detail.mode);
+    setNotation(detail.fact.signature); renderKeyComposer();
   } else {
     ui.title.textContent = `${keyDisplayText(detail.fact[detail.mode], currentDisplayMode())}の調号は？`;
     updateSignatureSelector();
@@ -89,8 +86,15 @@ function renderQuestion() {
   requestAnimationFrame(() => ui.title.focus());
 }
 function disableAnswers() {
-  ui.keyOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+  ui.tonic.disabled = true; ui.modeOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
+}
+function renderRelatedNeighborhood(targetKey) {
+  ui.feedbackContext.replaceChildren(...relatedKeyNeighborhood(targetKey).map(({ relation, key, target }) => {
+    const cell = document.createElement("div"); cell.className = `relation-cell${target ? " target" : ""}`;
+    const rel = document.createElement("span"); const name = document.createElement("strong");
+    rel.textContent = relation; name.textContent = keyDisplayText(key, currentDisplayMode()); cell.append(rel, name); return cell;
+  }));
 }
 function advanceOrFinish() { if (advanceSession(session)) renderQuestion(); else finishSession(); }
 function submitAnswer(submittedAnswer) {
@@ -101,7 +105,7 @@ function submitAnswer(submittedAnswer) {
   ui.feedback.className = `feedback ${trial.correct ? "correct" : "incorrect"}`;
   ui.feedbackHeading.textContent = trial.correct ? "○ 正解です" : "× 不正解です";
   ui.feedbackDetail.textContent = feedbackDetailForTrial(trial, answerLabel(question, trial.correct ? trial.submittedAnswer : trial.expectedAnswer));
-  ui.feedbackContext.textContent = `関連する調: ${keyDisplayText(describeQuestion(question).fact.major, currentDisplayMode())} / ${keyDisplayText(describeQuestion(question).fact.minor, currentDisplayMode())}`;
+  renderRelatedNeighborhood(describeQuestion(question).fact[describeQuestion(question).mode]);
   ui.next.textContent = session.currentIndex + 1 < session.queue.length ? "次へ" : "結果を見る"; ui.next.focus();
 }
 function metric(label, value) { const item = document.createElement("div"); item.className = "metric"; item.innerHTML = "<span></span><strong></strong>"; item.querySelector("span").textContent = label; item.querySelector("strong").textContent = value; return item; }
@@ -139,9 +143,21 @@ function beginSession() {
   session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: ui.mode.value, displayMode: ui.display.value });
   showScreen($("#quiz-screen")); startTimer(); renderQuestion();
 }
+function returnToSettings() {
+  clearInterval(timerHandle);
+  if (session?.status === "active") session.status = "abandoned";
+  session = null; ui.timer.classList.add("hidden"); showScreen($("#start-screen")); ui.start.focus();
+}
 
 DISPLAY_MODES.forEach((mode) => ui.display.add(new Option(mode.label, mode.id)));
-ui.start.addEventListener("click", beginSession); ui.restart.addEventListener("click", () => { showScreen($("#start-screen")); ui.timer.classList.add("hidden"); });
+ui.start.addEventListener("click", beginSession); ui.restart.addEventListener("click", returnToSettings); ui.back.addEventListener("click", returnToSettings);
+ui.tonic.addEventListener("change", updateKeyComposer);
+ui.modeOptions.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-key-mode]"); if (!button) return;
+  selectedKeyMode = button.dataset.keyMode;
+  ui.modeOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+  updateKeyComposer();
+});
 ui.down.addEventListener("click", () => { selectedSignature--; updateSignatureSelector(); }); ui.up.addEventListener("click", () => { selectedSignature++; updateSignatureSelector(); });
 ui.keyCommit.addEventListener("click", () => submitAnswer(selectedKeyId)); ui.signatureCommit.addEventListener("click", () => submitAnswer(selectedSignature)); ui.next.addEventListener("click", advanceOrFinish);
 ui.copyAi.addEventListener("click", () => copyText(ui.aiText.value, ui.aiText, "AI相談文をコピーしました。")); ui.copyJson.addEventListener("click", () => copyText(ui.jsonText.value, ui.jsonText, "JSONをコピーしました。"));
