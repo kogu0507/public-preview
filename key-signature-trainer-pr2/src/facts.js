@@ -1,64 +1,95 @@
 export const SIGNATURE_MIN = -7;
 export const SIGNATURE_MAX = 7;
 
-export const NOTATION_ASSETS = Object.freeze({
-  "-7": "assets/key-signatures/flat-7.svg",
-  "-6": "assets/key-signatures/flat-6.svg",
-  "-5": "assets/key-signatures/flat-5.svg",
-  "-4": "assets/key-signatures/flat-4.svg",
-  "-3": "assets/key-signatures/flat-3.svg",
-  "-2": "assets/key-signatures/flat-2.svg",
-  "-1": "assets/key-signatures/flat-1.svg",
-  "0": "assets/key-signatures/natural-0.svg",
-  "1": "assets/key-signatures/sharp-1.svg",
-  "2": "assets/key-signatures/sharp-2.svg",
-  "3": "assets/key-signatures/sharp-3.svg",
-  "4": "assets/key-signatures/sharp-4.svg",
-  "5": "assets/key-signatures/sharp-5.svg",
-  "6": "assets/key-signatures/sharp-6.svg",
-  "7": "assets/key-signatures/sharp-7.svg",
+export const DISPLAY_MODES = Object.freeze([
+  Object.freeze({ id: "ja", label: "日本語" }),
+  Object.freeze({ id: "en-ruby", label: "英語（ルビあり）" }),
+  Object.freeze({ id: "en", label: "英語（ルビなし）" }),
+  Object.freeze({ id: "de-ruby", label: "ドイツ語（ルビあり）" }),
+  Object.freeze({ id: "de", label: "ドイツ語（ルビなし）" }),
+]);
+
+const SIGNATURE_NAMES = Object.freeze([
+  [-7, ["変ハ", "C-flat", "Ces", "シー・フラット", "ツェス"], ["変イ", "A-flat", "As", "エー・フラット", "アス"]],
+  [-6, ["変ト", "G-flat", "Ges", "ジー・フラット", "ゲス"], ["変ホ", "E-flat", "Es", "イー・フラット", "エス"]],
+  [-5, ["変ニ", "D-flat", "Des", "ディー・フラット", "デス"], ["変ロ", "B-flat", "B", "ビー・フラット", "ベー"]],
+  [-4, ["変イ", "A-flat", "As", "エー・フラット", "アス"], ["ヘ", "F", "F", "エフ", "エフ"]],
+  [-3, ["変ホ", "E-flat", "Es", "イー・フラット", "エス"], ["ハ", "C", "C", "シー", "ツェー"]],
+  [-2, ["変ロ", "B-flat", "B", "ビー・フラット", "ベー"], ["ト", "G", "G", "ジー", "ゲー"]],
+  [-1, ["ヘ", "F", "F", "エフ", "エフ"], ["ニ", "D", "D", "ディー", "デー"]],
+  [0, ["ハ", "C", "C", "シー", "ツェー"], ["イ", "A", "A", "エー", "アー"]],
+  [1, ["ト", "G", "G", "ジー", "ゲー"], ["ホ", "E", "E", "イー", "エー"]],
+  [2, ["ニ", "D", "D", "ディー", "デー"], ["ロ", "B", "H", "ビー", "ハー"]],
+  [3, ["イ", "A", "A", "エー", "アー"], ["嬰ヘ", "F-sharp", "Fis", "エフ・シャープ", "フィス"]],
+  [4, ["ホ", "E", "E", "イー", "エー"], ["嬰ハ", "C-sharp", "Cis", "シー・シャープ", "ツィス"]],
+  [5, ["ロ", "B", "H", "ビー", "ハー"], ["嬰ト", "G-sharp", "Gis", "ジー・シャープ", "ギス"]],
+  [6, ["嬰ヘ", "F-sharp", "Fis", "エフ・シャープ", "フィス"], ["嬰ニ", "D-sharp", "Dis", "ディー・シャープ", "ディス"]],
+  [7, ["嬰ハ", "C-sharp", "Cis", "シー・シャープ", "ツィス"], ["嬰イ", "A-sharp", "Ais", "エー・シャープ", "アイス"]],
+]);
+
+function makeKey(signature, mode, values) {
+  const [jaPitch, enPitch, dePitch, enReading, deReading] = values;
+  return Object.freeze({
+    id: `${enPitch}-${mode}`,
+    signature,
+    mode,
+    ja: `${jaPitch}${mode === "major" ? "長調" : "短調"}`,
+    en: `${enPitch} ${mode}`,
+    de: `${dePitch}-${mode === "major" ? "Dur" : "Moll"}`,
+    enRuby: `${enReading}・${mode === "major" ? "メジャー" : "マイナー"}`,
+    deRuby: `${deReading}・${mode === "major" ? "ドゥア" : "モル"}`,
+  });
+}
+
+export const KEY_NAME_OPTIONS = Object.freeze(SIGNATURE_NAMES.flatMap(([signature, major, minor]) => [
+  makeKey(signature, "major", major),
+  makeKey(signature, "minor", minor),
+]));
+export const KEY_BY_ID = new Map(KEY_NAME_OPTIONS.map((key) => [key.id, key]));
+const KEY_BY_SIGNATURE_MODE = new Map(KEY_NAME_OPTIONS.map((key) => [`${key.signature}:${key.mode}`, key]));
+export const KEY_OPTIONS = Object.freeze({
+  major: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "major")),
+  minor: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "minor")),
 });
 
+export function keyDisplayParts(key, displayMode = "ja") {
+  if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby };
+  if (displayMode === "de-ruby") return { label: key.de, ruby: key.deRuby };
+  if (displayMode === "en") return { label: key.en, ruby: "" };
+  if (displayMode === "de") return { label: key.de, ruby: "" };
+  return { label: key.ja, ruby: "" };
+}
+
+export function keyDisplayText(key, displayMode = "ja") {
+  const parts = keyDisplayParts(key, displayMode);
+  return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
+}
+
+function keyFor(signature, mode) {
+  return KEY_BY_SIGNATURE_MODE.get(`${signature}:${mode}`);
+}
+
 export const FACTS = Object.freeze([
-  Object.freeze({
-    id: "ks-1f",
-    signature: -1,
-    accidental: Object.freeze({ type: "flat", count: 1 }),
-    major: Object.freeze({ id: "F-major", ja: "ヘ長調", en: "F major" }),
-    minor: Object.freeze({ id: "D-minor", ja: "ニ短調", en: "D minor" }),
-    notation: Object.freeze({ asset: "assets/key-signatures/flat-1.svg", clef: "treble" }),
-  }),
-  Object.freeze({
-    id: "ks-0",
-    signature: 0,
-    accidental: Object.freeze({ type: "natural", count: 0 }),
-    major: Object.freeze({ id: "C-major", ja: "ハ長調", en: "C major" }),
-    minor: Object.freeze({ id: "A-minor", ja: "イ短調", en: "A minor" }),
-    notation: Object.freeze({ asset: "assets/key-signatures/natural-0.svg", clef: "treble" }),
-  }),
-  Object.freeze({
-    id: "ks-1s",
-    signature: 1,
-    accidental: Object.freeze({ type: "sharp", count: 1 }),
-    major: Object.freeze({ id: "G-major", ja: "ト長調", en: "G major" }),
-    minor: Object.freeze({ id: "E-minor", ja: "ホ短調", en: "E minor" }),
-    notation: Object.freeze({ asset: "assets/key-signatures/sharp-1.svg", clef: "treble" }),
-  }),
-]);
+  [-1, "ks-1f", "flat", 1],
+  [0, "ks-0", "natural", 0],
+  [1, "ks-1s", "sharp", 1],
+].map(([signature, id, type, count]) => Object.freeze({
+  id,
+  signature,
+  accidental: Object.freeze({ type, count }),
+  major: keyFor(signature, "major"),
+  minor: keyFor(signature, "minor"),
+  notation: Object.freeze({ renderer: "svg-theory-renderer-v0.6", clef: "treble" }),
+})));
 
 export const FACT_BY_ID = new Map(FACTS.map((fact) => [fact.id, fact]));
 export const FACT_BY_SIGNATURE = new Map(FACTS.map((fact) => [fact.signature, fact]));
 
-export const KEY_OPTIONS = Object.freeze({
-  major: Object.freeze(FACTS.map((fact) => fact.major)),
-  minor: Object.freeze(FACTS.map((fact) => fact.minor)),
-});
-
-export function notationAssetFor(signature) {
-  return NOTATION_ASSETS[String(signature)] ?? null;
+export function signatureLabel(signature) {
+  if (signature === 0) return "調号なし";
+  return signature > 0 ? `シャープ ${signature} 個` : `フラット ${Math.abs(signature)} 個`;
 }
 
-export function signatureLabel(signature) {
-  if (signature === 0) return "調号なし（0）";
-  return signature > 0 ? `シャープ ${signature} 個（+${signature}）` : `フラット ${Math.abs(signature)} 個（${signature}）`;
+export function factDisplayText(fact, displayMode = "ja") {
+  return `${signatureLabel(fact.signature)}（${keyDisplayText(fact.major, displayMode)} / ${keyDisplayText(fact.minor, displayMode)}）`;
 }

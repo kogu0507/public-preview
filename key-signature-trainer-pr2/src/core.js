@@ -1,4 +1,4 @@
-import { FACTS, FACT_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN } from "./facts.js";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, keyDisplayText, signatureLabel } from "./facts.js";
 
 export const SCHEMA_VERSION = 1;
 export const STORAGE_KEY = "key-signature-trainer:sessions:v1";
@@ -42,20 +42,22 @@ export function feedbackDetailForTrial(trial, correctAnswerLabel) {
   return `正解: ${correctAnswerLabel}。再挑戦でも不正解でした。このセッションでは再出題されません。`;
 }
 
-export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS }) {
+export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja" }) {
   return {
     schemaVersion: SCHEMA_VERSION,
     sessionId,
     status: "active",
     startedAt,
     startedMonotonicMs,
+    practiceMode,
+    displayMode,
     queue: questions.map((question) => ({ ...question, attempt: 1, isRetry: false, retryOfTrialId: null })),
     currentIndex: 0,
     trials: [],
   };
 }
 
-export function commitTrial(session, { submittedAnswer, responseMs, answeredAt, trialId }) {
+export function commitTrial(session, { submittedAnswer, responseMs, answeredAt, trialId, visibilityInterrupted = false }) {
   if (session.status !== "active") throw new Error("Session is not active");
   const question = session.queue[session.currentIndex];
   if (!question) throw new Error("No active question");
@@ -72,6 +74,7 @@ export function commitTrial(session, { submittedAnswer, responseMs, answeredAt, 
     submittedAnswer,
     correct: submittedAnswer === detail.expectedAnswer,
     responseMs: Math.max(0, Math.round(responseMs)),
+    visibilityInterrupted: Boolean(visibilityInterrupted),
     attempt: question.attempt,
     isRetry: question.isRetry,
     retryOfTrialId: question.retryOfTrialId,
@@ -158,26 +161,38 @@ export function computeAnalytics(trials) {
   };
 }
 
-export function buildObservations(summary) {
+export function formatHumanDuration(milliseconds) {
+  const totalSeconds = Math.max(0, Math.round((Number(milliseconds) || 0) / 1000));
+  if (totalSeconds < 60) return `${totalSeconds}秒`;
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return seconds ? `${minutes}分${seconds}秒` : `${minutes}分`;
+}
+
+export function buildObservations(summary, displayMode = "ja") {
   if (!summary.trialCount) return ["このセッションには回答データがありません。"];
   const observations = [];
   const percent = (value) => `${Math.round(value * 100)}%`;
   observations.push(`初回回答は ${summary.firstAttempt.correct}/${summary.firstAttempt.count}（${percent(summary.firstAttempt.accuracy)}）でした。`);
   if (summary.retryRecoveredCount) observations.push(`再挑戦で ${summary.retryRecoveredCount} 問を正解できました。`);
   if (summary.retryStillWrongCount) observations.push(`再挑戦後も ${summary.retryStillWrongCount} 問が不正解でした。`);
-  if (summary.wrongFacts.length) observations.push(`このセッションで誤答があった項目: ${summary.wrongFacts.map((item) => `${item.factId}（${item.count}回）`).join("、")}。`);
-  if (summary.slowFacts[0]) observations.push(`このセッションで平均回答時間が最も長かった項目は ${summary.slowFacts[0].factId} でした。`);
+  if (summary.wrongFacts.length) observations.push(`このセッションで誤答があった項目: ${summary.wrongFacts.map((item) => `${factDisplayText(FACT_BY_ID.get(item.factId), displayMode)}（${item.count}回）`).join("、")}。`);
+  observations.push("回答時間は操作・迷い・中断を含む参考値で、理解度や能力を直接示すものではありません。");
   return observations.slice(0, 5);
 }
 
 export function createAiHandoff(sessionRecord) {
   const { summary, trials } = sessionRecord;
-  const observations = buildObservations(summary);
+  const displayMode = sessionRecord.displayMode ?? "ja";
+  const observations = buildObservations(summary, displayMode);
   const details = trials
-    .filter((trial) => !trial.correct || summary.slowFacts.slice(0, 2).some((item) => item.factId === trial.factId))
-    .map((trial) => `- ${trial.factId} / ${trial.questionType}: ${trial.correct ? "正解" : "不正解"}, ${trial.responseMs}ms, attempt ${trial.attempt}`)
-    .join("\n") || "- 特記する誤答・遅い項目はありません。";
-  return `これは Key Signature Trainer の1回分のセッション記録です。\n\n【セッション要約】\n初回正答: ${summary.firstAttempt.correct}/${summary.firstAttempt.count}\n再挑戦後: ${summary.finalMastery.correct}/${summary.finalMastery.count}\n平均回答時間: ${Math.round(summary.meanResponseMs ?? 0)}ms\n中央値: ${Math.round(summary.medianResponseMs ?? 0)}ms\n\n【決定的集計による特徴】\n${observations.map((item) => `- ${item}`).join("\n")}\n\n【必要な回答詳細】\n${details}\n\n次の条件で助言してください。\n- 記録から直接分かる観察と仮説を分ける\n- サンプル数が小さい限界を明記する\n- 次に行う短い練習を提案する\n- 次回の対面レッスンで先生に確認する点を提案する\n- 能力や適性を診断しない`;
+    .filter((trial) => !trial.correct)
+    .map((trial) => {
+      const fact = FACT_BY_ID.get(trial.factId);
+      const expected = trial.direction === "key_to_signature" ? signatureLabel(trial.expectedAnswer) : keyDisplayText(KEY_BY_ID.get(trial.expectedAnswer), displayMode);
+      return `- ${factDisplayText(fact, displayMode)}: 不正解（正解: ${expected}、回答時間: ${formatHumanDuration(trial.responseMs)}${trial.visibilityInterrupted ? "、画面外への移動あり" : ""}）`;
+    }).join("\n") || "- 特記する誤答はありません。";
+  return `これは Key Signature Trainer の1回分のセッション記録です。\n\n【セッション要約】\n初回正答: ${summary.firstAttempt.correct}/${summary.firstAttempt.count}\n再挑戦後: ${summary.finalMastery.correct}/${summary.finalMastery.count}\n平均回答時間: ${formatHumanDuration(summary.meanResponseMs)}\n中央値: ${formatHumanDuration(summary.medianResponseMs)}\n\n【決定的集計による特徴】\n${observations.map((item) => `- ${item}`).join("\n")}\n\n【誤答詳細】\n${details}\n\n回答時間には、考えた時間だけでなく操作、迷い、離席、バックグラウンド化が含まれ得ます。認知的な遅さ・理解度・能力の根拠として過剰解釈しないでください。\n\n次の条件で助言してください。\n- 記録から直接分かる観察と仮説を分ける\n- サンプル数が小さい限界を明記する\n- 次に行う短い練習を提案する\n- 次回の対面レッスンで先生に確認する点を提案する\n- 能力や適性を診断しない`;
 }
 
 export function completeSession(session, { endedAt, endedMonotonicMs }) {
@@ -191,6 +206,8 @@ export function completeSession(session, { endedAt, endedMonotonicMs }) {
     status: "complete",
     startedAt: session.startedAt,
     endedAt,
+    practiceMode: session.practiceMode,
+    displayMode: session.displayMode,
     totalElapsedMs: Math.max(0, Math.round(endedMonotonicMs - session.startedMonotonicMs)),
     trials: session.trials.map((trial) => ({ ...trial })),
     summary,

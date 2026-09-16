@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 180" role="img" aria-labelledby="title">
-  <title id="title">調号なしのト音記号譜表</title>
-  <rect width="520" height="180" rx="12" fill="#fff"/>
-  <g stroke="#30352f" stroke-width="3"><path d="M38 48H482M38 69H482M38 90H482M38 111H482M38 132H482"/></g>
-  <text x="58" y="130" font-family="Georgia,serif" font-size="105" fill="#18211c">𝄞</text>
-  <text x="330" y="97" font-family="system-ui,sans-serif" font-size="22" fill="#667069">調号なし</text>
-</svg>
