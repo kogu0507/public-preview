@@ -1,6 +1,7 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, relatedMinorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.8.1";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.8.1";
-import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.8.1";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m2.9";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.9";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.9";
+import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.9";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -144,51 +145,32 @@ function disableAnswers() {
   ui.slots.querySelectorAll("button").forEach((button) => { button.disabled = true; }); ui.longSelect.disabled = true;
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
 }
-function relatedDiagramNode(targetKey) {
-  const data = targetKey.mode === "major" ? relatedMajorDiagram(targetKey) : relatedMinorDiagram(targetKey);
-  const title = document.createElement("p"); title.className = "relation-title"; title.append(keyDisplayNode(targetKey), document.createTextNode("を中心に"));
-  const diagram = document.createElement("div"); diagram.className = "relation-diagram"; diagram.setAttribute("role", "group"); diagram.setAttribute("aria-label", `${keyDisplayText(targetKey, currentDisplayMode())}を中心にした近親調`);
-  const header = document.createElement("div"); header.className = "relation-header";
-  data.columns.forEach(({ signature }) => { const cell = document.createElement("span"); cell.textContent = compactSignatureLabel(signature); header.append(cell); });
-  const makeRow = (items, rowLabel) => {
-    const row = document.createElement("div"); row.className = "relation-row"; row.setAttribute("aria-label", rowLabel);
-    const byColumn = new Map(items.map((item) => [item.column, item]));
-    data.columns.forEach((_, index) => {
-      const item = byColumn.get(index); const cell = document.createElement("div"); cell.className = `relation-key${item?.target ? " is-current" : ""}${item?.key ? "" : " is-empty"}`;
-      if (item?.key) {
-        const relation = document.createElement("span"); relation.textContent = item.relation;
-        const name = document.createElement("strong"); name.append(keyDisplayNode(item.key));
-        cell.append(relation, name);
-      }
-      row.append(cell);
-    });
-    return row;
-  };
-  const rows = ["major", "minor"];
-  diagram.append(header, ...rows.map((mode) => makeRow(data[mode], mode === "major" ? "長調" : "短調")));
-  const section = document.createElement("section"); section.append(title, diagram);
-  return section;
-}
 function renderRelatedNeighborhood(detail) {
   // Keep one details node: its native open state survives feedback rerenders.
-  const keys = detail.mode === "both" ? [detail.fact.major, detail.fact.minor] : detail.mode === "major" ? [detail.fact.major] : [];
+  const keys = detail.mode === "both" ? [detail.fact.major, detail.fact.minor] : [detail.fact[detail.mode]];
   ui.feedbackContext.classList.toggle("hidden", !keys.length);
-  ui.feedbackContext.querySelector(".related-diagrams").replaceChildren(...keys.map(relatedDiagramNode));
+  ui.feedbackContext.querySelector(".related-diagrams").replaceChildren(...keys.map((key) => relatedDiagramNode(key, { document, displayMode: currentDisplayMode() })));
+}
+function markedValueNode(trial, value, role) {
+  if (trial.subanswers) return keyDisplayNode(KEY_BY_ID.get(value));
+  const notation = document.createElement("span"); notation.className = "marked-notation";
+  notation.innerHTML = renderKeySignatureSvg(value, { idPrefix: `feedback-${role}`, title: `${role === "submitted" ? "回答" : "正解"}：${signatureLabel(value)}のト音記号譜表` });
+  return notation;
 }
 function markedAnswerNode(trial) {
-  const sheet = document.createElement("div"); sheet.className = "marked-answers";
-  for (const mode of ["major", "minor"]) {
+  const sheet = document.createElement("div"); sheet.className = trial.subanswers ? "marked-answers" : "marked-answers single-answer";
+  for (const mode of trial.subanswers ? ["major", "minor"] : [trial.mode]) {
     const answer = answerRecords(trial).find((item) => item.mode === mode);
     const slot = document.createElement("div"); slot.className = `marked-answer ${answer.correct ? "is-correct" : "is-wrong"}`; slot.dataset.mode = mode;
     const heading = document.createElement("span"); heading.textContent = mode === "major" ? "長調" : "短調";
-    const name = document.createElement("strong"); name.append(keyDisplayNode(KEY_BY_ID.get(answer.submittedAnswer)));
+    const name = document.createElement("strong"); name.append(markedValueNode(trial, answer.submittedAnswer, "submitted"));
     const mark = document.createElement("span"); mark.className = "grade-mark"; mark.textContent = answer.correct ? "○" : "×";
     mark.setAttribute("aria-label", answer.correct ? "正解" : "不正解");
     const submitted = document.createElement("div"); submitted.className = "marked-submission"; submitted.append(mark, name);
     slot.append(heading, submitted);
     if (!answer.correct) {
       const correction = document.createElement("div"); correction.className = "answer-correction";
-      correction.append(document.createTextNode("正："), keyDisplayNode(KEY_BY_ID.get(answer.expectedAnswer)));
+      correction.append(document.createTextNode("正："), markedValueNode(trial, answer.expectedAnswer, "correct"));
       slot.append(correction);
     }
     sheet.append(slot);
@@ -204,7 +186,7 @@ function submitAnswer(submittedAnswer) {
   if (session.practiceMode === "exam") { advanceOrFinish(); return; }
   ui.feedback.className = `feedback ${trial.correct ? "correct" : "incorrect"}`;
   ui.feedbackHeading.textContent = trial.correct ? "○ 正解です" : "× 不正解です";
-  ui.feedbackDetail.replaceChildren(...(trial.subanswers ? [markedAnswerNode(trial)] : feedbackRows(trial)));
+  ui.feedbackDetail.replaceChildren(markedAnswerNode(trial));
   if (!trial.correct) ui.feedbackDetail.append(document.createTextNode(trial.isRetry ? "このセッションでは再出題されません。" : "この問題は最後にもう一度出題されます。"));
   const syllabusNote = answerRecords(trial).map((answer) => outOfSyllabusNoteForAnswer(answer.submittedAnswer)).filter(Boolean).join(" ");
   ui.syllabusNote.textContent = syllabusNote; ui.syllabusNote.classList.toggle("hidden", !syllabusNote);
