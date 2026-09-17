@@ -42,7 +42,7 @@ export function feedbackDetailForTrial(trial, correctAnswerLabel) {
   return `正解: ${correctAnswerLabel}。再挑戦でも不正解でした。このセッションでは再出題されません。`;
 }
 
-export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja" }) {
+export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja", answerUiMode = "decomposed" }) {
   return {
     schemaVersion: SCHEMA_VERSION,
     sessionId,
@@ -51,6 +51,7 @@ export function createSession({ sessionId, startedAt, startedMonotonicMs, questi
     startedMonotonicMs,
     practiceMode,
     displayMode,
+    answerUiMode,
     queue: questions.map((question) => ({ ...question, attempt: 1, isRetry: false, retryOfTrialId: null })),
     currentIndex: 0,
     trials: [],
@@ -208,6 +209,7 @@ export function completeSession(session, { endedAt, endedMonotonicMs }) {
     endedAt,
     practiceMode: session.practiceMode,
     displayMode: session.displayMode,
+    answerUiMode: session.answerUiMode,
     totalElapsedMs: Math.max(0, Math.round(endedMonotonicMs - session.startedMonotonicMs)),
     trials: session.trials.map((trial) => ({ ...trial })),
     summary,

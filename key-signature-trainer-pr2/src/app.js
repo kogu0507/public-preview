@@ -1,13 +1,13 @@
-import { DISPLAY_MODES, KEY_BY_ID, TONIC_OPTIONS, composeKey, keyDisplayText, modeDisplayText, relatedKeyNeighborhood, signatureLabel, tonicDisplayText } from "./facts.js";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, composeDecomposedKey, keyDisplayText, modeDisplayText, relatedKeyTable, signatureLabel, stemDisplayText } from "./facts.js";
 import { renderKeySignatureSvg } from "./signature-renderer.js";
 import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, saveCompletedSession } from "./core.js";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
 const ui = {
-  timer: $("#session-timer"), start: $("#start-button"), mode: $("#practice-mode"), display: $("#display-mode"),
+  timer: $("#session-timer"), start: $("#start-button"), mode: $("#practice-mode"), display: $("#display-mode"), answerUiMode: $("#answer-ui-mode"),
   title: $("#question-title"), progress: $("#progress-text"), retry: $("#retry-badge"), preview: $("#notation-preview"), label: $("#notation-label"),
-  back: $("#back-to-settings"), keyArea: $("#key-answer-area"), tonic: $("#tonic-select"), modeOptions: $("#mode-options"), composedKey: $("#composed-key-name"), composerStatus: $("#composer-status"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
+  back: $("#back-to-settings"), keyArea: $("#key-answer-area"), decomposed: $("#decomposed-answer"), stemOptions: $("#stem-options"), accidentalOptions: $("#accidental-options"), modeOptions: $("#mode-options"), longSelectArea: $("#long-select-answer"), longSelect: $("#long-key-select"), composedKey: $("#composed-key-name"), composerStatus: $("#composer-status"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
   down: $("#signature-down"), up: $("#signature-up"), signatureStatus: $("#signature-status"), signatureCommit: $("#signature-commit"),
   feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
   metrics: $("#result-metrics"), review: $("#exam-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
@@ -16,6 +16,8 @@ const ui = {
 let session;
 let questionStartedMs = 0;
 let selectedKeyId = null;
+let selectedStemId = null;
+let selectedAccidental = "natural";
 let selectedKeyMode = null;
 let selectedSignature = 0;
 let visibilityInterrupted = false;
@@ -42,16 +44,28 @@ function answerLabel(question, value) {
   return detail.direction === "key_to_signature" ? signatureLabel(value) : keyDisplayText(KEY_BY_ID.get(value), currentDisplayMode());
 }
 function updateKeyComposer() {
-  const key = ui.tonic.value && selectedKeyMode ? composeKey(ui.tonic.value, selectedKeyMode) : null;
+  const key = session.answerUiMode === "long-select"
+    ? KEY_BY_ID.get(ui.longSelect.value) ?? null
+    : selectedStemId && selectedKeyMode ? composeDecomposedKey(selectedStemId, selectedAccidental, selectedKeyMode) : null;
   selectedKeyId = key?.id ?? null;
   ui.composedKey.textContent = key ? keyDisplayText(key, currentDisplayMode()) : "—";
-  ui.composerStatus.textContent = ui.tonic.value && selectedKeyMode && !key ? "この組み合わせは現在の調号範囲外です。" : "";
+  ui.composerStatus.textContent = session.answerUiMode === "decomposed" && selectedStemId && selectedKeyMode && !key ? "この組み合わせは現在の調号範囲外です。" : "";
   ui.keyCommit.disabled = !key;
 }
 function renderKeyComposer() {
-  ui.tonic.replaceChildren(new Option("主音を選ぶ", ""), ...TONIC_OPTIONS.map((tonic) => new Option(tonicDisplayText(tonic, currentDisplayMode()), tonic.id)));
-  ui.tonic.disabled = false;
-  selectedKeyMode = null; selectedKeyId = null;
+  const decomposed = session.answerUiMode === "decomposed";
+  ui.decomposed.classList.toggle("hidden", !decomposed);
+  ui.longSelectArea.classList.toggle("hidden", decomposed);
+  ui.stemOptions.replaceChildren(...NATURAL_STEMS.map((stem) => {
+    const button = document.createElement("button"); button.type = "button"; button.dataset.stem = stem.id;
+    button.setAttribute("aria-pressed", "false"); button.textContent = stemDisplayText(stem, currentDisplayMode()); return button;
+  }));
+  ui.longSelect.replaceChildren(new Option("調名を選ぶ", ""), ...LONG_KEY_OPTIONS.map((key) => new Option(keyDisplayText(key, currentDisplayMode()), key.id)));
+  ui.longSelect.disabled = false;
+  selectedStemId = null; selectedAccidental = "natural"; selectedKeyMode = null; selectedKeyId = null;
+  ui.accidentalOptions.querySelectorAll("button").forEach((button) => {
+    button.disabled = false; button.setAttribute("aria-pressed", String(button.dataset.accidental === "natural"));
+  });
   ui.modeOptions.querySelectorAll("button").forEach((button) => {
     button.disabled = false;
     button.setAttribute("aria-pressed", "false");
@@ -74,7 +88,7 @@ function renderQuestion() {
   ui.feedback.className = "feedback hidden";
   ui.keyArea.classList.toggle("hidden", detail.direction !== "signature_to_key");
   ui.signatureArea.classList.toggle("hidden", detail.direction !== "key_to_signature");
-  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; selectedKeyId = null; selectedKeyMode = null; selectedSignature = 0;
+  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; selectedKeyId = null; selectedStemId = null; selectedAccidental = "natural"; selectedKeyMode = null; selectedSignature = 0;
   if (detail.direction === "signature_to_key") {
     ui.title.textContent = detail.mode === "major" ? "この調号の長調は？" : "この調号の短調は？";
     setNotation(detail.fact.signature); renderKeyComposer();
@@ -86,15 +100,39 @@ function renderQuestion() {
   requestAnimationFrame(() => ui.title.focus());
 }
 function disableAnswers() {
-  ui.tonic.disabled = true; ui.modeOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+  ui.stemOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+  ui.accidentalOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
+  ui.modeOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; }); ui.longSelect.disabled = true;
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
 }
 function renderRelatedNeighborhood(targetKey) {
-  ui.feedbackContext.replaceChildren(...relatedKeyNeighborhood(targetKey).map(({ relation, key, target }) => {
-    const cell = document.createElement("div"); cell.className = `relation-cell${target ? " target" : ""}`;
-    const rel = document.createElement("span"); const name = document.createElement("strong");
-    rel.textContent = relation; name.textContent = keyDisplayText(key, currentDisplayMode()); cell.append(rel, name); return cell;
-  }));
+  const data = relatedKeyTable(targetKey);
+  const table = document.createElement("table"); table.className = "relation-table";
+  const caption = document.createElement("caption"); caption.textContent = "五度圏の近親調";
+  const head = document.createElement("thead"); const headRow = document.createElement("tr");
+  data.columns.forEach(({ signature, columnRelation }) => {
+    const cell = document.createElement("th"); cell.scope = "col";
+    const relation = document.createElement("span"); relation.textContent = columnRelation;
+    const sign = document.createElement("strong"); sign.textContent = signatureLabel(signature);
+    cell.append(relation, sign); headRow.append(cell);
+  });
+  head.append(headRow);
+  const body = document.createElement("tbody");
+  for (const mode of ["major", "minor"]) {
+    const row = document.createElement("tr");
+    data.columns.forEach((column) => {
+      const item = column[mode]; const cell = document.createElement("td");
+      if (item.target) cell.classList.add("is-current");
+      const relation = document.createElement("span"); relation.textContent = item.relation;
+      const name = document.createElement("strong"); name.textContent = item.key ? keyDisplayText(item.key, currentDisplayMode()) : "—";
+      cell.append(relation, name); row.append(cell);
+    });
+    body.append(row);
+  }
+  table.append(caption, head, body);
+  const parallel = document.createElement("p"); parallel.className = "parallel-key";
+  parallel.textContent = data.parallel ? `${data.parallel.relation}: ${keyDisplayText(data.parallel.key, currentDisplayMode())}` : "";
+  ui.feedbackContext.replaceChildren(table, parallel);
 }
 function advanceOrFinish() { if (advanceSession(session)) renderQuestion(); else finishSession(); }
 function submitAnswer(submittedAnswer) {
@@ -113,6 +151,7 @@ function renderResults(record, saved) {
   const s = record.summary; const percent = (value) => value == null ? "—" : `${Math.round(value * 100)}%`;
   ui.metrics.replaceChildren(
     metric("モード", record.practiceMode === "exam" ? "Exam" : "Practice"),
+    metric("回答方法", record.answerUiMode === "long-select" ? "全調プルダウン" : "分解入力"),
     metric("初回正答率", `${s.firstAttempt.correct}/${s.firstAttempt.count} · ${percent(s.firstAttempt.accuracy)}`),
     metric("再挑戦後", `${s.finalMastery.correct}/${s.finalMastery.count} · ${percent(s.finalMastery.accuracy)}`),
     metric("合計時間", formatHumanDuration(record.totalElapsedMs)),
@@ -140,7 +179,7 @@ async function copyText(value, field, success) {
 }
 function beginSession() {
   const now = new Date();
-  session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: ui.mode.value, displayMode: ui.display.value });
+  session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: ui.mode.value, displayMode: ui.display.value, answerUiMode: ui.answerUiMode.value });
   showScreen($("#quiz-screen")); startTimer(); renderQuestion();
 }
 function returnToSettings() {
@@ -151,13 +190,25 @@ function returnToSettings() {
 
 DISPLAY_MODES.forEach((mode) => ui.display.add(new Option(mode.label, mode.id)));
 ui.start.addEventListener("click", beginSession); ui.restart.addEventListener("click", returnToSettings); ui.back.addEventListener("click", returnToSettings);
-ui.tonic.addEventListener("change", updateKeyComposer);
+ui.stemOptions.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-stem]"); if (!button) return;
+  selectedStemId = button.dataset.stem;
+  ui.stemOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+  updateKeyComposer();
+});
+ui.accidentalOptions.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-accidental]"); if (!button) return;
+  selectedAccidental = button.dataset.accidental;
+  ui.accidentalOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
+  updateKeyComposer();
+});
 ui.modeOptions.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-key-mode]"); if (!button) return;
   selectedKeyMode = button.dataset.keyMode;
   ui.modeOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
   updateKeyComposer();
 });
+ui.longSelect.addEventListener("change", updateKeyComposer);
 ui.down.addEventListener("click", () => { selectedSignature--; updateSignatureSelector(); }); ui.up.addEventListener("click", () => { selectedSignature++; updateSignatureSelector(); });
 ui.keyCommit.addEventListener("click", () => submitAnswer(selectedKeyId)); ui.signatureCommit.addEventListener("click", () => submitAnswer(selectedSignature)); ui.next.addEventListener("click", advanceOrFinish);
 ui.copyAi.addEventListener("click", () => copyText(ui.aiText.value, ui.aiText, "AI相談文をコピーしました。")); ui.copyJson.addEventListener("click", () => copyText(ui.jsonText.value, ui.jsonText, "JSONをコピーしました。"));

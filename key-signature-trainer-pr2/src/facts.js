@@ -57,14 +57,23 @@ export const KEY_OPTIONS = Object.freeze({
   minor: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "minor")),
 });
 
-export const TONIC_OPTIONS = Object.freeze([...new Map([...KEY_OPTIONS.major, ...KEY_OPTIONS.minor].map((key) => [key.enPitch, Object.freeze({
-  id: key.enPitch,
-  ja: key.jaPitch,
-  en: key.enPitch,
-  de: key.dePitch,
-  enRuby: key.enPitchRuby,
-  deRuby: key.dePitchRuby,
-})])).values()]);
+export const NATURAL_STEMS = Object.freeze([
+  Object.freeze({ id: "C", ja: "ハ", en: "C", de: "C", enRuby: "シー", deRuby: "ツェー" }),
+  Object.freeze({ id: "D", ja: "ニ", en: "D", de: "D", enRuby: "ディー", deRuby: "デー" }),
+  Object.freeze({ id: "E", ja: "ホ", en: "E", de: "E", enRuby: "イー", deRuby: "エー" }),
+  Object.freeze({ id: "F", ja: "ヘ", en: "F", de: "F", enRuby: "エフ", deRuby: "エフ" }),
+  Object.freeze({ id: "G", ja: "ト", en: "G", de: "G", enRuby: "ジー", deRuby: "ゲー" }),
+  Object.freeze({ id: "A", ja: "イ", en: "A", de: "A", enRuby: "エー", deRuby: "アー" }),
+  Object.freeze({ id: "B", ja: "ロ", en: "B", de: "H", enRuby: "ビー", deRuby: "ハー" }),
+]);
+
+export const ACCIDENTAL_OPTIONS = Object.freeze([
+  Object.freeze({ id: "flat", label: "♭" }),
+  Object.freeze({ id: "natural", label: "♮" }),
+  Object.freeze({ id: "sharp", label: "♯" }),
+]);
+
+export const LONG_KEY_OPTIONS = Object.freeze([...KEY_OPTIONS.major, ...KEY_OPTIONS.minor]);
 
 export function keyDisplayParts(key, displayMode = "ja") {
   if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby };
@@ -79,17 +88,12 @@ export function keyDisplayText(key, displayMode = "ja") {
   return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
 }
 
-export function tonicDisplayParts(tonic, displayMode = "ja") {
-  if (displayMode === "en-ruby") return { label: tonic.en, ruby: tonic.enRuby };
-  if (displayMode === "de-ruby") return { label: tonic.de, ruby: tonic.deRuby };
-  if (displayMode === "en") return { label: tonic.en, ruby: "" };
-  if (displayMode === "de") return { label: tonic.de, ruby: "" };
-  return { label: tonic.ja, ruby: "" };
-}
-
-export function tonicDisplayText(tonic, displayMode = "ja") {
-  const parts = tonicDisplayParts(tonic, displayMode);
-  return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
+export function stemDisplayText(stem, displayMode = "ja") {
+  if (displayMode === "en-ruby") return `${stem.en}（${stem.enRuby}）`;
+  if (displayMode === "de-ruby") return `${stem.de}（${stem.deRuby}）`;
+  if (displayMode === "en") return stem.en;
+  if (displayMode === "de") return stem.de;
+  return stem.ja;
 }
 
 export function modeDisplayText(mode, displayMode = "ja") {
@@ -102,17 +106,34 @@ export function composeKey(tonicId, mode) {
   return KEY_NAME_OPTIONS.find((key) => key.enPitch === tonicId && key.mode === mode) ?? null;
 }
 
-export function relatedKeyNeighborhood(targetKey) {
-  const sameMode = (signature) => KEY_BY_SIGNATURE_MODE.get(`${signature}:${targetKey.mode}`) ?? null;
+export function composeDecomposedKey(stemId, accidental, mode) {
+  const suffix = accidental === "flat" ? "-flat" : accidental === "sharp" ? "-sharp" : "";
+  return composeKey(`${stemId}${suffix}`, mode);
+}
+
+export function relatedKeyTable(targetKey) {
   const oppositeMode = targetKey.mode === "major" ? "minor" : "major";
   const parallel = KEY_NAME_OPTIONS.find((key) => key.enPitch === targetKey.enPitch && key.mode === oppositeMode) ?? null;
-  return Object.freeze([
-    Object.freeze({ relation: "下属調", key: sameMode(targetKey.signature - 1) }),
-    Object.freeze({ relation: "平行調", key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature}:${oppositeMode}`) ?? null }),
-    Object.freeze({ relation: "主調", key: targetKey, target: true }),
-    Object.freeze({ relation: "同主調", key: parallel }),
-    Object.freeze({ relation: "属調", key: sameMode(targetKey.signature + 1) }),
-  ].filter((item) => item.key));
+  const columnRelation = ["下属調側", "現在の調", "属調側"];
+  const sameRelations = ["下属調", "主調", "属調"];
+  const relativeRelations = ["下属調の平行調", "平行調", "属調の平行調"];
+  const columns = [-1, 0, 1].map((offset, index) => {
+    const signature = targetKey.signature + offset;
+    const major = KEY_BY_SIGNATURE_MODE.get(`${signature}:major`) ?? null;
+    const minor = KEY_BY_SIGNATURE_MODE.get(`${signature}:minor`) ?? null;
+    const cell = (key, mode) => Object.freeze({
+      key,
+      relation: mode === targetKey.mode ? sameRelations[index] : relativeRelations[index],
+      target: key?.id === targetKey.id,
+    });
+    return Object.freeze({
+      signature,
+      columnRelation: columnRelation[index],
+      major: cell(major, "major"),
+      minor: cell(minor, "minor"),
+    });
+  });
+  return Object.freeze({ columns: Object.freeze(columns), parallel: parallel ? Object.freeze({ relation: "同主調", key: parallel }) : null });
 }
 
 function keyFor(signature, mode) {
