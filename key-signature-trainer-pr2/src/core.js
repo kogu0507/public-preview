@@ -1,4 +1,4 @@
-import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m2.4.0";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m2.5.0";
 
 export const SCHEMA_VERSION = 1;
 export const STORAGE_KEY = "key-signature-trainer:sessions:v1";
@@ -42,10 +42,15 @@ export function feedbackDetailForTrial(trial, correctAnswerLabel) {
   return `正解: ${correctAnswerLabel}。再挑戦でも不正解でした。このセッションでは再出題されません。`;
 }
 
-export const OUT_OF_SYLLABUS_NOTE = "このトレーナーの基本範囲は、調号なし・♯1〜7・♭1〜7です。これを超える調では、重嬰・重変などを含む表記が必要になることがあります。";
+export const OUT_OF_SYLLABUS_NOTE = "この調は理論上作れますが、通常の調号表記では重嬰・重変などが必要になることがあります。";
+
+const OUT_OF_SYLLABUS_NOTES = Object.freeze({
+  "G-sharp-major": "嬰ト長調は理論上作れますが、調号は♯8個相当になり、通常の調号表記では扱いません。実際には異名同音の変イ長調を使うのが一般的です。",
+});
 
 export function outOfSyllabusNoteForAnswer(submittedAnswer) {
-  return typeof submittedAnswer === "string" && !isKeyAnswerInSyllabus(submittedAnswer) ? OUT_OF_SYLLABUS_NOTE : "";
+  if (typeof submittedAnswer !== "string" || !KEY_BY_ID.has(submittedAnswer) || isKeyAnswerInSyllabus(submittedAnswer)) return "";
+  return OUT_OF_SYLLABUS_NOTES[submittedAnswer] ?? OUT_OF_SYLLABUS_NOTE;
 }
 
 export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja", answerUiMode = "decomposed" }) {

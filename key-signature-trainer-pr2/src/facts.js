@@ -29,6 +29,7 @@ const SIGNATURE_NAMES = Object.freeze([
 
 function makeKey(signature, mode, values, stem, accidental) {
   const [jaPitch, enPitch, dePitch, enReading, deReading] = values;
+  const deTonic = mode === "minor" ? dePitch.toLocaleLowerCase("de") : dePitch;
   return Object.freeze({
     id: `${enPitch}-${mode}`,
     signature,
@@ -43,7 +44,7 @@ function makeKey(signature, mode, values, stem, accidental) {
     inSyllabus: signature != null,
     ja: `${jaPitch}${mode === "major" ? "長調" : "短調"}`,
     en: `${enPitch} ${mode}`,
-    de: `${dePitch}-${mode === "major" ? "Dur" : "Moll"}`,
+    de: `${deTonic}-${mode === "major" ? "Dur" : "Moll"}`,
     enRuby: `${enReading}・${mode === "major" ? "メジャー" : "マイナー"}`,
     deRuby: `${deReading}・${mode === "major" ? "ドゥア" : "モル"}`,
   });
@@ -102,6 +103,21 @@ export const NATURAL_STEMS = Object.freeze(PITCH_SPELLINGS.filter(([, accidental
   deRuby: values[4],
 })));
 
+export const PITCH_GRID_OPTIONS = Object.freeze(["sharp", "natural", "flat"].flatMap((accidental) =>
+  PITCH_SPELLINGS
+    .filter(([, candidateAccidental]) => candidateAccidental === accidental)
+    .map(([stem, , values]) => Object.freeze({
+      id: `${stem}:${accidental}`,
+      stem,
+      accidental,
+      ja: values[0],
+      en: values[1],
+      de: values[2],
+      enRuby: values[3],
+      deRuby: values[4],
+    })),
+));
+
 export const ACCIDENTAL_OPTIONS = Object.freeze([
   Object.freeze({ id: "flat", label: "♭" }),
   Object.freeze({ id: "natural", label: "♮" }),
@@ -122,16 +138,44 @@ export function keyDisplayParts(key, displayMode = "ja") {
 }
 
 export function keyDisplayText(key, displayMode = "ja") {
-  const parts = keyDisplayParts(key, displayMode);
-  return parts.ruby ? `${parts.label}（${parts.ruby}）` : parts.label;
+  return keyDisplayParts(key, displayMode).label;
+}
+
+export function pitchDisplayParts(pitch, displayMode = "ja") {
+  if (displayMode === "en-ruby") return { label: pitch.en, ruby: pitch.enRuby };
+  if (displayMode === "de-ruby") return { label: pitch.de, ruby: pitch.deRuby };
+  if (displayMode === "en") return { label: pitch.en, ruby: "" };
+  if (displayMode === "de") return { label: pitch.de, ruby: "" };
+  return { label: pitch.ja, ruby: "" };
 }
 
 export function stemDisplayText(stem, displayMode = "ja") {
-  if (displayMode === "en-ruby") return `${stem.en}（${stem.enRuby}）`;
-  if (displayMode === "de-ruby") return `${stem.de}（${stem.deRuby}）`;
-  if (displayMode === "en") return stem.en;
-  if (displayMode === "de") return stem.de;
-  return stem.ja;
+  return pitchDisplayParts(stem, displayMode).label;
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "\"": "&quot;",
+    "'": "&#39;",
+  })[character]);
+}
+
+function displayPartsHtml(parts, displayMode) {
+  const label = escapeHtml(parts.label);
+  if (!parts.ruby) return label;
+  const language = displayMode.startsWith("de") ? "de" : "en";
+  return `<ruby lang="${language}">${label}<rt>${escapeHtml(parts.ruby)}</rt></ruby>`;
+}
+
+export function keyDisplayHtml(key, displayMode = "ja") {
+  return displayPartsHtml(keyDisplayParts(key, displayMode), displayMode);
+}
+
+export function pitchDisplayHtml(pitch, displayMode = "ja") {
+  return displayPartsHtml(pitchDisplayParts(pitch, displayMode), displayMode);
 }
 
 export function modeDisplayText(mode, displayMode = "ja") {
@@ -146,6 +190,11 @@ export function composeKey(tonicId, mode) {
 
 export function composeDecomposedKey(stemId, accidental, mode) {
   return ANSWER_KEY_OPTIONS.find((key) => key.stem === stemId && key.accidental === accidental && key.mode === mode) ?? null;
+}
+
+export function composeGridKey(gridPitchId, mode) {
+  const pitch = PITCH_GRID_OPTIONS.find((candidate) => candidate.id === gridPitchId);
+  return pitch ? composeDecomposedKey(pitch.stem, pitch.accidental, mode) : null;
 }
 
 export function isKeyAnswerInSyllabus(answerId) {
