@@ -1,6 +1,6 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, composeDecomposedKey, keyDisplayText, modeDisplayText, relatedKeyTable, signatureLabel, stemDisplayText } from "./facts.js";
-import { renderKeySignatureSvg } from "./signature-renderer.js";
-import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, saveCompletedSession } from "./core.js";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, composeDecomposedKey, keyDisplayText, modeDisplayText, relatedKeyTable, signatureLabel, stemDisplayText } from "./facts.js?v=m2.3.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.3.0";
+import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, saveCompletedSession } from "./core.js?v=m2.3.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];

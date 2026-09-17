@@ -1,4 +1,4 @@
-import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, keyDisplayText, signatureLabel } from "./facts.js";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, keyDisplayText, signatureLabel } from "./facts.js?v=m2.3.0";
 
 export const SCHEMA_VERSION = 1;
 export const STORAGE_KEY = "key-signature-trainer:sessions:v1";
