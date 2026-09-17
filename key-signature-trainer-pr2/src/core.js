@@ -1,4 +1,4 @@
-import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, keyDisplayText, signatureLabel } from "./facts.js?v=m2.3.0";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m2.4.0";
 
 export const SCHEMA_VERSION = 1;
 export const STORAGE_KEY = "key-signature-trainer:sessions:v1";
@@ -40,6 +40,12 @@ export function feedbackDetailForTrial(trial, correctAnswerLabel) {
   if (trial.correct) return `回答: ${correctAnswerLabel}`;
   if (willQueueRetry(trial)) return `正解: ${correctAnswerLabel}。この問題は最後にもう一度出題されます。`;
   return `正解: ${correctAnswerLabel}。再挑戦でも不正解でした。このセッションでは再出題されません。`;
+}
+
+export const OUT_OF_SYLLABUS_NOTE = "このトレーナーの基本範囲は、調号なし・♯1〜7・♭1〜7です。これを超える調では、重嬰・重変などを含む表記が必要になることがあります。";
+
+export function outOfSyllabusNoteForAnswer(submittedAnswer) {
+  return typeof submittedAnswer === "string" && !isKeyAnswerInSyllabus(submittedAnswer) ? OUT_OF_SYLLABUS_NOTE : "";
 }
 
 export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja", answerUiMode = "decomposed" }) {

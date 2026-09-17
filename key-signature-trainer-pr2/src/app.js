@@ -1,6 +1,6 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, composeDecomposedKey, keyDisplayText, modeDisplayText, relatedKeyTable, signatureLabel, stemDisplayText } from "./facts.js?v=m2.3.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.3.0";
-import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, saveCompletedSession } from "./core.js?v=m2.3.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, compactSignatureLabel, composeDecomposedKey, keyDisplayText, modeDisplayText, relatedMajorDiagram, signatureLabel, stemDisplayText } from "./facts.js?v=m2.4.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.4.0";
+import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, feedbackDetailForTrial, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.4.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -9,7 +9,7 @@ const ui = {
   title: $("#question-title"), progress: $("#progress-text"), retry: $("#retry-badge"), preview: $("#notation-preview"), label: $("#notation-label"),
   back: $("#back-to-settings"), keyArea: $("#key-answer-area"), decomposed: $("#decomposed-answer"), stemOptions: $("#stem-options"), accidentalOptions: $("#accidental-options"), modeOptions: $("#mode-options"), longSelectArea: $("#long-select-answer"), longSelect: $("#long-key-select"), composedKey: $("#composed-key-name"), composerStatus: $("#composer-status"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
   down: $("#signature-down"), up: $("#signature-up"), signatureStatus: $("#signature-status"), signatureCommit: $("#signature-commit"),
-  feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
+  feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), syllabusNote: $("#syllabus-note"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
   metrics: $("#result-metrics"), review: $("#exam-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
   copyAi: $("#copy-ai"), copyJson: $("#copy-json"), downloadJson: $("#download-json"), copyStatus: $("#copy-status"), toast: $("#copy-toast"), restart: $("#restart-button"),
 };
@@ -49,7 +49,7 @@ function updateKeyComposer() {
     : selectedStemId && selectedKeyMode ? composeDecomposedKey(selectedStemId, selectedAccidental, selectedKeyMode) : null;
   selectedKeyId = key?.id ?? null;
   ui.composedKey.textContent = key ? keyDisplayText(key, currentDisplayMode()) : "—";
-  ui.composerStatus.textContent = session.answerUiMode === "decomposed" && selectedStemId && selectedKeyMode && !key ? "この組み合わせは現在の調号範囲外です。" : "";
+  ui.composerStatus.textContent = "";
   ui.keyCommit.disabled = !key;
 }
 function renderKeyComposer() {
@@ -106,33 +106,29 @@ function disableAnswers() {
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
 }
 function renderRelatedNeighborhood(targetKey) {
-  const data = relatedKeyTable(targetKey);
-  const table = document.createElement("table"); table.className = "relation-table";
-  const caption = document.createElement("caption"); caption.textContent = "五度圏の近親調";
-  const head = document.createElement("thead"); const headRow = document.createElement("tr");
-  data.columns.forEach(({ signature, columnRelation }) => {
-    const cell = document.createElement("th"); cell.scope = "col";
-    const relation = document.createElement("span"); relation.textContent = columnRelation;
-    const sign = document.createElement("strong"); sign.textContent = signatureLabel(signature);
-    cell.append(relation, sign); headRow.append(cell);
-  });
-  head.append(headRow);
-  const body = document.createElement("tbody");
-  for (const mode of ["major", "minor"]) {
-    const row = document.createElement("tr");
-    data.columns.forEach((column) => {
-      const item = column[mode]; const cell = document.createElement("td");
-      if (item.target) cell.classList.add("is-current");
-      const relation = document.createElement("span"); relation.textContent = item.relation;
-      const name = document.createElement("strong"); name.textContent = item.key ? keyDisplayText(item.key, currentDisplayMode()) : "—";
-      cell.append(relation, name); row.append(cell);
+  const data = relatedMajorDiagram(targetKey);
+  ui.feedbackContext.classList.toggle("hidden", !data);
+  if (!data) { ui.feedbackContext.replaceChildren(); return; }
+  const title = document.createElement("p"); title.className = "relation-title"; title.textContent = "近親調";
+  const diagram = document.createElement("div"); diagram.className = "relation-diagram"; diagram.setAttribute("role", "group"); diagram.setAttribute("aria-label", `${keyDisplayText(targetKey, currentDisplayMode())}を中心にした近親調`);
+  const header = document.createElement("div"); header.className = "relation-header";
+  data.columns.forEach(({ signature }) => { const cell = document.createElement("span"); cell.textContent = compactSignatureLabel(signature); header.append(cell); });
+  const makeRow = (items, rowLabel) => {
+    const row = document.createElement("div"); row.className = "relation-row"; row.setAttribute("aria-label", rowLabel);
+    const byColumn = new Map(items.map((item) => [item.column, item]));
+    data.columns.forEach((_, index) => {
+      const item = byColumn.get(index); const cell = document.createElement("div"); cell.className = `relation-key${item?.target ? " is-current" : ""}${item?.key ? "" : " is-empty"}`;
+      if (item?.key) {
+        const relation = document.createElement("span"); relation.textContent = item.relation;
+        const name = document.createElement("strong"); name.textContent = keyDisplayText(item.key, currentDisplayMode());
+        cell.append(relation, name);
+      }
+      row.append(cell);
     });
-    body.append(row);
-  }
-  table.append(caption, head, body);
-  const parallel = document.createElement("p"); parallel.className = "parallel-key";
-  parallel.textContent = data.parallel ? `${data.parallel.relation}: ${keyDisplayText(data.parallel.key, currentDisplayMode())}` : "";
-  ui.feedbackContext.replaceChildren(table, parallel);
+    return row;
+  };
+  diagram.append(header, makeRow(data.major, "長調"), makeRow(data.minor, "短調"));
+  ui.feedbackContext.replaceChildren(title, diagram);
 }
 function advanceOrFinish() { if (advanceSession(session)) renderQuestion(); else finishSession(); }
 function submitAnswer(submittedAnswer) {
@@ -143,6 +139,8 @@ function submitAnswer(submittedAnswer) {
   ui.feedback.className = `feedback ${trial.correct ? "correct" : "incorrect"}`;
   ui.feedbackHeading.textContent = trial.correct ? "○ 正解です" : "× 不正解です";
   ui.feedbackDetail.textContent = feedbackDetailForTrial(trial, answerLabel(question, trial.correct ? trial.submittedAnswer : trial.expectedAnswer));
+  const syllabusNote = outOfSyllabusNoteForAnswer(trial.submittedAnswer);
+  ui.syllabusNote.textContent = syllabusNote; ui.syllabusNote.classList.toggle("hidden", !syllabusNote);
   renderRelatedNeighborhood(describeQuestion(question).fact[describeQuestion(question).mode]);
   ui.next.textContent = session.currentIndex + 1 < session.queue.length ? "次へ" : "結果を見る"; ui.next.focus();
 }
@@ -161,7 +159,10 @@ function renderResults(record, saved) {
   ui.review.classList.toggle("hidden", record.practiceMode !== "exam");
   ui.review.replaceChildren(...record.trials.map((trial, index) => {
     const item = document.createElement("li"); const question = session.queue.find((q) => q.id === trial.questionId) ?? { type: trial.questionType, factId: trial.factId };
-    item.textContent = `${index + 1}. ${trial.correct ? "○" : "×"} 回答: ${answerLabel(question, trial.submittedAnswer)} / 正解: ${answerLabel(question, trial.expectedAnswer)}`; return item;
+    item.textContent = `${index + 1}. ${trial.correct ? "○" : "×"} 回答: ${answerLabel(question, trial.submittedAnswer)} / 正解: ${answerLabel(question, trial.expectedAnswer)}`;
+    const note = outOfSyllabusNoteForAnswer(trial.submittedAnswer);
+    if (note) { const detail = document.createElement("p"); detail.className = "review-note"; detail.textContent = note; item.append(detail); }
+    return item;
   }));
   ui.aiText.value = record.aiHandoffText; ui.jsonText.value = JSON.stringify(record, null, 2);
   ui.copyStatus.textContent = saved ? "完了セッションをこの端末に保存しました。" : "端末への保存はできませんでした。表示中のデータはコピーできます。";

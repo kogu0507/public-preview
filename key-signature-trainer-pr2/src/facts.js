@@ -27,7 +27,7 @@ const SIGNATURE_NAMES = Object.freeze([
   [7, ["嬰ハ", "C-sharp", "Cis", "シー・シャープ", "ツィス"], ["嬰イ", "A-sharp", "Ais", "エー・シャープ", "アイス"]],
 ]);
 
-function makeKey(signature, mode, values) {
+function makeKey(signature, mode, values, stem, accidental) {
   const [jaPitch, enPitch, dePitch, enReading, deReading] = values;
   return Object.freeze({
     id: `${enPitch}-${mode}`,
@@ -38,6 +38,9 @@ function makeKey(signature, mode, values) {
     dePitch,
     enPitchRuby: enReading,
     dePitchRuby: deReading,
+    stem,
+    accidental,
+    inSyllabus: signature != null,
     ja: `${jaPitch}${mode === "major" ? "長調" : "短調"}`,
     en: `${enPitch} ${mode}`,
     de: `${dePitch}-${mode === "major" ? "Dur" : "Moll"}`,
@@ -46,26 +49,58 @@ function makeKey(signature, mode, values) {
   });
 }
 
-export const KEY_NAME_OPTIONS = Object.freeze(SIGNATURE_NAMES.flatMap(([signature, major, minor]) => [
-  makeKey(signature, "major", major),
-  makeKey(signature, "minor", minor),
+const PITCH_SPELLINGS = Object.freeze([
+  ["C", "flat", ["変ハ", "C-flat", "Ces", "シー・フラット", "ツェス"]],
+  ["C", "natural", ["ハ", "C", "C", "シー", "ツェー"]],
+  ["C", "sharp", ["嬰ハ", "C-sharp", "Cis", "シー・シャープ", "ツィス"]],
+  ["D", "flat", ["変ニ", "D-flat", "Des", "ディー・フラット", "デス"]],
+  ["D", "natural", ["ニ", "D", "D", "ディー", "デー"]],
+  ["D", "sharp", ["嬰ニ", "D-sharp", "Dis", "ディー・シャープ", "ディス"]],
+  ["E", "flat", ["変ホ", "E-flat", "Es", "イー・フラット", "エス"]],
+  ["E", "natural", ["ホ", "E", "E", "イー", "エー"]],
+  ["E", "sharp", ["嬰ホ", "E-sharp", "Eis", "イー・シャープ", "アイス"]],
+  ["F", "flat", ["変ヘ", "F-flat", "Fes", "エフ・フラット", "フェス"]],
+  ["F", "natural", ["ヘ", "F", "F", "エフ", "エフ"]],
+  ["F", "sharp", ["嬰ヘ", "F-sharp", "Fis", "エフ・シャープ", "フィス"]],
+  ["G", "flat", ["変ト", "G-flat", "Ges", "ジー・フラット", "ゲス"]],
+  ["G", "natural", ["ト", "G", "G", "ジー", "ゲー"]],
+  ["G", "sharp", ["嬰ト", "G-sharp", "Gis", "ジー・シャープ", "ギス"]],
+  ["A", "flat", ["変イ", "A-flat", "As", "エー・フラット", "アス"]],
+  ["A", "natural", ["イ", "A", "A", "エー", "アー"]],
+  ["A", "sharp", ["嬰イ", "A-sharp", "Ais", "エー・シャープ", "アイス"]],
+  ["B", "flat", ["変ロ", "B-flat", "B", "ビー・フラット", "ベー"]],
+  ["B", "natural", ["ロ", "B", "H", "ビー", "ハー"]],
+  ["B", "sharp", ["嬰ロ", "B-sharp", "His", "ビー・シャープ", "ヒス"]],
+]);
+
+const CANONICAL_SIGNATURE_BY_ID = new Map(SIGNATURE_NAMES.flatMap(([signature, major, minor]) => [
+  [`${major[1]}-major`, signature],
+  [`${minor[1]}-minor`, signature],
 ]));
-export const KEY_BY_ID = new Map(KEY_NAME_OPTIONS.map((key) => [key.id, key]));
+
+export const ANSWER_KEY_OPTIONS = Object.freeze(PITCH_SPELLINGS.flatMap(([stem, accidental, values]) => ["major", "minor"].map((mode) => {
+  const id = `${values[1]}-${mode}`;
+  return makeKey(CANONICAL_SIGNATURE_BY_ID.get(id) ?? null, mode, values, stem, accidental);
+})));
+export const KEY_BY_ID = new Map(ANSWER_KEY_OPTIONS.map((key) => [key.id, key]));
+export const KEY_NAME_OPTIONS = Object.freeze(SIGNATURE_NAMES.flatMap(([, major, minor]) => [
+  KEY_BY_ID.get(`${major[1]}-major`),
+  KEY_BY_ID.get(`${minor[1]}-minor`),
+]));
 const KEY_BY_SIGNATURE_MODE = new Map(KEY_NAME_OPTIONS.map((key) => [`${key.signature}:${key.mode}`, key]));
 export const KEY_OPTIONS = Object.freeze({
-  major: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "major")),
-  minor: Object.freeze(KEY_NAME_OPTIONS.filter((key) => key.mode === "minor")),
+  major: Object.freeze(SIGNATURE_NAMES.map(([, major]) => KEY_BY_ID.get(`${major[1]}-major`))),
+  minor: Object.freeze(SIGNATURE_NAMES.map(([, , minor]) => KEY_BY_ID.get(`${minor[1]}-minor`))),
 });
 
-export const NATURAL_STEMS = Object.freeze([
-  Object.freeze({ id: "C", ja: "ハ", en: "C", de: "C", enRuby: "シー", deRuby: "ツェー" }),
-  Object.freeze({ id: "D", ja: "ニ", en: "D", de: "D", enRuby: "ディー", deRuby: "デー" }),
-  Object.freeze({ id: "E", ja: "ホ", en: "E", de: "E", enRuby: "イー", deRuby: "エー" }),
-  Object.freeze({ id: "F", ja: "ヘ", en: "F", de: "F", enRuby: "エフ", deRuby: "エフ" }),
-  Object.freeze({ id: "G", ja: "ト", en: "G", de: "G", enRuby: "ジー", deRuby: "ゲー" }),
-  Object.freeze({ id: "A", ja: "イ", en: "A", de: "A", enRuby: "エー", deRuby: "アー" }),
-  Object.freeze({ id: "B", ja: "ロ", en: "B", de: "H", enRuby: "ビー", deRuby: "ハー" }),
-]);
+export const NATURAL_STEMS = Object.freeze(PITCH_SPELLINGS.filter(([, accidental]) => accidental === "natural").map(([id, , values]) => Object.freeze({
+  id,
+  ja: values[0],
+  en: values[1],
+  de: values[2],
+  enRuby: values[3],
+  deRuby: values[4],
+})));
 
 export const ACCIDENTAL_OPTIONS = Object.freeze([
   Object.freeze({ id: "flat", label: "♭" }),
@@ -73,7 +108,10 @@ export const ACCIDENTAL_OPTIONS = Object.freeze([
   Object.freeze({ id: "sharp", label: "♯" }),
 ]);
 
-export const LONG_KEY_OPTIONS = Object.freeze([...KEY_OPTIONS.major, ...KEY_OPTIONS.minor]);
+export const LONG_KEY_OPTIONS = Object.freeze([
+  ...ANSWER_KEY_OPTIONS.filter((key) => key.mode === "major"),
+  ...ANSWER_KEY_OPTIONS.filter((key) => key.mode === "minor"),
+]);
 
 export function keyDisplayParts(key, displayMode = "ja") {
   if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby };
@@ -103,37 +141,37 @@ export function modeDisplayText(mode, displayMode = "ja") {
 }
 
 export function composeKey(tonicId, mode) {
-  return KEY_NAME_OPTIONS.find((key) => key.enPitch === tonicId && key.mode === mode) ?? null;
+  return KEY_BY_ID.get(`${tonicId}-${mode}`) ?? null;
 }
 
 export function composeDecomposedKey(stemId, accidental, mode) {
-  const suffix = accidental === "flat" ? "-flat" : accidental === "sharp" ? "-sharp" : "";
-  return composeKey(`${stemId}${suffix}`, mode);
+  return ANSWER_KEY_OPTIONS.find((key) => key.stem === stemId && key.accidental === accidental && key.mode === mode) ?? null;
 }
 
-export function relatedKeyTable(targetKey) {
-  const oppositeMode = targetKey.mode === "major" ? "minor" : "major";
-  const parallel = KEY_NAME_OPTIONS.find((key) => key.enPitch === targetKey.enPitch && key.mode === oppositeMode) ?? null;
-  const columnRelation = ["下属調側", "現在の調", "属調側"];
-  const sameRelations = ["下属調", "主調", "属調"];
-  const relativeRelations = ["下属調の平行調", "平行調", "属調の平行調"];
-  const columns = [-1, 0, 1].map((offset, index) => {
-    const signature = targetKey.signature + offset;
-    const major = KEY_BY_SIGNATURE_MODE.get(`${signature}:major`) ?? null;
-    const minor = KEY_BY_SIGNATURE_MODE.get(`${signature}:minor`) ?? null;
-    const cell = (key, mode) => Object.freeze({
-      key,
-      relation: mode === targetKey.mode ? sameRelations[index] : relativeRelations[index],
-      target: key?.id === targetKey.id,
-    });
-    return Object.freeze({
-      signature,
-      columnRelation: columnRelation[index],
-      major: cell(major, "major"),
-      minor: cell(minor, "minor"),
-    });
+export function isKeyAnswerInSyllabus(answerId) {
+  return KEY_BY_ID.get(answerId)?.inSyllabus === true;
+}
+
+export function compactSignatureLabel(signature) {
+  if (signature === 0) return "なし";
+  return signature > 0 ? `♯${signature}` : `♭${Math.abs(signature)}`;
+}
+
+export function relatedMajorDiagram(targetKey) {
+  if (targetKey.mode !== "major" || targetKey.signature == null) return null;
+  const offsets = [-3, -2, -1, 0, 1];
+  const columns = offsets.map((offset) => Object.freeze({ signature: targetKey.signature + offset }));
+  const cell = (offset, mode, relation, target = false) => Object.freeze({
+    column: offsets.indexOf(offset),
+    key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
+    relation,
+    target,
   });
-  return Object.freeze({ columns: Object.freeze(columns), parallel: parallel ? Object.freeze({ relation: "同主調", key: parallel }) : null });
+  return Object.freeze({
+    columns: Object.freeze(columns),
+    major: Object.freeze([cell(-1, "major", "下属調"), cell(0, "major", "主調", true), cell(1, "major", "属調")]),
+    minor: Object.freeze([cell(-3, "minor", "同主調"), cell(0, "minor", "平行調")]),
+  });
 }
 
 function keyFor(signature, mode) {
