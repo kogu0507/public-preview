@@ -1,11 +1,11 @@
-import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m2.5.0";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m2.6.0";
 
-export const SCHEMA_VERSION = 1;
-export const STORAGE_KEY = "key-signature-trainer:sessions:v1";
+export const SCHEMA_VERSION = 2;
+export const STORAGE_KEY = "key-signature-trainer:sessions:v2";
 
 export const PROTOTYPE_QUESTIONS = Object.freeze([
-  Object.freeze({ id: "q-signature-major-sharp", type: "signature_to_major_key", factId: "ks-1s" }),
-  Object.freeze({ id: "q-signature-minor-flat", type: "signature_to_minor_key", factId: "ks-1f" }),
+  Object.freeze({ id: "q-signature-dual-sharp", type: "signature_to_keys", factId: "ks-1s" }),
+  Object.freeze({ id: "q-signature-dual-flat", type: "signature_to_keys", factId: "ks-1f" }),
   Object.freeze({ id: "q-major-signature-flat", type: "major_key_to_signature", factId: "ks-1f" }),
   Object.freeze({ id: "q-minor-signature-natural", type: "minor_key_to_signature", factId: "ks-0" }),
 ]);
@@ -17,19 +17,22 @@ export function clampSignature(value) {
 export function describeQuestion(question) {
   const fact = FACT_BY_ID.get(question.factId);
   if (!fact) throw new Error(`Unknown fact: ${question.factId}`);
-  const mode = question.type.includes("major") ? "major" : "minor";
+  const dual = question.type === "signature_to_keys";
+  const mode = dual ? "both" : question.type.includes("major") ? "major" : "minor";
   const direction = question.type.startsWith("signature_to") ? "signature_to_key" : "key_to_signature";
   return {
     fact,
     mode,
     direction,
-    expectedAnswer: direction === "signature_to_key" ? fact[mode].id : fact.signature,
+    expectedAnswer: dual ? Object.freeze({ major: fact.major.id, minor: fact.minor.id }) : direction === "signature_to_key" ? fact[mode].id : fact.signature,
   };
 }
 
 export function gradeAnswer(question, submittedAnswer) {
   const { expectedAnswer } = describeQuestion(question);
-  return submittedAnswer === expectedAnswer;
+  return question.type === "signature_to_keys"
+    ? ["major", "minor"].every((mode) => submittedAnswer?.[mode] === expectedAnswer[mode])
+    : submittedAnswer === expectedAnswer;
 }
 
 export function willQueueRetry(trial) {
@@ -53,7 +56,7 @@ export function outOfSyllabusNoteForAnswer(submittedAnswer) {
   return OUT_OF_SYLLABUS_NOTES[submittedAnswer] ?? OUT_OF_SYLLABUS_NOTE;
 }
 
-export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja", answerUiMode = "decomposed" }) {
+export function createSession({ sessionId, startedAt, startedMonotonicMs, questions = PROTOTYPE_QUESTIONS, practiceMode = "practice", displayMode = "ja", answerUiMode = "pitch-grid" }) {
   return {
     schemaVersion: SCHEMA_VERSION,
     sessionId,
@@ -73,7 +76,13 @@ export function commitTrial(session, { submittedAnswer, responseMs, answeredAt, 
   if (session.status !== "active") throw new Error("Session is not active");
   const question = session.queue[session.currentIndex];
   if (!question) throw new Error("No active question");
+  if (session.trials.some((trial) => trial.questionId === question.id && trial.attempt === question.attempt)) throw new Error("Question already committed");
+  if (session.trials.some((trial) => trial.trialId === trialId)) throw new Error("Duplicate trial ID");
   const detail = describeQuestion(question);
+  const dual = detail.mode === "both";
+  if (dual && !["major", "minor"].every((mode) => KEY_BY_ID.get(submittedAnswer?.[mode])?.mode === mode)) throw new Error("Both major and minor answers are required");
+  if (dual) submittedAnswer = Object.freeze({ major: submittedAnswer.major, minor: submittedAnswer.minor });
+  const subanswers = dual ? Object.freeze(["major", "minor"].map((mode) => Object.freeze({ mode, expectedAnswer: detail.expectedAnswer[mode], submittedAnswer: submittedAnswer[mode], correct: submittedAnswer[mode] === detail.expectedAnswer[mode] }))) : null;
   const trial = Object.freeze({
     trialId,
     sessionId: session.sessionId,
@@ -84,7 +93,8 @@ export function commitTrial(session, { submittedAnswer, responseMs, answeredAt, 
     direction: detail.direction,
     expectedAnswer: detail.expectedAnswer,
     submittedAnswer,
-    correct: submittedAnswer === detail.expectedAnswer,
+    correct: gradeAnswer(question, submittedAnswer),
+    ...(dual ? { subanswers } : {}),
     responseMs: Math.max(0, Math.round(responseMs)),
     visibilityInterrupted: Boolean(visibilityInterrupted),
     attempt: question.attempt,
@@ -131,7 +141,12 @@ function groupAccuracy(trials, predicate) {
   return { count: group.length, correct, accuracy: accuracy(correct, group.length) };
 }
 
+export function answerRecords(trial) {
+  return trial.subanswers ? trial.subanswers.map((answer) => ({ ...trial, ...answer })) : [trial];
+}
+
 export function computeAnalytics(trials) {
+  const answers = trials.flatMap(answerRecords);
   const firstAttempts = trials.filter((trial) => !trial.isRetry);
   const finalByQuestion = new Map();
   for (const trial of trials) finalByQuestion.set(trial.questionId, trial);
@@ -157,8 +172,8 @@ export function computeAnalytics(trials) {
     finalMastery: { count: finalTrials.length, correct: finalCorrect, accuracy: accuracy(finalCorrect, finalTrials.length) },
     meanResponseMs: mean(trials.map((trial) => trial.responseMs)),
     medianResponseMs: median(trials.map((trial) => trial.responseMs)),
-    major: groupAccuracy(trials, (trial) => trial.mode === "major"),
-    minor: groupAccuracy(trials, (trial) => trial.mode === "minor"),
+    major: groupAccuracy(answers, (trial) => trial.mode === "major"),
+    minor: groupAccuracy(answers, (trial) => trial.mode === "minor"),
     signatureToKey: groupAccuracy(trials, (trial) => trial.direction === "signature_to_key"),
     keyToSignature: groupAccuracy(trials, (trial) => trial.direction === "key_to_signature"),
     accidental: {
@@ -197,14 +212,14 @@ export function createAiHandoff(sessionRecord) {
   const { summary, trials } = sessionRecord;
   const displayMode = sessionRecord.displayMode ?? "ja";
   const observations = buildObservations(summary, displayMode);
-  const details = trials
+  const details = trials.flatMap(answerRecords)
     .filter((trial) => !trial.correct)
     .map((trial) => {
       const fact = FACT_BY_ID.get(trial.factId);
       const expected = trial.direction === "key_to_signature" ? signatureLabel(trial.expectedAnswer) : keyDisplayText(KEY_BY_ID.get(trial.expectedAnswer), displayMode);
-      return `- ${factDisplayText(fact, displayMode)}: 不正解（正解: ${expected}、回答時間: ${formatHumanDuration(trial.responseMs)}${trial.visibilityInterrupted ? "、画面外への移動あり" : ""}）`;
+      return `- ${factDisplayText(fact, displayMode)} / ${trial.mode === "major" ? "長調" : "短調"}: 不正解（正解: ${expected}、回答時間: ${formatHumanDuration(trial.responseMs)}${trial.visibilityInterrupted ? "、画面外への移動あり" : ""}）`;
     }).join("\n") || "- 特記する誤答はありません。";
-  return `これは Key Signature Trainer の1回分のセッション記録です。\n\n【セッション要約】\n初回正答: ${summary.firstAttempt.correct}/${summary.firstAttempt.count}\n再挑戦後: ${summary.finalMastery.correct}/${summary.finalMastery.count}\n平均回答時間: ${formatHumanDuration(summary.meanResponseMs)}\n中央値: ${formatHumanDuration(summary.medianResponseMs)}\n\n【決定的集計による特徴】\n${observations.map((item) => `- ${item}`).join("\n")}\n\n【誤答詳細】\n${details}\n\n回答時間には、考えた時間だけでなく操作、迷い、離席、バックグラウンド化が含まれ得ます。認知的な遅さ・理解度・能力の根拠として過剰解釈しないでください。\n\n次の条件で助言してください。\n- 記録から直接分かる観察と仮説を分ける\n- サンプル数が小さい限界を明記する\n- 次に行う短い練習を提案する\n- 次回の対面レッスンで先生に確認する点を提案する\n- 能力や適性を診断しない`;
+  return `これは Key Signature Trainer の1回分のセッション記録です。\n\n【セッション要約】\n初回正答: ${summary.firstAttempt.correct}/${summary.firstAttempt.count}\n再挑戦後: ${summary.finalMastery.correct}/${summary.finalMastery.count}\n長調回答: ${summary.major.correct}/${summary.major.count} / 短調回答: ${summary.minor.correct}/${summary.minor.count}（再挑戦を含む）\n平均回答時間: ${formatHumanDuration(summary.meanResponseMs)}\n中央値: ${formatHumanDuration(summary.medianResponseMs)}\n\n【決定的集計による特徴】\n${observations.map((item) => `- ${item}`).join("\n")}\n\n【誤答詳細】\n${details}\n\n回答時間には、考えた時間だけでなく操作、迷い、離席、バックグラウンド化が含まれ得ます。認知的な遅さ・理解度・能力の根拠として過剰解釈しないでください。\n\n次の条件で助言してください。\n- 記録から直接分かる観察と仮説を分ける\n- サンプル数が小さい限界を明記する\n- 次に行う短い練習を提案する\n- 次回の対面レッスンで先生に確認する点を提案する\n- 能力や適性を診断しない`;
 }
 
 export function completeSession(session, { endedAt, endedMonotonicMs }) {

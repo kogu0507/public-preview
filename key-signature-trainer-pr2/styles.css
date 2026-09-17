@@ -122,3 +122,12 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
   button { transition: background-color .15s ease, border-color .15s ease, transform .15s ease; }
   button:active:not(:disabled) { transform: translateY(1px); }
 }
+
+.notation-card h2 { margin: 0 0 .5rem; font-size: 1.25rem; text-align: center; }
+.prompt-key-name { font-size: 1.6rem; font-weight: 800; margin: .6rem 0; text-align: center; }
+.answer-slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+.answer-slots button { display: grid; gap: .5rem; min-width: 0; min-height: 5rem; padding: .6rem; border: 2px solid var(--line); border-radius: .75rem; background: white; color: var(--ink); cursor: pointer; }
+.answer-slots button[aria-pressed="true"] { border-color: var(--accent); background: #e2f0ea; box-shadow: inset 0 0 0 1px var(--accent); }
+.answer-slots strong { overflow-wrap: anywhere; }
+.active-slot-label { margin: 0; color: var(--accent-dark); font-weight: 750; }
+.answer-feedback-row { display: block; margin-bottom: .5rem; }

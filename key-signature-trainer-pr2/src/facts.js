@@ -59,7 +59,7 @@ const PITCH_SPELLINGS = Object.freeze([
   ["D", "sharp", ["嬰ニ", "D-sharp", "Dis", "ディー・シャープ", "ディス"]],
   ["E", "flat", ["変ホ", "E-flat", "Es", "イー・フラット", "エス"]],
   ["E", "natural", ["ホ", "E", "E", "イー", "エー"]],
-  ["E", "sharp", ["嬰ホ", "E-sharp", "Eis", "イー・シャープ", "アイス"]],
+  ["E", "sharp", ["嬰ホ", "E-sharp", "Eis", "イー・シャープ", "エイス"]],
   ["F", "flat", ["変ヘ", "F-flat", "Fes", "エフ・フラット", "フェス"]],
   ["F", "natural", ["ヘ", "F", "F", "エフ", "エフ"]],
   ["F", "sharp", ["嬰ヘ", "F-sharp", "Fis", "エフ・シャープ", "フィス"]],

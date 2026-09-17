@@ -1,13 +1,13 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, keyDisplayParts, keyDisplayText, modeDisplayText, pitchDisplayParts, relatedMajorDiagram, signatureLabel, stemDisplayText } from "./facts.js?v=m2.5.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.5.0";
-import { advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.5.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, signatureLabel, stemDisplayText } from "./facts.js?v=m2.6.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.6.0";
+import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.6.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
 const ui = {
   timer: $("#session-timer"), start: $("#start-button"), mode: $("#practice-mode"), display: $("#display-mode"), answerUiMode: $("#answer-ui-mode"),
   title: $("#question-title"), progress: $("#progress-text"), retry: $("#retry-badge"), preview: $("#notation-preview"), label: $("#notation-label"),
-  back: $("#back-to-settings"), keyArea: $("#key-answer-area"), decomposed: $("#decomposed-answer"), stemOptions: $("#stem-options"), accidentalOptions: $("#accidental-options"), grid: $("#pitch-grid-answer"), gridOptions: $("#pitch-grid-options"), modeControl: $("#key-mode-control"), modeLegend: $("#key-mode-legend"), modeOptions: $("#mode-options"), longSelectArea: $("#long-select-answer"), longSelect: $("#long-key-select"), composedKey: $("#composed-key-name"), composerStatus: $("#composer-status"), keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
+  back: $("#back-to-settings"), keyArea: $("#key-answer-area"), decomposed: $("#decomposed-answer"), stemOptions: $("#stem-options"), accidentalOptions: $("#accidental-options"), grid: $("#pitch-grid-answer"), gridOptions: $("#pitch-grid-options"), slots: $("#answer-slots"), activeSlotLabel: $("#active-slot-label"), promptKey: $("#prompt-key-name"), longSelectArea: $("#long-select-answer"), longSelect: $("#long-key-select"),  keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
   down: $("#signature-down"), up: $("#signature-up"), signatureStatus: $("#signature-status"), signatureCommit: $("#signature-commit"),
   feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), syllabusNote: $("#syllabus-note"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
   metrics: $("#result-metrics"), review: $("#exam-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
@@ -15,11 +15,11 @@ const ui = {
 };
 let session;
 let questionStartedMs = 0;
-let selectedKeyId = null;
+let slotAnswers = { major: null, minor: null };
 let selectedStemId = null;
 let selectedAccidental = "natural";
 let selectedGridPitchId = null;
-let selectedKeyMode = null;
+let selectedKeyMode = "major";
 let selectedSignature = 0;
 let visibilityInterrupted = false;
 let timerHandle;
@@ -59,19 +59,34 @@ function updateKeyComposer() {
     : session.answerUiMode === "pitch-grid"
       ? selectedGridPitchId && selectedKeyMode ? composeGridKey(selectedGridPitchId, selectedKeyMode) : null
       : selectedStemId && selectedKeyMode ? composeDecomposedKey(selectedStemId, selectedAccidental, selectedKeyMode) : null;
-  selectedKeyId = key?.id ?? null;
-  replaceKeyDisplay(ui.composedKey, key);
-  ui.composerStatus.textContent = "";
-  ui.keyCommit.disabled = !key;
+  slotAnswers[selectedKeyMode] = key?.id ?? null;
+  ui.slots.querySelectorAll("button").forEach((button) => {
+    replaceKeyDisplay(button.querySelector("strong"), KEY_BY_ID.get(slotAnswers[button.dataset.slot]));
+  });
+  ui.keyCommit.disabled = !slotAnswers.major || !slotAnswers.minor;
 }
+function activateSlot(mode) {
+  selectedKeyMode = mode;
+  const key = KEY_BY_ID.get(slotAnswers[mode]);
+  selectedStemId = key?.stem ?? null;
+  selectedAccidental = key?.accidental ?? "natural";
+  selectedGridPitchId = key ? `${key.stem}:${key.accidental}` : null;
+  ui.slots.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.slot === mode)));
+  ui.activeSlotLabel.textContent = `${mode === "major" ? "長調" : "短調"}の音名を選択`;
+  ui.longSelect.replaceChildren(new Option("調名を選ぶ", ""), ...LONG_KEY_OPTIONS.filter((item) => item.mode === mode).map((item) => new Option(keyDisplayText(item, currentDisplayMode()), item.id)));
+  ui.longSelect.value = key?.id ?? "";
+  ui.stemOptions.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.stem === selectedStemId)));
+  ui.accidentalOptions.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.accidental === selectedAccidental)));
+  ui.gridOptions.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.gridPitch === selectedGridPitchId)));
+  updateKeyComposer();
+}
+
 function renderKeyComposer() {
   const decomposed = session.answerUiMode === "decomposed";
   const grid = session.answerUiMode === "pitch-grid";
   const longSelect = session.answerUiMode === "long-select";
   ui.decomposed.classList.toggle("hidden", !decomposed);
   ui.grid.classList.toggle("hidden", !grid);
-  ui.modeControl.classList.toggle("hidden", longSelect);
-  ui.modeLegend.textContent = grid ? "2. 長調 / 短調を選択" : "3. 長調 / 短調を選択";
   ui.longSelectArea.classList.toggle("hidden", !longSelect);
   ui.stemOptions.replaceChildren(...NATURAL_STEMS.map((stem) => {
     const button = document.createElement("button"); button.type = "button"; button.dataset.stem = stem.id;
@@ -81,19 +96,13 @@ function renderKeyComposer() {
     const button = document.createElement("button"); button.type = "button"; button.dataset.gridPitch = pitch.id;
     button.setAttribute("aria-pressed", "false"); button.setAttribute("aria-label", pitchDisplayParts(pitch, currentDisplayMode()).label); button.append(pitchDisplayNode(pitch)); return button;
   }));
-  ui.longSelect.replaceChildren(new Option("調名を選ぶ", ""), ...LONG_KEY_OPTIONS.map((key) => new Option(keyDisplayText(key, currentDisplayMode()), key.id)));
   ui.longSelect.disabled = false;
-  selectedStemId = null; selectedAccidental = "natural"; selectedGridPitchId = null; selectedKeyMode = null; selectedKeyId = null;
-  ui.accidentalOptions.querySelectorAll("button").forEach((button) => {
-    button.disabled = false; button.setAttribute("aria-pressed", String(button.dataset.accidental === "natural"));
-  });
-  ui.modeOptions.querySelectorAll("button").forEach((button) => {
-    button.disabled = false;
-    button.setAttribute("aria-pressed", "false");
-    button.textContent = modeDisplayText(button.dataset.keyMode, currentDisplayMode());
-  });
-  updateKeyComposer();
+  ui.slots.querySelectorAll("button").forEach((button) => { button.disabled = false; });
+  ui.accidentalOptions.querySelectorAll("button").forEach((button) => { button.disabled = false; });
+  slotAnswers = { major: null, minor: null };
+  activateSlot("major");
 }
+
 function updateSignatureSelector() {
   selectedSignature = clampSignature(selectedSignature);
   ui.down.disabled = selectedSignature <= -7; ui.up.disabled = selectedSignature >= 7;
@@ -109,12 +118,15 @@ function renderQuestion() {
   ui.feedback.className = "feedback hidden";
   ui.keyArea.classList.toggle("hidden", detail.direction !== "signature_to_key");
   ui.signatureArea.classList.toggle("hidden", detail.direction !== "key_to_signature");
-  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; selectedKeyId = null; selectedStemId = null; selectedAccidental = "natural"; selectedGridPitchId = null; selectedKeyMode = null; selectedSignature = 0;
+  ui.keyCommit.disabled = true; ui.signatureCommit.disabled = false; slotAnswers = { major: null, minor: null }; selectedStemId = null; selectedAccidental = "natural"; selectedGridPitchId = null; selectedKeyMode = null; selectedSignature = 0;
   if (detail.direction === "signature_to_key") {
-    ui.title.textContent = detail.mode === "major" ? "この調号の長調は？" : "この調号の短調は？";
+    ui.title.textContent = "調名を答えなさい。";
+    ui.promptKey.classList.add("hidden");
     setNotation(detail.fact.signature); renderKeyComposer();
   } else {
-    ui.title.replaceChildren(keyDisplayNode(detail.fact[detail.mode]), document.createTextNode("の調号は？"));
+    ui.title.textContent = "調号を答えなさい。";
+    ui.promptKey.classList.remove("hidden");
+    replaceKeyDisplay(ui.promptKey, detail.fact[detail.mode]);
     updateSignatureSelector();
   }
   visibilityInterrupted = false; questionStartedMs = performance.now();
@@ -124,7 +136,7 @@ function disableAnswers() {
   ui.stemOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
   ui.accidentalOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
   ui.gridOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
-  ui.modeOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; }); ui.longSelect.disabled = true;
+  ui.slots.querySelectorAll("button").forEach((button) => { button.disabled = true; }); ui.longSelect.disabled = true;
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
 }
 function renderRelatedNeighborhood(targetKey) {
@@ -160,13 +172,21 @@ function submitAnswer(submittedAnswer) {
   if (session.practiceMode === "exam") { advanceOrFinish(); return; }
   ui.feedback.className = `feedback ${trial.correct ? "correct" : "incorrect"}`;
   ui.feedbackHeading.textContent = trial.correct ? "○ 正解です" : "× 不正解です";
-  const feedbackValue = trial.correct ? trial.submittedAnswer : trial.expectedAnswer;
-  const feedbackSuffix = trial.correct ? "" : trial.isRetry ? "。再挑戦でも不正解でした。このセッションでは再出題されません。" : "。この問題は最後にもう一度出題されます。";
-  ui.feedbackDetail.replaceChildren(document.createTextNode(trial.correct ? "回答: " : "正解: "), answerDisplayNode(question, feedbackValue), document.createTextNode(feedbackSuffix));
-  const syllabusNote = outOfSyllabusNoteForAnswer(trial.submittedAnswer);
+  ui.feedbackDetail.replaceChildren(...feedbackRows(trial));
+  if (!trial.correct) ui.feedbackDetail.append(document.createTextNode(trial.isRetry ? "このセッションでは再出題されません。" : "この問題は最後にもう一度出題されます。"));
+  const syllabusNote = answerRecords(trial).map((answer) => outOfSyllabusNoteForAnswer(answer.submittedAnswer)).filter(Boolean).join(" ");
   ui.syllabusNote.textContent = syllabusNote; ui.syllabusNote.classList.toggle("hidden", !syllabusNote);
-  renderRelatedNeighborhood(describeQuestion(question).fact[describeQuestion(question).mode]);
+  const detail = describeQuestion(question);
+  renderRelatedNeighborhood(detail.fact[detail.mode === "both" ? "major" : detail.mode]);
   ui.next.textContent = session.currentIndex + 1 < session.queue.length ? "次へ" : "結果を見る"; ui.next.focus();
+}
+function feedbackRows(trial, displayMode = currentDisplayMode()) {
+  return answerRecords(trial).map((answer) => {
+    const row = document.createElement("span"); row.className = "answer-feedback-row";
+    row.append(document.createTextNode(`${answer.mode === "major" ? "長調" : "短調"} ${answer.correct ? "○ 正解" : "× 不正解"} · 回答: `), answerDisplayNode({ type: trial.questionType, factId: trial.factId }, answer.submittedAnswer, displayMode));
+    if (!answer.correct) row.append(document.createTextNode(" / 正解: "), answerDisplayNode({ type: trial.questionType, factId: trial.factId }, answer.expectedAnswer, displayMode));
+    return row;
+  });
 }
 function metric(label, value) { const item = document.createElement("div"); item.className = "metric"; item.innerHTML = "<span></span><strong></strong>"; item.querySelector("span").textContent = label; item.querySelector("strong").textContent = value; return item; }
 function renderResults(record, saved) {
@@ -176,15 +196,17 @@ function renderResults(record, saved) {
     metric("回答方法", record.answerUiMode === "long-select" ? "全調プルダウン" : record.answerUiMode === "pitch-grid" ? "21音名グリッド" : "分解入力"),
     metric("初回正答率", `${s.firstAttempt.correct}/${s.firstAttempt.count} · ${percent(s.firstAttempt.accuracy)}`),
     metric("再挑戦後", `${s.finalMastery.correct}/${s.finalMastery.count} · ${percent(s.finalMastery.accuracy)}`),
+    metric("長調（再挑戦含む）", `${s.major.correct}/${s.major.count}`),
+    metric("短調（再挑戦含む）", `${s.minor.correct}/${s.minor.count}`),
     metric("合計時間", formatHumanDuration(record.totalElapsedMs)),
     metric("平均 / 中央値", `${formatHumanDuration(s.meanResponseMs)} / ${formatHumanDuration(s.medianResponseMs)}`),
   );
   ui.observations.replaceChildren(...buildObservations(s, record.displayMode).map((text) => Object.assign(document.createElement("li"), { textContent: text })));
   ui.review.classList.toggle("hidden", record.practiceMode !== "exam");
   ui.review.replaceChildren(...record.trials.map((trial) => {
-    const item = document.createElement("li"); const question = session.queue.find((q) => q.id === trial.questionId) ?? { type: trial.questionType, factId: trial.factId };
-    item.append(document.createTextNode(`${trial.correct ? "○" : "×"} 回答: `), answerDisplayNode(question, trial.submittedAnswer, record.displayMode), document.createTextNode(" / 正解: "), answerDisplayNode(question, trial.expectedAnswer, record.displayMode));
-    const note = outOfSyllabusNoteForAnswer(trial.submittedAnswer);
+    const item = document.createElement("li");
+    item.append(...feedbackRows(trial, record.displayMode));
+    const note = answerRecords(trial).map((answer) => outOfSyllabusNoteForAnswer(answer.submittedAnswer)).filter(Boolean).join(" ");
     if (note) { const detail = document.createElement("p"); detail.className = "review-note"; detail.textContent = note; item.append(detail); }
     return item;
   }));
@@ -233,15 +255,15 @@ ui.gridOptions.addEventListener("click", (event) => {
   ui.gridOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
   updateKeyComposer();
 });
-ui.modeOptions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-key-mode]"); if (!button) return;
-  selectedKeyMode = button.dataset.keyMode;
-  ui.modeOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-  updateKeyComposer();
+ui.slots.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-slot]"); if (button) activateSlot(button.dataset.slot);
+});
+ui.slots.addEventListener("focusin", (event) => {
+  const button = event.target.closest("button[data-slot]"); if (button) activateSlot(button.dataset.slot);
 });
 ui.longSelect.addEventListener("change", updateKeyComposer);
 ui.down.addEventListener("click", () => { selectedSignature--; updateSignatureSelector(); }); ui.up.addEventListener("click", () => { selectedSignature++; updateSignatureSelector(); });
-ui.keyCommit.addEventListener("click", () => submitAnswer(selectedKeyId)); ui.signatureCommit.addEventListener("click", () => submitAnswer(selectedSignature)); ui.next.addEventListener("click", advanceOrFinish);
+ui.keyCommit.addEventListener("click", () => submitAnswer(slotAnswers)); ui.signatureCommit.addEventListener("click", () => submitAnswer(selectedSignature)); ui.next.addEventListener("click", advanceOrFinish);
 ui.copyAi.addEventListener("click", () => copyText(ui.aiText.value, ui.aiText, "AI相談文をコピーしました。")); ui.copyJson.addEventListener("click", () => copyText(ui.jsonText.value, ui.jsonText, "JSONをコピーしました。"));
 ui.downloadJson.addEventListener("click", () => { const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([ui.jsonText.value], { type: "application/json" })); link.download = `${session.sessionId}.json`; link.click(); URL.revokeObjectURL(link.href); showToast("JSONファイルを保存しました。"); });
 document.addEventListener("visibilitychange", () => { if (session?.status === "active" && document.hidden) visibilityInterrupted = true; });
