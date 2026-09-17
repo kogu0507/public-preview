@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="ja">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M2.6 prototype</title><link rel="stylesheet" href="styles.css?v=m2.6.0"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M2.7 prototype</title><link rel="stylesheet" href="styles.css?v=m2.7.0"></head>
 <body>
 <main class="app-shell">
-  <header class="app-header"><div><p class="eyebrow">M2.6 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
+  <header class="app-header"><div><p class="eyebrow">M2.7 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
   <section id="start-screen" class="panel hero" aria-labelledby="start-heading">
     <div class="hero-mark" aria-hidden="true">♭ ♮ ♯</div><h2 id="start-heading">調号と調名を結びつける</h2>
     <div class="settings">
@@ -11,20 +11,21 @@
       <label for="display-mode">調名表記</label><select id="display-mode"></select>
       <label for="answer-ui-mode">調名の回答方法</label><select id="answer-ui-mode"><option value="pitch-grid">21音名グリッド</option><option value="decomposed">分解入力</option><option value="long-select">全調プルダウン</option></select>
     </div>
-    <button id="start-button" class="primary-button" type="button">始める</button><p class="prototype-note">UI確認用の出題範囲: 調号なし・シャープ1個・フラット1個</p>
+    <button id="start-button" class="primary-button" type="button">始める</button><p class="prototype-note">UI確認用の出題範囲: 調号なし・♯1つ・♭1つ</p>
   </section>
   <section id="quiz-screen" class="panel hidden" aria-labelledby="question-title">
     <div class="progress-row"><div><span id="progress-text">問題 1</span><span id="retry-badge" class="badge hidden">再挑戦</span></div><button id="back-to-settings" class="text-button" type="button">設定に戻る</button></div>
     <div class="notation-card"><h2 id="question-title" tabindex="-1"></h2><div id="prompt-key-name" class="prompt-key-name hidden"></div><div id="notation-preview" class="notation-preview"></div><p id="notation-label"></p></div>
     <div id="key-answer-area" class="answer-area key-composer hidden">
-      <div id="answer-slots" class="answer-slots" role="group" aria-label="回答する調を選ぶ"><button type="button" data-slot="major" aria-pressed="true"><span>長調</span><strong>—</strong></button><button type="button" data-slot="minor" aria-pressed="false"><span>短調</span><strong>—</strong></button></div>
+      <fieldset class="slot-step"><legend>1. 長調／短調を選択</legend><div id="answer-slots" class="answer-slots" role="group" aria-label="回答する調を選ぶ"><button type="button" data-slot="major" aria-pressed="true"><span>長調 <small class="slot-state">入力中</small></span><strong>—</strong></button><button type="button" data-slot="minor" aria-pressed="false"><span>短調 <small class="slot-state"></small></span><strong>—</strong></button></div></fieldset>
       <p id="active-slot-label" class="active-slot-label" aria-live="polite"></p>
       <div id="decomposed-answer" class="decomposed-answer">
-        <fieldset><legend>1. 幹音を選択</legend><div id="stem-options" class="stem-options"></div></fieldset>
-        <fieldset><legend>2. ♭ / ♮ / ♯ を選択</legend><div id="accidental-options" class="accidental-options"><button type="button" data-accidental="flat" aria-pressed="false" aria-label="フラット">♭</button><button type="button" data-accidental="natural" aria-pressed="true" aria-label="ナチュラル">♮</button><button type="button" data-accidental="sharp" aria-pressed="false" aria-label="シャープ">♯</button></div></fieldset>
+        <fieldset><legend>幹音</legend><div id="stem-options" class="stem-options"></div></fieldset>
+        <fieldset><legend>♭ / ♮ / ♯</legend><div id="accidental-options" class="accidental-options"><button type="button" data-accidental="flat" aria-pressed="false" aria-label="フラット">♭</button><button type="button" data-accidental="natural" aria-pressed="true" aria-label="ナチュラル">♮</button><button type="button" data-accidental="sharp" aria-pressed="false" aria-label="シャープ">♯</button></div></fieldset>
       </div>
-      <fieldset id="pitch-grid-answer" class="pitch-grid-answer hidden"><legend>1. 音名を選択</legend><div id="pitch-grid-options" class="pitch-grid-options"></div></fieldset>
+      <fieldset id="pitch-grid-answer" class="pitch-grid-answer hidden"><legend class="sr-only">主音</legend><div id="pitch-grid-options" class="pitch-grid-options"></div></fieldset>
       <div id="long-select-answer" class="long-select-answer hidden"><label for="long-key-select">調名を選択</label><select id="long-key-select"><option value="">調名を選ぶ</option></select></div>
+      <p id="answer-next-action" class="answer-next-action" role="status"></p>
       <button id="key-commit" class="primary-button" type="button" disabled>回答する</button>
     </div>
     <div id="signature-answer-area" class="answer-area hidden"><div class="signature-selector" role="group" aria-label="調号を選ぶ"><button id="signature-down" class="selector-button" type="button" aria-label="フラット方向へ1つ移動">← ♭</button><button id="signature-up" class="selector-button" type="button" aria-label="シャープ方向へ1つ移動">♯ →</button></div><p id="signature-status" class="sr-only" aria-live="polite"></p><button id="signature-commit" class="primary-button" type="button">回答する</button></div>
@@ -37,5 +38,5 @@
     <h3>AIに相談</h3><p>記録は自動送信されません。必要なら文章をコピーしてください。</p><button id="copy-ai" class="secondary-button" type="button">AI相談文をコピー</button><textarea id="ai-text" class="export-text" readonly aria-label="AI相談文"></textarea>
     <h3>データ</h3><div class="button-row"><button id="copy-json" class="secondary-button" type="button">JSONをコピー</button><button id="download-json" class="secondary-button" type="button">JSONを保存</button></div><textarea id="json-text" class="export-text" readonly aria-label="セッションJSON"></textarea><p id="copy-status" class="copy-status" role="status"></p><button id="restart-button" class="primary-button" type="button">設定に戻る</button>
   </section>
-</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m2.6.0"></script>
+</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m2.7.0"></script>
 </body></html>

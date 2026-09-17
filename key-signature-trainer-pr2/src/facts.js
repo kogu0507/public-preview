@@ -27,6 +27,8 @@ const SIGNATURE_NAMES = Object.freeze([
   [7, ["嬰ハ", "C-sharp", "Cis", "シー・シャープ", "ツィス"], ["嬰イ", "A-sharp", "Ais", "エー・シャープ", "アイス"]],
 ]);
 
+function compactEnglishPitch(value) { return value.replace(/-sharp/g, "♯").replace(/-flat/g, "♭"); }
+
 function makeKey(signature, mode, values, stem, accidental) {
   const [jaPitch, enPitch, dePitch, enReading, deReading] = values;
   const deTonic = mode === "minor" ? dePitch.toLocaleLowerCase("de") : dePitch;
@@ -43,7 +45,7 @@ function makeKey(signature, mode, values, stem, accidental) {
     accidental,
     inSyllabus: signature != null,
     ja: `${jaPitch}${mode === "major" ? "長調" : "短調"}`,
-    en: `${enPitch} ${mode}`,
+    en: `${compactEnglishPitch(enPitch)} ${mode}`,
     de: `${deTonic}-${mode === "major" ? "Dur" : "Moll"}`,
     enRuby: `${enReading}・${mode === "major" ? "メジャー" : "マイナー"}`,
     deRuby: `${deReading}・${mode === "major" ? "ドゥア" : "モル"}`,
@@ -97,7 +99,7 @@ export const KEY_OPTIONS = Object.freeze({
 export const NATURAL_STEMS = Object.freeze(PITCH_SPELLINGS.filter(([, accidental]) => accidental === "natural").map(([id, , values]) => Object.freeze({
   id,
   ja: values[0],
-  en: values[1],
+  en: compactEnglishPitch(values[1]),
   de: values[2],
   enRuby: values[3],
   deRuby: values[4],
@@ -111,7 +113,7 @@ export const PITCH_GRID_OPTIONS = Object.freeze(["sharp", "natural", "flat"].fla
       stem,
       accidental,
       ja: values[0],
-      en: values[1],
+      en: compactEnglishPitch(values[1]),
       de: values[2],
       enRuby: values[3],
       deRuby: values[4],
@@ -164,7 +166,7 @@ function escapeHtml(value) {
 }
 
 function displayPartsHtml(parts, displayMode) {
-  const label = escapeHtml(parts.label);
+  const label = escapeHtml(parts.label).replace(/[♯♭]/g, (symbol) => `<span class="key-accidental">${symbol}</span>`);
   if (!parts.ruby) return label;
   const language = displayMode.startsWith("de") ? "de" : "en";
   return `<ruby lang="${language}">${label}<rt>${escapeHtml(parts.ruby)}</rt></ruby>`;
@@ -250,4 +252,8 @@ export function signatureLabel(signature) {
 
 export function factDisplayText(fact, displayMode = "ja") {
   return `${signatureLabel(fact.signature)}（${keyDisplayText(fact.major, displayMode)} / ${keyDisplayText(fact.minor, displayMode)}）`;
+}
+
+export function signatureHelperLabel(signature) {
+  return signature === 0 ? "（なし）" : `（${compactSignatureLabel(signature)}つ）`;
 }

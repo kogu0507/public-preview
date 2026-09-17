@@ -131,3 +131,8 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .answer-slots strong { overflow-wrap: anywhere; }
 .active-slot-label { margin: 0; color: var(--accent-dark); font-weight: 750; }
 .answer-feedback-row { display: block; margin-bottom: .5rem; }
+
+.notation-card #notation-label { color: var(--muted); font-size: .8rem; font-weight: 400; }
+.slot-state { display: inline-block; min-height: 1.2em; font-size: .7rem; font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
+.answer-next-action { margin: 0; font-size: .8rem; color: var(--accent-dark); }
+.key-accidental, .relation-key .key-accidental, .relation-key.is-current .key-accidental { display: inline; position: relative; top: -.2em; font-family: "Noto Music", "Segoe UI Symbol", "Apple Symbols", sans-serif; font-size: .78em; font-weight: inherit; color: inherit; }

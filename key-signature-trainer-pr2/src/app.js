@@ -1,6 +1,6 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, signatureLabel, stemDisplayText } from "./facts.js?v=m2.6.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.6.0";
-import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.6.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.7.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.7.0";
+import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.7.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -29,9 +29,13 @@ function showScreen(target) { screens.forEach((screen) => screen.classList.toggl
 function timerText(ms) { const seconds = Math.floor(Math.max(0, ms) / 1000); return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`; }
 function currentDisplayMode() { return session?.displayMode ?? ui.display.value; }
 function displayNode(parts, displayMode = currentDisplayMode()) {
-  if (!parts.ruby) return document.createTextNode(parts.label);
+  const label = document.createDocumentFragment();
+  parts.label.split(/([♯♭])/).forEach((part) => {
+    label.append(/[♯♭]/.test(part) ? Object.assign(document.createElement("span"), { className: "key-accidental", textContent: part }) : document.createTextNode(part));
+  });
+  if (!parts.ruby) return label;
   const ruby = document.createElement("ruby"); ruby.lang = displayMode.startsWith("de") ? "de" : "en";
-  ruby.append(document.createTextNode(parts.label), Object.assign(document.createElement("rt"), { textContent: parts.ruby }));
+  ruby.append(label, Object.assign(document.createElement("rt"), { textContent: parts.ruby }));
   return ruby;
 }
 function keyDisplayNode(key, displayMode = currentDisplayMode()) { return displayNode(keyDisplayParts(key, displayMode), displayMode); }
@@ -47,7 +51,7 @@ function startTimer() {
 function setNotation(signature) {
   const label = signatureLabel(signature);
   ui.preview.innerHTML = renderKeySignatureSvg(signature, { idPrefix: `notation-${signature < 0 ? `m${-signature}` : signature}`, title: `${label}のト音記号譜表` });
-  ui.label.textContent = label;
+  ui.label.textContent = signatureHelperLabel(signature);
 }
 function answerDisplayNode(question, value, displayMode = currentDisplayMode()) {
   const detail = describeQuestion(question);
@@ -64,6 +68,8 @@ function updateKeyComposer() {
     replaceKeyDisplay(button.querySelector("strong"), KEY_BY_ID.get(slotAnswers[button.dataset.slot]));
   });
   ui.keyCommit.disabled = !slotAnswers.major || !slotAnswers.minor;
+  const missing = ["major", "minor"].find((mode) => !slotAnswers[mode]);
+  $("#answer-next-action").textContent = !missing ? "両方の回答を確認して、回答する" : missing !== selectedKeyMode ? `${missing === "major" ? "長調" : "短調"}のスロットを選択 → 主音を選択` : "選択中のスロットの主音を選択";
 }
 function activateSlot(mode) {
   selectedKeyMode = mode;
@@ -71,8 +77,12 @@ function activateSlot(mode) {
   selectedStemId = key?.stem ?? null;
   selectedAccidental = key?.accidental ?? "natural";
   selectedGridPitchId = key ? `${key.stem}:${key.accidental}` : null;
-  ui.slots.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.slot === mode)));
-  ui.activeSlotLabel.textContent = `${mode === "major" ? "長調" : "短調"}の音名を選択`;
+  ui.slots.querySelectorAll("button").forEach((button) => {
+    const active = button.dataset.slot === mode;
+    button.setAttribute("aria-pressed", String(active));
+    button.querySelector(".slot-state").textContent = active ? "入力中" : "";
+  });
+  ui.activeSlotLabel.textContent = `2. ${mode === "major" ? "長調" : "短調"}の主音を選択`;
   ui.longSelect.replaceChildren(new Option("調名を選ぶ", ""), ...LONG_KEY_OPTIONS.filter((item) => item.mode === mode).map((item) => new Option(keyDisplayText(item, currentDisplayMode()), item.id)));
   ui.longSelect.value = key?.id ?? "";
   ui.stemOptions.querySelectorAll("button").forEach((button) => button.setAttribute("aria-pressed", String(button.dataset.stem === selectedStemId)));
