@@ -15,29 +15,51 @@
 </main>
 <script>
 const projectUrl='https://chatgpt.com/g/g-p-6a75c4173298819193ea7d27cde06902-google-drive-projects/project';
-const demo=[
-{id:'dummy03-a',title:'DUMMY 03-A｜色の並べ替え',minutes:3,description:'赤・青・黄を2通りで整理する',prompt:'これはCalendar半自動AI仕事ランチャーの動作確認用ダミータスクです。\n\n新Chatとして開始し、「赤・青・黄」を五十音順と文字数順の2通りで整理し、結果を簡単に比較してください。最後に「DUMMY 03-A COMPLETE」と表示して停止してください。\n\nGoogle Drive、Calendar、Gmail、Web、外部サービス、正本は変更しないでください。'},
-{id:'dummy03-b',title:'DUMMY 03-B｜果物の分類',minutes:3,description:'りんご・みかん・バナナを分類する',prompt:'これはCalendar半自動AI仕事ランチャーの動作確認用ダミータスクです。\n\n新Chatとして開始し、「りんご・みかん・バナナ」を文字数順に並べ、ひらがな・カタカナ表記の違いにも触れてください。最後に「DUMMY 03-B COMPLETE」と表示して停止してください。\n\nGoogle Drive、Calendar、Gmail、Web、外部サービス、正本は変更しないでください。'},
-{id:'dummy03-c',title:'DUMMY 03-C｜数字の比較',minutes:3,description:'3・10・21を2種類の順序で整理する',prompt:'これはCalendar半自動AI仕事ランチャーの動作確認用ダミータスクです。\n\n新Chatとして開始し、「3・10・21」を数値の小さい順と、文字として読んだときの五十音順の2通りで整理し、違いを簡単に説明してください。最後に「DUMMY 03-C COMPLETE」と表示して停止してください。\n\nGoogle Drive、Calendar、Gmail、Web、外部サービス、正本は変更しないでください。'}
-];
 function decodeData(){
-  const m=location.hash.match(/(?:^#|&)data=([^&]+)/); if(!m)return demo;
-  try{let s=m[1].replace(/-/g,'+').replace(/_/g,'/');while(s.length%4)s+='=';const bin=atob(s);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return JSON.parse(new TextDecoder().decode(bytes));}catch(e){return demo;}
+  const m=location.hash.match(/(?:^#|&)data=([^&]+)/);
+  if(!m)return null;
+  try{
+    let s=m[1].replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length%4)s+='=';
+    const bin=atob(s);
+    const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
+    const data=JSON.parse(new TextDecoder().decode(bytes));
+    return Array.isArray(data)?data:null;
+  }catch(e){return null}
 }
 function key(id){return 'ai-job-launcher:done:'+id}
-async function copy(text,status){try{await navigator.clipboard.writeText(text);status.textContent='コピーしました。';return true}catch(e){status.textContent='コピーできませんでした。';return false}}
+async function copy(text,status){
+  try{await navigator.clipboard.writeText(text);status.textContent='コピーしました。';return true}
+  catch(e){status.textContent='コピーできませんでした。';return false}
+}
 function render(){
- const root=document.getElementById('cards'); const tasks=decodeData(); root.innerHTML='';
- if(!Array.isArray(tasks)||!tasks.length){root.innerHTML='<div class="empty">タスクがありません。</div>';return}
+ const root=document.getElementById('cards');
+ const tasks=decodeData();
+ root.innerHTML='';
+ if(!tasks){
+   root.innerHTML='<div class="empty">カードデータを読み込めませんでした。Calendarのリンクからもう一度開いてください。</div>';
+   return;
+ }
+ if(!tasks.length){
+   root.innerHTML='<div class="empty">今日のタスクはありません。</div>';
+   return;
+ }
  tasks.forEach(t=>{
   const card=document.createElement('section');card.className='card';
   const checked=localStorage.getItem(key(t.id))==='1';if(checked)card.classList.add('done');
   card.innerHTML=`<div class="row"><input type="checkbox" ${checked?'checked':''} aria-label="完了"><div><strong></strong><div class="meta"></div><div class="desc"></div></div></div><button type="button">コピーしてGoogle Drive Projectsを開く</button><button type="button" class="secondary">プロンプトだけコピー</button><div class="status" aria-live="polite"></div>`;
-  card.querySelector('strong').textContent=t.title||'AI仕事';card.querySelector('.meta').textContent=t.minutes?`目安 ${t.minutes}分`:'';card.querySelector('.desc').textContent=t.description||'';
+  card.querySelector('strong').textContent=t.title||'AI仕事';
+  card.querySelector('.meta').textContent=t.minutes?`目安 ${t.minutes}分`:'';
+  card.querySelector('.desc').textContent=t.description||'';
   const box=card.querySelector('input'),buttons=card.querySelectorAll('button'),status=card.querySelector('.status');
-  box.addEventListener('change',()=>{localStorage.setItem(key(t.id),box.checked?'1':'0');card.classList.toggle('done',box.checked)});
+  box.addEventListener('change',()=>{
+    localStorage.setItem(key(t.id),box.checked?'1':'0');
+    card.classList.toggle('done',box.checked)
+  });
   buttons[1].addEventListener('click',()=>copy(t.prompt||'',status));
-  buttons[0].addEventListener('click',async()=>{if(await copy(t.prompt||'',status))setTimeout(()=>location.href=projectUrl,160)});
+  buttons[0].addEventListener('click',async()=>{
+    if(await copy(t.prompt||'',status))setTimeout(()=>location.href=projectUrl,160)
+  });
   root.appendChild(card);
  });
 }
