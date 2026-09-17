@@ -1,6 +1,6 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, relatedMinorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.8.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.8.0";
-import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.8.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, relatedMinorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.8.1";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.8.1";
+import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.8.1";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -164,7 +164,7 @@ function relatedDiagramNode(targetKey) {
     });
     return row;
   };
-  const rows = targetKey.mode === "major" ? ["major", "minor"] : ["minor", "major"];
+  const rows = ["major", "minor"];
   diagram.append(header, ...rows.map((mode) => makeRow(data[mode], mode === "major" ? "長調" : "短調")));
   const section = document.createElement("section"); section.append(title, diagram);
   return section;
