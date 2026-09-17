@@ -132,7 +132,7 @@ export const LONG_KEY_OPTIONS = Object.freeze([
 ]);
 
 export function keyDisplayParts(key, displayMode = "ja") {
-  if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby };
+  if (displayMode === "en-ruby") return { label: key.en, ruby: key.enRuby.split("・")[0] };
   if (displayMode === "de-ruby") return { label: key.de, ruby: key.deRuby };
   if (displayMode === "en") return { label: key.en, ruby: "" };
   if (displayMode === "de") return { label: key.de, ruby: "" };
@@ -144,7 +144,7 @@ export function keyDisplayText(key, displayMode = "ja") {
 }
 
 export function pitchDisplayParts(pitch, displayMode = "ja") {
-  if (displayMode === "en-ruby") return { label: pitch.en, ruby: pitch.enRuby };
+  if (displayMode === "en-ruby") return { label: pitch.en, ruby: pitch.enRuby.split("・")[0] };
   if (displayMode === "de-ruby") return { label: pitch.de, ruby: pitch.deRuby };
   if (displayMode === "en") return { label: pitch.en, ruby: "" };
   if (displayMode === "de") return { label: pitch.de, ruby: "" };
@@ -165,9 +165,10 @@ function escapeHtml(value) {
   })[character]);
 }
 
-function displayPartsHtml(parts, displayMode) {
+export function displayPartsHtml(parts, displayMode) {
   const label = escapeHtml(parts.label).replace(/[♯♭]/g, (symbol) => `<span class="key-accidental">${symbol}</span>`);
   if (!parts.ruby) return label;
+  if (displayMode === "en-ruby") return `<ruby lang="en">${label[0]}<rt>${escapeHtml(parts.ruby)}</rt></ruby>${label.slice(1)}`;
   const language = displayMode.startsWith("de") ? "de" : "en";
   return `<ruby lang="${language}">${label}<rt>${escapeHtml(parts.ruby)}</rt></ruby>`;
 }
@@ -222,6 +223,23 @@ export function relatedMajorDiagram(targetKey) {
     columns: Object.freeze(columns),
     major: Object.freeze([cell(-1, "major", "下属調"), cell(0, "major", "主調", true), cell(1, "major", "属調")]),
     minor: Object.freeze([cell(-3, "minor", "同主調"), cell(0, "minor", "平行調")]),
+  });
+}
+
+// Natural-minor relationships approved in O-049 checkpoint 28 / Issue #7.
+// Out-of-range neighbors remain null; never clamp to a different musical key.
+export function relatedMinorDiagram(targetKey) {
+  if (targetKey.mode !== "minor" || targetKey.signature == null) return null;
+  const offsets = [-1, 0, 1, 2, 3];
+  const cell = (offset, mode, relation, target = false) => Object.freeze({
+    column: offsets.indexOf(offset),
+    key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
+    relation, target,
+  });
+  return Object.freeze({
+    columns: Object.freeze(offsets.map((offset) => Object.freeze({ signature: targetKey.signature + offset }))),
+    minor: Object.freeze([cell(-1, "minor", "下属調"), cell(0, "minor", "主調", true), cell(1, "minor", "属調")]),
+    major: Object.freeze([cell(0, "major", "平行調"), cell(3, "major", "同主調")]),
   });
 }
 

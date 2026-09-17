@@ -135,4 +135,18 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .notation-card #notation-label { color: var(--muted); font-size: .8rem; font-weight: 400; }
 .slot-state { display: inline-block; min-height: 1.2em; font-size: .7rem; font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 .answer-next-action { margin: 0; font-size: .8rem; color: var(--accent-dark); }
-.key-accidental, .relation-key .key-accidental, .relation-key.is-current .key-accidental { display: inline; position: relative; top: -.2em; font-family: "Noto Music", "Segoe UI Symbol", "Apple Symbols", sans-serif; font-size: .78em; font-weight: inherit; color: inherit; }
+.key-accidental, .relation-key .key-accidental, .relation-key.is-current .key-accidental { display: inline; position: relative; top: -.36em; font-family: "Segoe UI Symbol", "Apple Symbols", sans-serif; font-size: .78em; font-weight: inherit; color: inherit; }
+
+/* Native details retains session-local state; beginSession resets it. */
+.related-neighborhood summary { cursor: pointer; min-height: 2.75rem; padding: .7rem .25rem; font-weight: 750; }
+.related-neighborhood summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.related-diagrams { display: grid; gap: 1rem; }
+.marked-answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; margin: .8rem 0; color: var(--ink); }
+.marked-answer { min-width: 0; padding: .6rem; border: 1px solid var(--line); border-radius: .75rem; background: var(--paper); }
+.marked-answer > span { font-size: .85rem; font-weight: 750; }
+.marked-submission { display: flex; align-items: baseline; gap: .3rem; margin-top: .6rem; }
+.marked-submission strong { min-width: 0; overflow-wrap: anywhere; }
+.grade-mark { flex: none; font-size: 1.45rem; font-weight: 850; }
+.is-correct .grade-mark { color: var(--correct); }
+.is-wrong .grade-mark, .answer-correction { color: var(--wrong); }
+.answer-correction { margin-top: .65rem; font-size: .9rem; overflow-wrap: anywhere; }

@@ -1,6 +1,6 @@
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.7.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.7.0";
-import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.7.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, compactSignatureLabel, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, relatedMajorDiagram, relatedMinorDiagram, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.8.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.8.0";
+import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.8.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -29,14 +29,9 @@ function showScreen(target) { screens.forEach((screen) => screen.classList.toggl
 function timerText(ms) { const seconds = Math.floor(Math.max(0, ms) / 1000); return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`; }
 function currentDisplayMode() { return session?.displayMode ?? ui.display.value; }
 function displayNode(parts, displayMode = currentDisplayMode()) {
-  const label = document.createDocumentFragment();
-  parts.label.split(/([♯♭])/).forEach((part) => {
-    label.append(/[♯♭]/.test(part) ? Object.assign(document.createElement("span"), { className: "key-accidental", textContent: part }) : document.createTextNode(part));
-  });
-  if (!parts.ruby) return label;
-  const ruby = document.createElement("ruby"); ruby.lang = displayMode.startsWith("de") ? "de" : "en";
-  ruby.append(label, Object.assign(document.createElement("rt"), { textContent: parts.ruby }));
-  return ruby;
+  const template = document.createElement("template");
+  template.innerHTML = displayPartsHtml(parts, displayMode);
+  return template.content;
 }
 function keyDisplayNode(key, displayMode = currentDisplayMode()) { return displayNode(keyDisplayParts(key, displayMode), displayMode); }
 function pitchDisplayNode(pitch, displayMode = currentDisplayMode()) { return displayNode(pitchDisplayParts(pitch, displayMode), displayMode); }
@@ -149,11 +144,9 @@ function disableAnswers() {
   ui.slots.querySelectorAll("button").forEach((button) => { button.disabled = true; }); ui.longSelect.disabled = true;
   ui.keyCommit.disabled = true; ui.down.disabled = true; ui.up.disabled = true; ui.signatureCommit.disabled = true;
 }
-function renderRelatedNeighborhood(targetKey) {
-  const data = relatedMajorDiagram(targetKey);
-  ui.feedbackContext.classList.toggle("hidden", !data);
-  if (!data) { ui.feedbackContext.replaceChildren(); return; }
-  const title = document.createElement("p"); title.className = "relation-title"; title.textContent = "近親調";
+function relatedDiagramNode(targetKey) {
+  const data = targetKey.mode === "major" ? relatedMajorDiagram(targetKey) : relatedMinorDiagram(targetKey);
+  const title = document.createElement("p"); title.className = "relation-title"; title.append(keyDisplayNode(targetKey), document.createTextNode("を中心に"));
   const diagram = document.createElement("div"); diagram.className = "relation-diagram"; diagram.setAttribute("role", "group"); diagram.setAttribute("aria-label", `${keyDisplayText(targetKey, currentDisplayMode())}を中心にした近親調`);
   const header = document.createElement("div"); header.className = "relation-header";
   data.columns.forEach(({ signature }) => { const cell = document.createElement("span"); cell.textContent = compactSignatureLabel(signature); header.append(cell); });
@@ -171,9 +164,38 @@ function renderRelatedNeighborhood(targetKey) {
     });
     return row;
   };
-  diagram.append(header, makeRow(data.major, "長調"), makeRow(data.minor, "短調"));
-  ui.feedbackContext.replaceChildren(title, diagram);
+  const rows = targetKey.mode === "major" ? ["major", "minor"] : ["minor", "major"];
+  diagram.append(header, ...rows.map((mode) => makeRow(data[mode], mode === "major" ? "長調" : "短調")));
+  const section = document.createElement("section"); section.append(title, diagram);
+  return section;
 }
+function renderRelatedNeighborhood(detail) {
+  // Keep one details node: its native open state survives feedback rerenders.
+  const keys = detail.mode === "both" ? [detail.fact.major, detail.fact.minor] : detail.mode === "major" ? [detail.fact.major] : [];
+  ui.feedbackContext.classList.toggle("hidden", !keys.length);
+  ui.feedbackContext.querySelector(".related-diagrams").replaceChildren(...keys.map(relatedDiagramNode));
+}
+function markedAnswerNode(trial) {
+  const sheet = document.createElement("div"); sheet.className = "marked-answers";
+  for (const mode of ["major", "minor"]) {
+    const answer = answerRecords(trial).find((item) => item.mode === mode);
+    const slot = document.createElement("div"); slot.className = `marked-answer ${answer.correct ? "is-correct" : "is-wrong"}`; slot.dataset.mode = mode;
+    const heading = document.createElement("span"); heading.textContent = mode === "major" ? "長調" : "短調";
+    const name = document.createElement("strong"); name.append(keyDisplayNode(KEY_BY_ID.get(answer.submittedAnswer)));
+    const mark = document.createElement("span"); mark.className = "grade-mark"; mark.textContent = answer.correct ? "○" : "×";
+    mark.setAttribute("aria-label", answer.correct ? "正解" : "不正解");
+    const submitted = document.createElement("div"); submitted.className = "marked-submission"; submitted.append(mark, name);
+    slot.append(heading, submitted);
+    if (!answer.correct) {
+      const correction = document.createElement("div"); correction.className = "answer-correction";
+      correction.append(document.createTextNode("正："), keyDisplayNode(KEY_BY_ID.get(answer.expectedAnswer)));
+      slot.append(correction);
+    }
+    sheet.append(slot);
+  }
+  return sheet;
+}
+
 function advanceOrFinish() { if (advanceSession(session)) renderQuestion(); else finishSession(); }
 function submitAnswer(submittedAnswer) {
   const question = session.queue[session.currentIndex];
@@ -182,12 +204,12 @@ function submitAnswer(submittedAnswer) {
   if (session.practiceMode === "exam") { advanceOrFinish(); return; }
   ui.feedback.className = `feedback ${trial.correct ? "correct" : "incorrect"}`;
   ui.feedbackHeading.textContent = trial.correct ? "○ 正解です" : "× 不正解です";
-  ui.feedbackDetail.replaceChildren(...feedbackRows(trial));
+  ui.feedbackDetail.replaceChildren(...(trial.subanswers ? [markedAnswerNode(trial)] : feedbackRows(trial)));
   if (!trial.correct) ui.feedbackDetail.append(document.createTextNode(trial.isRetry ? "このセッションでは再出題されません。" : "この問題は最後にもう一度出題されます。"));
   const syllabusNote = answerRecords(trial).map((answer) => outOfSyllabusNoteForAnswer(answer.submittedAnswer)).filter(Boolean).join(" ");
   ui.syllabusNote.textContent = syllabusNote; ui.syllabusNote.classList.toggle("hidden", !syllabusNote);
   const detail = describeQuestion(question);
-  renderRelatedNeighborhood(detail.fact[detail.mode === "both" ? "major" : detail.mode]);
+  renderRelatedNeighborhood(detail);
   ui.next.textContent = session.currentIndex + 1 < session.queue.length ? "次へ" : "結果を見る"; ui.next.focus();
 }
 function feedbackRows(trial, displayMode = currentDisplayMode()) {
@@ -235,6 +257,7 @@ async function copyText(value, field, success) {
   catch { field.focus(); field.select(); const message = "自動コピーできませんでした。選択中の文章を手動でコピーしてください。"; ui.copyStatus.textContent = message; showToast(message, true); }
 }
 function beginSession() {
+  ui.feedbackContext.open = true;
   const now = new Date();
   session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: ui.mode.value, displayMode: ui.display.value, answerUiMode: ui.answerUiMode.value });
   showScreen($("#quiz-screen")); startTimer(); renderQuestion();
