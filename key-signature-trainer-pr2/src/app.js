@@ -1,8 +1,9 @@
-import { buildResultInsights, reviewTrials, lessonHandoff, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.0";
-import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.0";
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.0";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.0";
-import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.0";
+import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.0-followup";
+import { createLessonDraft } from "./lesson-note.js?v=m3.0-followup";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.0-followup";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.0-followup";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.0-followup";
+import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.0-followup";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -27,6 +28,7 @@ let selectedSignature = 0;
 let visibilityInterrupted = false;
 let timerHandle;
 let toastHandle;
+const lessonDraft = createLessonDraft();
 
 function showScreen(target) { screens.forEach((screen) => screen.classList.toggle("hidden", screen !== target)); }
 function timerText(ms) { const seconds = Math.floor(Math.max(0, ms) / 1000); return `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`; }
@@ -207,15 +209,15 @@ function renderResults(record, saved) {
   document.querySelector('input[name="review-filter"][value="wrong"]').checked = true;
   renderAnswerReview();
   $("#timing-caution").textContent = TIMING_CAUTION;
-  $("#lesson-summary").replaceChildren(...lessonHandoff(record).flatMap(([label, value]) => [
-    Object.assign(document.createElement("dt"), { textContent: label }),
-    Object.assign(document.createElement("dd"), { textContent: value }),
-  ]));
+  $("#lesson-note").value = lessonDraft.read();
+  $("#memo-status").textContent = "";
+  updateMemoActions();
   const s = record.summary;
+  $("#result-score").textContent = `初回 ${s.firstAttempt.correct}/${s.firstAttempt.count}問 正解 · 再挑戦後 ${s.finalMastery.correct}/${s.finalMastery.count}問 正解`;
   $("#result-timing").textContent = `合計 ${formatHumanDuration(record.totalElapsedMs)} · 平均 ${formatHumanDuration(s.meanResponseMs)} / 中央値 ${formatHumanDuration(s.medianResponseMs)}`;
   $("#analysis-data").open = false;
   ui.aiText.value = record.aiHandoffText; ui.jsonText.value = JSON.stringify(record, null, 2);
-  ui.copyStatus.textContent = saved ? "完了セッションをこの端末に保存しました。" : "端末への保存はできませんでした。表示中のデータはコピーできます。";
+  ui.copyStatus.textContent = saved ? "回答記録をこの端末に保存しました（メモを除く）。" : "回答記録を端末に保存できませんでした。表示中のデータはコピーできます。";
 }
 function finishSession() {
   clearInterval(timerHandle);
@@ -224,9 +226,13 @@ function finishSession() {
   renderResults(record, saved); showScreen($("#result-screen")); requestAnimationFrame(() => $("#result-heading").focus());
 }
 function showToast(message, failed = false) { clearTimeout(toastHandle); ui.toast.textContent = message; ui.toast.className = `toast visible${failed ? " failed" : ""}`; toastHandle = setTimeout(() => { ui.toast.className = "toast"; }, 3200); }
-async function copyText(value, field, success) {
-  try { await navigator.clipboard.writeText(value); ui.copyStatus.textContent = success; showToast(success); }
-  catch { field.focus(); field.select(); const message = "自動コピーできませんでした。選択中の文章を手動でコピーしてください。"; ui.copyStatus.textContent = message; showToast(message, true); }
+async function copyText(value, field, success, status = ui.copyStatus) {
+  try { await navigator.clipboard.writeText(value); status.textContent = success; showToast(success); }
+  catch { field.focus(); field.select(); const message = "自動コピーできませんでした。選択中の文章を手動でコピーしてください。"; status.textContent = message; showToast(message, true); }
+}
+function updateMemoActions() {
+  $("#copy-memo").disabled = !lessonDraft.read().trim();
+  $("#clear-memo").disabled = !lessonDraft.read();
 }
 function beginSession() {
   ui.feedbackContext.open = true;
@@ -275,3 +281,11 @@ document.addEventListener("visibilitychange", () => { if (session?.status === "a
 showScreen($("#start-screen")); ui.timer.classList.add("hidden");
 
 document.querySelectorAll('input[name="review-filter"]').forEach((input) => input.addEventListener("change", renderAnswerReview));
+$("#lesson-note").addEventListener("input", (event) => {
+  lessonDraft.write(event.target.value); $("#memo-status").textContent = ""; updateMemoActions();
+});
+$("#copy-memo").addEventListener("click", () => copyText(lessonDraft.read(), $("#lesson-note"), "メモをコピーしました。", $("#memo-status")));
+$("#clear-memo").addEventListener("click", () => {
+  lessonDraft.clear(); $("#lesson-note").value = ""; updateMemoActions();
+  $("#memo-status").textContent = "メモを消しました。"; $("#lesson-note").focus();
+});
