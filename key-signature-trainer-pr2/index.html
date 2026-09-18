@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="ja">
-<head><link rel="icon" href="data:,"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M2.9 prototype</title><link rel="stylesheet" href="styles.css?v=m2.9"><link rel="stylesheet" href="src/related-key-diagram.css?v=m2.9"></head>
+<head><link rel="icon" href="data:,"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M3.0 prototype</title><link rel="stylesheet" href="styles.css?v=m3.0"><link rel="stylesheet" href="src/related-key-diagram.css?v=m3.0"></head>
 <body>
 <main class="app-shell">
-  <header class="app-header"><div><p class="eyebrow">M2.9 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
+  <header class="app-header"><div><p class="eyebrow">M3.0 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
   <section id="start-screen" class="panel hero" aria-labelledby="start-heading">
     <div class="hero-mark" aria-hidden="true">♭ ♮ ♯</div><h2 id="start-heading">調号と調名を結びつける</h2>
     <div class="settings">
@@ -32,11 +32,21 @@
     <div id="feedback" class="feedback hidden" role="status" aria-live="polite"><p id="feedback-heading" class="feedback-heading"></p><div id="feedback-detail"></div><p id="syllabus-note" class="syllabus-note hidden"></p><details id="feedback-context" class="related-neighborhood" open><summary>近親調</summary><div class="related-diagrams"></div></details><button id="next-button" class="primary-button" type="button">次へ</button></div>
   </section>
   <section id="result-screen" class="panel hidden" aria-labelledby="result-heading">
-    <p class="eyebrow">Session complete</p><h2 id="result-heading" tabindex="-1">今回の結果</h2><div id="result-metrics" class="metrics"></div>
-    <ol id="exam-review" class="exam-review hidden" aria-label="Examの回答比較"></ol>
-    <h3>特徴を見る</h3><ul id="observations" class="observations"></ul>
-    <h3>AIに相談</h3><p>記録は自動送信されません。必要なら文章をコピーしてください。</p><button id="copy-ai" class="secondary-button" type="button">AI相談文をコピー</button><textarea id="ai-text" class="export-text" readonly aria-label="AI相談文"></textarea>
-    <h3>データ</h3><div class="button-row"><button id="copy-json" class="secondary-button" type="button">JSONをコピー</button><button id="download-json" class="secondary-button" type="button">JSONを保存</button></div><textarea id="json-text" class="export-text" readonly aria-label="セッションJSON"></textarea><p id="copy-status" class="copy-status" role="status"></p><button id="restart-button" class="primary-button" type="button">設定に戻る</button>
+    <p class="eyebrow">Session complete</p><h2 id="result-heading" tabindex="-1">今回の結果</h2>
+    <section id="result-insights" class="result-insights" aria-labelledby="insights-heading"><h3 id="insights-heading">今回の気づき</h3><ul id="observations" class="observations"></ul></section>
+    <section aria-labelledby="review-heading">
+      <h3 id="review-heading">回答を振り返る</h3>
+      <fieldset class="review-filter"><legend class="sr-only">回答記録の表示</legend><label><input type="radio" name="review-filter" value="wrong" checked>間違いのみ</label><label><input type="radio" name="review-filter" value="all">すべて</label></fieldset>
+      <p id="review-count" class="review-count" role="status"></p>
+      <ol id="answer-review" class="answer-review" aria-label="回答記録"></ol>
+      <p id="timing-caution" class="timing-caution"></p>
+    </section>
+    <section aria-labelledby="lesson-heading"><h3 id="lesson-heading">レッスン用まとめ</h3><dl id="lesson-summary" class="lesson-summary"></dl><p id="result-timing" class="review-time"></p></section>
+    <details id="analysis-data" class="analysis-data"><summary>AI・分析用データ</summary>
+      <h3>AIに相談</h3><p>記録は自動送信されません。必要なら文章をコピーしてください。</p><button id="copy-ai" class="secondary-button" type="button">AI相談文をコピー</button><textarea id="ai-text" class="export-text" readonly aria-label="AI相談文"></textarea>
+      <h3>データ</h3><div class="button-row"><button id="copy-json" class="secondary-button" type="button">JSONをコピー</button><button id="download-json" class="secondary-button" type="button">JSONを保存</button></div><textarea id="json-text" class="export-text" readonly aria-label="セッションJSON"></textarea>
+    </details>
+    <p id="copy-status" class="copy-status" role="status"></p><button id="restart-button" class="primary-button" type="button">設定に戻る</button>
   </section>
-</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m2.9"></script>
+</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m3.0"></script>
 </body></html>

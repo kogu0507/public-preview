@@ -1,7 +1,8 @@
-import { relatedDiagramNode } from "./related-key-diagram.js?v=m2.9";
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m2.9";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m2.9";
-import { answerRecords, advanceSession, buildObservations, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m2.9";
+import { buildResultInsights, reviewTrials, lessonHandoff, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.0";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.0";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.0";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.0";
+import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.0";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -11,10 +12,11 @@ const ui = {
   back: $("#back-to-settings"), keyArea: $("#key-answer-area"), decomposed: $("#decomposed-answer"), stemOptions: $("#stem-options"), accidentalOptions: $("#accidental-options"), grid: $("#pitch-grid-answer"), gridOptions: $("#pitch-grid-options"), slots: $("#answer-slots"), activeSlotLabel: $("#active-slot-label"), promptKey: $("#prompt-key-name"), longSelectArea: $("#long-select-answer"), longSelect: $("#long-key-select"),  keyCommit: $("#key-commit"), signatureArea: $("#signature-answer-area"),
   down: $("#signature-down"), up: $("#signature-up"), signatureStatus: $("#signature-status"), signatureCommit: $("#signature-commit"),
   feedback: $("#feedback"), feedbackHeading: $("#feedback-heading"), feedbackDetail: $("#feedback-detail"), syllabusNote: $("#syllabus-note"), feedbackContext: $("#feedback-context"), next: $("#next-button"),
-  metrics: $("#result-metrics"), review: $("#exam-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
+  review: $("#answer-review"), observations: $("#observations"), aiText: $("#ai-text"), jsonText: $("#json-text"),
   copyAi: $("#copy-ai"), copyJson: $("#copy-json"), downloadJson: $("#download-json"), copyStatus: $("#copy-status"), toast: $("#copy-toast"), restart: $("#restart-button"),
 };
 let session;
+let completedRecord;
 let questionStartedMs = 0;
 let slotAnswers = { major: null, minor: null };
 let selectedStemId = null;
@@ -48,10 +50,6 @@ function setNotation(signature) {
   const label = signatureLabel(signature);
   ui.preview.innerHTML = renderKeySignatureSvg(signature, { idPrefix: `notation-${signature < 0 ? `m${-signature}` : signature}`, title: `${label}のト音記号譜表` });
   ui.label.textContent = signatureHelperLabel(signature);
-}
-function answerDisplayNode(question, value, displayMode = currentDisplayMode()) {
-  const detail = describeQuestion(question);
-  return detail.direction === "key_to_signature" ? document.createTextNode(signatureLabel(value)) : keyDisplayNode(KEY_BY_ID.get(value), displayMode);
 }
 function updateKeyComposer() {
   const key = session.answerUiMode === "long-select"
@@ -194,36 +192,28 @@ function submitAnswer(submittedAnswer) {
   renderRelatedNeighborhood(detail);
   ui.next.textContent = session.currentIndex + 1 < session.queue.length ? "次へ" : "結果を見る"; ui.next.focus();
 }
-function feedbackRows(trial, displayMode = currentDisplayMode()) {
-  return answerRecords(trial).map((answer) => {
-    const row = document.createElement("span"); row.className = "answer-feedback-row";
-    row.append(document.createTextNode(`${answer.mode === "major" ? "長調" : "短調"} ${answer.correct ? "○ 正解" : "× 不正解"} · 回答: `), answerDisplayNode({ type: trial.questionType, factId: trial.factId }, answer.submittedAnswer, displayMode));
-    if (!answer.correct) row.append(document.createTextNode(" / 正解: "), answerDisplayNode({ type: trial.questionType, factId: trial.factId }, answer.expectedAnswer, displayMode));
-    return row;
-  });
+function renderAnswerReview() {
+  const filter = document.querySelector('input[name="review-filter"]:checked').value;
+  const entries = reviewTrials(completedRecord, filter);
+  ui.review.replaceChildren(...entries.map((entry) => reviewCard(entry, { document, displayMode: completedRecord.displayMode })));
+  $("#review-count").textContent = entries.length ? `${entries.length}件の回答記録（再挑戦を含む）` : "間違いのある回答はありません。";
 }
-function metric(label, value) { const item = document.createElement("div"); item.className = "metric"; item.innerHTML = "<span></span><strong></strong>"; item.querySelector("span").textContent = label; item.querySelector("strong").textContent = value; return item; }
 function renderResults(record, saved) {
-  const s = record.summary; const percent = (value) => value == null ? "—" : `${Math.round(value * 100)}%`;
-  ui.metrics.replaceChildren(
-    metric("モード", record.practiceMode === "exam" ? "Exam" : "Practice"),
-    metric("回答方法", record.answerUiMode === "long-select" ? "全調プルダウン" : record.answerUiMode === "pitch-grid" ? "21音名グリッド" : "分解入力"),
-    metric("初回正答率", `${s.firstAttempt.correct}/${s.firstAttempt.count} · ${percent(s.firstAttempt.accuracy)}`),
-    metric("再挑戦後", `${s.finalMastery.correct}/${s.finalMastery.count} · ${percent(s.finalMastery.accuracy)}`),
-    metric("長調（再挑戦含む）", `${s.major.correct}/${s.major.count}`),
-    metric("短調（再挑戦含む）", `${s.minor.correct}/${s.minor.count}`),
-    metric("合計時間", formatHumanDuration(record.totalElapsedMs)),
-    metric("平均 / 中央値", `${formatHumanDuration(s.meanResponseMs)} / ${formatHumanDuration(s.medianResponseMs)}`),
-  );
-  ui.observations.replaceChildren(...buildObservations(s, record.displayMode).map((text) => Object.assign(document.createElement("li"), { textContent: text })));
-  ui.review.classList.toggle("hidden", record.practiceMode !== "exam");
-  ui.review.replaceChildren(...record.trials.map((trial) => {
-    const item = document.createElement("li");
-    item.append(...feedbackRows(trial, record.displayMode));
-    const note = answerRecords(trial).map((answer) => outOfSyllabusNoteForAnswer(answer.submittedAnswer)).filter(Boolean).join(" ");
-    if (note) { const detail = document.createElement("p"); detail.className = "review-note"; detail.textContent = note; item.append(detail); }
-    return item;
-  }));
+  completedRecord = record;
+  ui.timer.classList.add("hidden");
+  const insights = buildResultInsights(record);
+  $("#result-insights").hidden = !insights.length;
+  ui.observations.replaceChildren(...insights.map(({ text }) => Object.assign(document.createElement("li"), { textContent: text })));
+  document.querySelector('input[name="review-filter"][value="wrong"]').checked = true;
+  renderAnswerReview();
+  $("#timing-caution").textContent = TIMING_CAUTION;
+  $("#lesson-summary").replaceChildren(...lessonHandoff(record).flatMap(([label, value]) => [
+    Object.assign(document.createElement("dt"), { textContent: label }),
+    Object.assign(document.createElement("dd"), { textContent: value }),
+  ]));
+  const s = record.summary;
+  $("#result-timing").textContent = `合計 ${formatHumanDuration(record.totalElapsedMs)} · 平均 ${formatHumanDuration(s.meanResponseMs)} / 中央値 ${formatHumanDuration(s.medianResponseMs)}`;
+  $("#analysis-data").open = false;
   ui.aiText.value = record.aiHandoffText; ui.jsonText.value = JSON.stringify(record, null, 2);
   ui.copyStatus.textContent = saved ? "完了セッションをこの端末に保存しました。" : "端末への保存はできませんでした。表示中のデータはコピーできます。";
 }
@@ -283,3 +273,5 @@ ui.copyAi.addEventListener("click", () => copyText(ui.aiText.value, ui.aiText, "
 ui.downloadJson.addEventListener("click", () => { const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([ui.jsonText.value], { type: "application/json" })); link.download = `${session.sessionId}.json`; link.click(); URL.revokeObjectURL(link.href); showToast("JSONファイルを保存しました。"); });
 document.addEventListener("visibilitychange", () => { if (session?.status === "active" && document.hidden) visibilityInterrupted = true; });
 showScreen($("#start-screen")); ui.timer.classList.add("hidden");
+
+document.querySelectorAll('input[name="review-filter"]').forEach((input) => input.addEventListener("change", renderAnswerReview));

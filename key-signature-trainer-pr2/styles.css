@@ -80,17 +80,11 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .related-neighborhood { margin-top: .85rem; color: var(--ink); }
 .review-note { margin: .35rem 0 0; padding: .45rem .55rem; border-left: 3px solid #b27614; background: #fff8df; color: #4d3b18; font-size: .78rem; }
 .feedback .primary-button { margin-top: .65rem; }
-.metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .7rem; }
-.metric { padding: .8rem; border: 1px solid var(--line); border-radius: .8rem; background: white; }
-.metric span { display: block; color: var(--muted); font-size: .78rem; }
-.metric strong { display: block; margin-top: .15rem; font-size: 1.15rem; }
 .observations { padding-left: 1.2rem; }
 .observations li + li { margin-top: .55rem; }
 .button-row { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
 .export-text { width: 100%; min-height: 8rem; margin-top: .75rem; padding: .7rem; border: 1px solid var(--line); border-radius: .65rem; resize: vertical; background: white; color: var(--ink); font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: .75rem; }
 .copy-status { min-height: 1.5rem; color: var(--accent-dark); font-weight: 700; }
-.exam-review { margin: 1.25rem 0; padding: 1rem 1rem 1rem 2.3rem; border: 1px solid var(--line); border-radius: .8rem; background: white; }
-.exam-review li + li { margin-top: .5rem; }
 .toast { position: fixed; z-index: 10; left: 50%; bottom: 1rem; max-width: calc(100% - 2rem); padding: .75rem 1rem; border-radius: .7rem; background: var(--accent-dark); color: white; font-weight: 750; opacity: 0; pointer-events: none; transform: translate(-50%, 1rem); transition: opacity .18s, transform .18s; }
 .toast.visible { opacity: 1; transform: translate(-50%, 0); }
 .toast.failed { background: var(--wrong); }
@@ -99,7 +93,7 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
   .app-shell { padding: .6rem; }
   .panel { padding: 1rem; }
   .settings { grid-template-columns: 1fr; gap: .35rem; }
-  .metrics, .button-row { grid-template-columns: 1fr; }
+  .button-row { grid-template-columns: 1fr; }
   .stem-options { grid-template-columns: repeat(4, 1fr); }
 }
 
@@ -115,7 +109,6 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .answer-slots button[aria-pressed="true"] { border-color: var(--accent); background: #e2f0ea; box-shadow: inset 0 0 0 1px var(--accent); }
 .answer-slots strong { overflow-wrap: anywhere; }
 .active-slot-label { margin: 0; color: var(--accent-dark); font-weight: 750; }
-.answer-feedback-row { display: block; margin-bottom: .5rem; }
 
 .notation-card #notation-label { color: var(--muted); font-size: .8rem; font-weight: 400; }
 .slot-state { display: inline-block; min-height: 1.2em; font-size: .7rem; font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
@@ -140,3 +133,42 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .single-answer .marked-submission { align-items: center; }
 .single-answer .marked-submission strong { flex: 1; }
 .marked-notation { display: block; width: 100%; height: 6.5rem; color: var(--ink); }
+
+/* Completed-session hierarchy: insights, structured review, lesson summary, exports. */
+#result-screen h3 { margin: 1.6rem 0 .7rem; }
+.result-insights { padding: 1rem; border-left: 4px solid var(--accent); border-radius: .5rem; background: #e2f0ea; }
+#result-screen .result-insights h3 { margin: 0 0 .7rem; }
+.result-insights .observations { margin-bottom: 0; line-height: 1.65; }
+.review-filter { display: flex; gap: .5rem; padding: 0; border: 0; margin: 0; }
+.review-filter label { display: flex; align-items: center; gap: .35rem; min-height: 2.8rem; padding: .5rem .65rem; border: 1px solid var(--line); border-radius: .6rem; cursor: pointer; background: white; }
+.review-filter label:has(input:checked) { background: #e2f0ea; border-color: var(--accent); font-weight: 750; }
+.review-filter input:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.review-count, .review-time, .timing-caution { font-size: .78rem; color: var(--muted); line-height: 1.5; }
+.review-count { margin: .7rem 0; }
+.answer-review { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+.review-card { min-width: 0; border: 1px solid var(--line); border-radius: .8rem; background: white; padding: .8rem; }
+.review-card-heading { margin: 0; font-size: .85rem; color: var(--muted); }
+.review-prompt { display: grid; justify-items: center; gap: .45rem; padding: .6rem 0; border-bottom: 1px solid var(--line); }
+.review-label { font-size: .8rem; color: var(--muted); }
+.review-key { line-height: 1.9; overflow-wrap: anywhere; }
+.review-prompt > .review-key { font-size: 1.15rem; font-weight: 800; }
+.review-notation { display: block; width: 100%; height: 5rem; color: var(--ink); }
+.review-answers { display: grid; gap: .6rem; padding-top: .75rem; }
+.review-answers.dual { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.review-answer { min-width: 0; border-radius: .5rem; padding: .5rem; background: #f7f5ee; }
+.review-answer.is-wrong { background: #fff1ef; }
+.review-answer-heading { margin: 0 0 .65rem; font-size: .8rem; }
+.review-answer.is-wrong h5, .review-correction { color: var(--wrong); }
+.review-answer.is-correct h5 { color: var(--correct); }
+.review-fields { margin: 0; }
+.review-fields dt { color: var(--muted); font-size: .7rem; margin-top: .45rem; }
+.review-fields dd { margin: 0; font-size: .9rem; font-weight: 700; }
+.review-card > .review-time { margin: .7rem 0 0; }
+.timing-caution { margin: .8rem 0; }
+.lesson-summary { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .65rem .75rem; padding: 1rem; border: 1px solid var(--line); border-radius: .8rem; font-size: .88rem; }
+.lesson-summary dt { color: var(--muted); }
+.lesson-summary dd { margin: 0; overflow-wrap: anywhere; }
+.analysis-data { margin-top: 1.5rem; border-top: 1px solid var(--line); }
+.analysis-data summary { min-height: 3rem; padding: .8rem .2rem; cursor: pointer; font-weight: 750; }
+.analysis-data summary:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+#result-screen .copy-status { font-size: .78rem; margin-top: .85rem; }
