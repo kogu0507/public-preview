@@ -1,6 +1,6 @@
-import { FACT_BY_ID, KEY_BY_ID, keyDisplayText, keyDisplayHtml, compactSignatureLabel } from "./facts.js?v=m3.0-followup";
-import { answerRecords, formatHumanDuration, outOfSyllabusNoteForAnswer } from "./core.js?v=m3.0-followup";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.0-followup";
+import { FACT_BY_ID, KEY_BY_ID, keyDisplayText, keyDisplayHtml, compactSignatureLabel } from "./facts.js?v=m3.1";
+import { answerRecords, formatHumanDuration, outOfSyllabusNoteForAnswer } from "./core.js?v=m3.1";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.1";
 
 export const TIMING_CAUTION = "回答時間は操作・迷い・中断を含む参考値で、理解度や能力を直接示すものではありません。";
 const directionLabel = (direction) => direction === "signature_to_key" ? "調号→調名" : "調名→調号";
@@ -26,27 +26,18 @@ export function buildResultInsights(record) {
   compare(first, (a) => a.direction, "signature_to_key", "key_to_signature", ["調号→調名", "調名→調号"]);
   compare(first, (a) => FACT_BY_ID.get(a.factId).accidental.type, "sharp", "flat", ["♯の調号", "♭の調号"]);
 
-  const covered = new Set();
-  for (const retry of record.trials.filter((trial) => trial.isRetry)) {
-    const original = record.trials.find((trial) => trial.trialId === retry.retryOfTrialId && !trial.isRetry && trial.questionId === retry.questionId);
-    if (!original) continue;
-    const answers = answerRecords(retry);
-    for (const before of answerRecords(original).filter((answer) => !answer.correct)) {
-      const after = answers.find((answer) => answer.mode === before.mode);
-      if (!after) continue;
-      covered.add(targetId(before));
-      insights.push({ kind: "retry", text: `${targetLabel(before, displayMode)}（${directionLabel(before.direction)}）は、${after.correct ? "初回の誤答から再挑戦で正解に変わりました（初回0/1 → 再挑戦1/1）" : "初回・再挑戦とも誤答でした（正答0/2）"}。` });
-    }
-  }
+  compare(first, (a) => Math.abs(FACT_BY_ID.get(a.factId).signature) <= 3 ? "low" : "high",
+    "low", "high", ["調号0〜3個の問題", "調号4個以上の問題"]);
+
   const groups = new Map();
-  for (const answer of record.trials.flatMap(answerRecords)) {
+  for (const answer of first.flatMap(answerRecords)) {
     const id = targetId(answer);
     if (!groups.has(id)) groups.set(id, []);
-    groups.get(id).push(answer);
+    if (!groups.get(id).some((item) => item.questionId === answer.questionId)) groups.get(id).push(answer);
   }
-  for (const [id, group] of groups) {
+  for (const group of groups.values()) {
     const wrong = group.filter((answer) => !answer.correct).length;
-    if (wrong >= 2 && !covered.has(id)) insights.push({ kind: "repeated", text: `${targetLabel(group[0], displayMode)}（${directionLabel(group[0].direction)}）は、${group.length}回の回答中${wrong}回が誤答でした。` });
+    if (wrong >= 2) insights.push({ kind: "repeated", text: `${targetLabel(group[0], displayMode)}（${directionLabel(group[0].direction)}）は、初回${group.length}回の回答中${wrong}回が誤答でした。` });
   }
   return [...insights, ...buildTimingInsights(record)].slice(0, 4);
 }
