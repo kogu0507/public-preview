@@ -1,4 +1,4 @@
-import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml } from "./facts.js?v=m3.1";
+import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml } from "./facts.js?v=m3.2";
 
 // Keep ruby/tonic intact; wrap only before the mode in narrow cells.
 export function diagramKeyHtml(key, displayMode) {

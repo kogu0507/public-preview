@@ -1,9 +1,9 @@
-import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.1";
-import { createLessonDraft } from "./lesson-note.js?v=m3.1";
-import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.1";
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.1";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.1";
-import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.1";
+import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.2";
+import { createLessonDraft } from "./lesson-note.js?v=m3.2";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.2";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.2";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.2";
+import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.2";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -17,6 +17,8 @@ const ui = {
   copyAi: $("#copy-ai"), copyJson: $("#copy-json"), downloadJson: $("#download-json"), copyStatus: $("#copy-status"), toast: $("#copy-toast"), restart: $("#restart-button"),
 };
 let session;
+let fastInput = false;
+let answersLocked = true;
 let completedRecord;
 let questionStartedMs = 0;
 let slotAnswers = { major: null, minor: null };
@@ -67,6 +69,27 @@ function updateKeyComposer() {
   const missing = ["major", "minor"].find((mode) => !slotAnswers[mode]);
   $("#answer-next-action").textContent = !missing ? "両方の回答を確認して、回答する" : missing !== selectedKeyMode ? `${missing === "major" ? "長調" : "短調"}のスロットを選択 → 主音を選択` : "選択中のスロットの主音を選択";
 }
+function renderFastAnswer() {
+  replaceKeyDisplay($("#fast-major"), KEY_BY_ID.get(slotAnswers.major));
+  replaceKeyDisplay($("#fast-minor"), KEY_BY_ID.get(slotAnswers.minor));
+  const target = slotAnswers.major ? "短調" : "長調";
+  ui.activeSlotLabel.textContent = slotAnswers.major ? "2. 短調の主音を選択 → 回答を確定" : "1. 長調の主音を選択";
+  ui.gridOptions.setAttribute("aria-label", `${target}の主音を選択`);
+  ui.gridOptions.setAttribute("aria-describedby", "active-slot-label answer-next-action");
+  $("#answer-next-action").textContent = slotAnswers.major ? "次の1タップで回答が確定します。" : "長調 → 短調の順に2タップ";
+  $("#reset-fast-answer").disabled = answersLocked || !slotAnswers.major;
+  ui.gridOptions.querySelectorAll("button").forEach((button) => {
+    const key = composeGridKey(button.dataset.gridPitch, "major");
+    button.setAttribute("aria-pressed", String(key.id === slotAnswers.major));
+  });
+}
+function selectFastPitch(pitchId) {
+  if (answersLocked) return;
+  const mode = slotAnswers.major ? "minor" : "major";
+  slotAnswers[mode] = composeGridKey(pitchId, mode).id;
+  renderFastAnswer();
+  if (mode === "minor") submitAnswer(slotAnswers);
+}
 function activateSlot(mode) {
   selectedKeyMode = mode;
   const key = KEY_BY_ID.get(slotAnswers[mode]);
@@ -91,6 +114,12 @@ function renderKeyComposer() {
   const decomposed = session.answerUiMode === "decomposed";
   const grid = session.answerUiMode === "pitch-grid";
   const longSelect = session.answerUiMode === "long-select";
+  ui.slots.closest("fieldset").classList.toggle("hidden", fastInput);
+  $("#fast-answer-preview").classList.toggle("hidden", !fastInput);
+  $("#reset-fast-answer").classList.toggle("hidden", !fastInput);
+  ui.keyCommit.classList.toggle("hidden", fastInput);
+  ui.gridOptions.setAttribute("aria-label", "主音を選択");
+  ui.gridOptions.removeAttribute("aria-describedby");
   ui.decomposed.classList.toggle("hidden", !decomposed);
   ui.grid.classList.toggle("hidden", !grid);
   ui.longSelectArea.classList.toggle("hidden", !longSelect);
@@ -106,7 +135,8 @@ function renderKeyComposer() {
   ui.slots.querySelectorAll("button").forEach((button) => { button.disabled = false; });
   ui.accidentalOptions.querySelectorAll("button").forEach((button) => { button.disabled = false; });
   slotAnswers = { major: null, minor: null };
-  activateSlot("major");
+  if (fastInput) renderFastAnswer();
+  else activateSlot("major");
 }
 
 function updateSignatureSelector() {
@@ -117,6 +147,7 @@ function updateSignatureSelector() {
   setNotation(selectedSignature);
 }
 function renderQuestion() {
+  answersLocked = false;
   const question = session.queue[session.currentIndex];
   const detail = describeQuestion(question);
   ui.progress.textContent = session.practiceMode === "exam" ? `問題 ${session.currentIndex + 1}` : `問題 ${session.currentIndex + 1} / ${session.queue.length}`;
@@ -136,9 +167,11 @@ function renderQuestion() {
     updateSignatureSelector();
   }
   visibilityInterrupted = false; questionStartedMs = performance.now();
-  requestAnimationFrame(() => ui.title.focus());
+  ui.title.focus();
 }
 function disableAnswers() {
+  answersLocked = true;
+  $("#reset-fast-answer").disabled = true;
   ui.stemOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
   ui.accidentalOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
   ui.gridOptions.querySelectorAll("button").forEach((button) => { button.disabled = true; });
@@ -180,6 +213,7 @@ function markedAnswerNode(trial) {
 
 function advanceOrFinish() { if (advanceSession(session)) renderQuestion(); else finishSession(); }
 function submitAnswer(submittedAnswer) {
+  if (answersLocked || session?.status !== "active") return;
   const question = session.queue[session.currentIndex];
   const trial = commitTrial(session, { submittedAnswer, responseMs: performance.now() - questionStartedMs, answeredAt: new Date().toISOString(), trialId: `${session.sessionId}-t${session.trials.length + 1}`, visibilityInterrupted });
   disableAnswers();
@@ -235,12 +269,14 @@ function updateMemoActions() {
   $("#clear-memo").disabled = !lessonDraft.read();
 }
 function beginSession() {
+  fastInput = $("#answer-interaction").value === "fast" && ui.answerUiMode.value === "pitch-grid";
   ui.feedbackContext.open = true;
   const now = new Date();
   session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: ui.mode.value, displayMode: ui.display.value, answerUiMode: ui.answerUiMode.value });
   showScreen($("#quiz-screen")); startTimer(); renderQuestion();
 }
 function returnToSettings() {
+  answersLocked = true;
   clearInterval(timerHandle);
   if (session?.status === "active") session.status = "abandoned";
   session = null; ui.timer.classList.add("hidden"); showScreen($("#start-screen")); ui.start.focus();
@@ -261,10 +297,22 @@ ui.accidentalOptions.addEventListener("click", (event) => {
   updateKeyComposer();
 });
 ui.gridOptions.addEventListener("click", (event) => {
-  const button = event.target.closest("button[data-grid-pitch]"); if (!button) return;
+  const button = event.target.closest("button[data-grid-pitch]");
+  if (!button || button.disabled || !ui.gridOptions.contains(button) || answersLocked) return;
+  if (fastInput) { selectFastPitch(button.dataset.gridPitch); return; }
   selectedGridPitchId = button.dataset.gridPitch;
   ui.gridOptions.querySelectorAll("button").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
   updateKeyComposer();
+});
+ui.gridOptions.addEventListener("keydown", (event) => {
+  if (event.repeat && (event.key === "Enter" || event.key === " ")) event.preventDefault();
+});
+$("#reset-fast-answer").addEventListener("click", () => {
+  if (!fastInput || answersLocked || !slotAnswers.major) return;
+  const previous = ui.gridOptions.querySelector('[aria-pressed="true"]');
+  slotAnswers = { major: null, minor: null };
+  renderFastAnswer();
+  previous?.focus();
 });
 ui.slots.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-slot]"); if (button) activateSlot(button.dataset.slot);
