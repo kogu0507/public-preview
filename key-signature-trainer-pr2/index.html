@@ -1,22 +1,37 @@
 <!doctype html>
 <html lang="ja">
-<head><link rel="icon" href="data:,"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M3.2 prototype</title><link rel="stylesheet" href="styles.css?v=m3.2"><link rel="stylesheet" href="src/related-key-diagram.css?v=m3.2"></head>
+<head><link rel="icon" href="data:,"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>調号トレーナー — M3.3 prototype</title><link rel="stylesheet" href="styles.css?v=m3.3"><link rel="stylesheet" href="src/related-key-diagram.css?v=m3.3"></head>
 <body>
 <main class="app-shell">
-  <header class="app-header"><div><p class="eyebrow">M3.2 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
-  <section id="start-screen" class="panel hero" aria-labelledby="start-heading">
-    <div class="hero-mark" aria-hidden="true">♭ ♮ ♯</div><h2 id="start-heading">調号と調名を結びつける</h2>
-    <div class="settings">
-      <label for="practice-mode">進め方</label><select id="practice-mode"><option value="practice">Practice — 1問ずつ確認</option><option value="exam">Exam — 最後にまとめて確認</option></select>
-      <label for="display-mode">調名表記</label><select id="display-mode"></select>
-      <label for="answer-interaction">回答の進め方</label><select id="answer-interaction" aria-describedby="interaction-hint"><option value="fast">高速入力（2タップ）</option><option value="explicit">スロット選択・確認</option></select>
-      <label for="answer-ui-mode">音名の入力パレット</label><select id="answer-ui-mode"><option value="pitch-grid">21音名グリッド</option><option value="decomposed">分解入力</option><option value="long-select">全調プルダウン</option></select>
-    </div>
-    <p id="interaction-hint" class="memo-hint">高速入力は21音名グリッドで使えます。分解入力・プルダウンではスロットを選び、確認して回答します。</p>
-    <button id="start-button" class="primary-button" type="button">始める</button><p class="prototype-note">UI確認用の出題範囲: 調号なし・♯1つ・♭1つ</p>
+  <header class="app-header"><div><p class="eyebrow">M3.3 prototype</p><h1>調号トレーナー</h1></div><p id="session-timer" class="timer" aria-label="経過時間">00:00</p></header>
+  <section id="start-screen" class="panel start-panel" aria-labelledby="start-heading">
+    <p class="eyebrow">目指す到達点</p><h2 id="start-heading">入試実戦</h2>
+    <p class="start-intro">調名も調号も、長調も短調も。両方向を続けて答え、最後に振り返ります。</p>
+    <button id="master-start" class="primary-button" type="button">入試実戦を始める</button>
+    <p class="prototype-note">現在は少数問の体験版です（調号なし・♯1つ・♭1つ）。入試全範囲の問題集ではありません。</p>
+    <div class="settings display-setting"><label for="display-mode">調名表記</label><select id="display-mode"></select></div>
+    <details id="learning-route" class="start-path">
+      <summary>おすすめ順に練習する</summary>
+      <p class="path-intro">どこから始めるか迷ったら、この順で。必要な練習へいつでも戻れます。</p>
+      <ol id="route-steps" class="route-steps" start="0"></ol>
+      <p class="memo-hint">練習の段階はPractice、最初と最後の実戦はExamです。調名表記・回答の進め方・入力パレットは、選んだ設定を使います。</p>
+    </details>
+    <details id="custom-practice" class="start-path">
+      <summary>練習内容を自分で選ぶ</summary>
+      <div class="settings">
+        <label for="practice-direction">答えるもの</label><select id="practice-direction"><option value="mixed">調名＋調号</option><option value="key-name">調名（調号を見る）</option><option value="key-signature">調号（調名を見る）</option></select>
+        <label for="practice-tonality">長調・短調</label><select id="practice-tonality"><option value="both">長調＋短調</option><option value="major">長調のみ</option><option value="minor">短調のみ</option></select>
+        <label for="practice-mode">進め方</label><select id="practice-mode"><option value="practice">Practice — 1問ずつ確認</option><option value="exam">Exam — 最後にまとめて確認</option></select>
+        <label for="answer-interaction">回答の進め方</label><select id="answer-interaction" aria-describedby="interaction-hint"><option value="fast">高速入力（2タップ）</option><option value="explicit">スロット選択・確認</option></select>
+        <label for="answer-ui-mode">音名の入力パレット</label><select id="answer-ui-mode"><option value="pitch-grid">21音名グリッド</option><option value="decomposed">分解入力</option><option value="long-select">全調プルダウン</option></select>
+      </div>
+      <p id="interaction-hint" class="memo-hint">高速入力は、長調＋短調の調名を21音名グリッドで答えるときに使えます。長調のみ・短調のみや、ほかのパレットでは確認して回答します。</p>
+      <button id="start-button" class="secondary-button" type="button">この内容で練習する</button>
+    </details>
   </section>
   <section id="quiz-screen" class="panel hidden" aria-labelledby="question-title">
-    <div class="progress-row"><div><span id="progress-text">問題 1</span><span id="retry-badge" class="badge hidden">再挑戦</span></div><button id="back-to-settings" class="text-button" type="button">設定に戻る</button></div>
+    <div class="progress-row"><div><span id="progress-text">問題 1</span><span id="retry-badge" class="badge hidden">再挑戦</span></div><button id="back-to-settings" class="text-button" type="button">開始画面に戻る</button></div>
+    <p id="session-conditions" class="memo-hint"></p>
     <div class="notation-card"><h2 id="question-title" tabindex="-1"></h2><div id="prompt-key-name" class="prompt-key-name hidden"></div><div id="notation-preview" class="notation-preview"></div><p id="notation-label"></p></div>
     <div id="key-answer-area" class="answer-area key-composer hidden">
       <div id="fast-answer-preview" class="fast-answer-preview hidden" role="group" aria-label="入力した回答"><div><span>1. 長調</span><strong id="fast-major">—</strong></div><div><span>2. 短調</span><strong id="fast-minor">—</strong></div></div>
@@ -59,7 +74,7 @@
       <h3>AIに相談</h3><p>記録は自動送信されません。必要なら文章をコピーしてください。</p><button id="copy-ai" class="secondary-button" type="button">AI相談文をコピー</button><textarea id="ai-text" class="export-text" readonly aria-label="AI相談文"></textarea>
       <h3>データ</h3><div class="button-row"><button id="copy-json" class="secondary-button" type="button">JSONをコピー</button><button id="download-json" class="secondary-button" type="button">JSONを保存</button></div><textarea id="json-text" class="export-text" readonly aria-label="セッションJSON"></textarea>
     </details>
-    <p id="copy-status" class="copy-status" role="status"></p><button id="restart-button" class="primary-button" type="button">設定に戻る</button>
+    <p id="copy-status" class="copy-status" role="status"></p><button id="restart-button" class="primary-button" type="button">開始画面に戻る</button>
   </section>
-</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m3.2"></script>
+</main><div id="copy-toast" class="toast" role="status" aria-live="polite"></div><script type="module" src="src/app.js?v=m3.3"></script>
 </body></html>

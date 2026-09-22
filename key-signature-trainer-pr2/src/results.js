@@ -1,6 +1,6 @@
-import { FACT_BY_ID, KEY_BY_ID, keyDisplayText, keyDisplayHtml, compactSignatureLabel } from "./facts.js?v=m3.2";
-import { answerRecords, formatHumanDuration, outOfSyllabusNoteForAnswer } from "./core.js?v=m3.2";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.2";
+import { FACT_BY_ID, KEY_BY_ID, keyDisplayText, keyDisplayHtml, compactSignatureLabel } from "./facts.js?v=m3.3";
+import { answerRecords, formatHumanDuration, outOfSyllabusNoteForAnswer } from "./core.js?v=m3.3";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.3";
 
 export const TIMING_CAUTION = "回答時間は操作・迷い・中断を含む参考値で、理解度や能力を直接示すものではありません。";
 const directionLabel = (direction) => direction === "signature_to_key" ? "調号→調名" : "調名→調号";
