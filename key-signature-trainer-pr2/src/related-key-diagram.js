@@ -1,4 +1,4 @@
-import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.4";
+import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.5";
 
 const outsideRange = signature => signature < SIGNATURE_MIN || signature > SIGNATURE_MAX;
 

@@ -1,11 +1,13 @@
-import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.4";
-import { createLessonDraft } from "./lesson-note.js?v=m3.4";
-import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.4";
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.4";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.4";
-import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.4";
+import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.5";
+import { createLessonDraft } from "./lesson-note.js?v=m3.5";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.5";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.5";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.5";
+import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.5";
 
-import { MASTER_SETTINGS, ROUTE_STEPS, questionsForSettings, conditionLabel } from "./practice-plan.js?v=m3.4";
+import { questionsForSettings, conditionLabel } from "./practice-plan.js?v=m3.5";
+
+import { settingsFromSearch } from "./settings.js?v=m3.5";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
@@ -22,7 +24,6 @@ let session;
 let fastInput = false;
 let questionMode = "both";
 let selectedInteraction = "fast";
-let launchControl;
 let answersLocked = true;
 let completedRecord;
 let questionStartedMs = 0;
@@ -286,7 +287,6 @@ function updateMemoActions() {
 }
 function beginSession(settings = { direction: $("#practice-direction").value, tonality: $("#practice-tonality").value, practiceMode: ui.mode.value }) {
   selectedInteraction = $("#answer-interaction").value;
-  launchControl = document.activeElement;
   ui.feedbackContext.open = true;
   const now = new Date();
   session = createSession({ sessionId: `session-${now.toISOString().replace(/[:.]/g, "-")}`, startedAt: now.toISOString(), startedMonotonicMs: performance.now(), practiceMode: settings.practiceMode, displayMode: ui.display.value, answerUiMode: ui.answerUiMode.value, questions: questionsForSettings(settings) });
@@ -297,28 +297,15 @@ function returnToSettings() {
   answersLocked = true;
   clearInterval(timerHandle);
   if (session?.status === "active") session.status = "abandoned";
-  session = null; ui.timer.classList.add("hidden"); showScreen($("#start-screen")); (launchControl ?? $("#master-start")).focus();
-}
-
-function renderLearningRoute() {
-  $("#route-steps").replaceChildren(...ROUTE_STEPS.map(step => {
-    const item = document.createElement("li");
-    const heading = document.createElement("h3"); heading.textContent = step.title;
-    const note = document.createElement("p"); note.textContent = step.note;
-    item.append(heading, note);
-    for (const entry of step.entries) {
-      const button = document.createElement("button"); button.type = "button"; button.className = "secondary-button";
-      button.dataset.route = entry.id; button.textContent = entry.label;
-      button.addEventListener("click", () => beginSession(entry.settings));
-      item.append(button);
-    }
-    return item;
-  }));
+  session = null; ui.timer.classList.add("hidden"); showScreen($("#start-screen")); ui.start.focus();
 }
 
 DISPLAY_MODES.forEach((mode) => ui.display.add(new Option(mode.label, mode.id)));
-renderLearningRoute();
-$("#master-start").addEventListener("click", () => beginSession(MASTER_SETTINGS));
+const initialSettings = settingsFromSearch(window.location.search);
+for (const [id, field] of [["practice-direction", "direction"], ["practice-tonality", "tonality"], ["practice-mode", "practiceMode"], ["display-mode", "displayMode"], ["answer-ui-mode", "answerUiMode"], ["answer-interaction", "interaction"]]) {
+  $("#" + id).value = initialSettings[field];
+}
+
 ui.start.addEventListener("click", () => beginSession()); ui.restart.addEventListener("click", returnToSettings); ui.back.addEventListener("click", returnToSettings);
 ui.stemOptions.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-stem]"); if (!button) return;
