@@ -1,4 +1,4 @@
-import { PROTOTYPE_QUESTIONS, describeQuestion } from "./core.js?v=m3.7";
+import { PROTOTYPE_QUESTIONS, describeQuestion } from "./core.js?v=m3.8";
 
 export function questionsForSettings({ direction = "mixed", tonality = "both" } = {}) {
   if (!["key-name", "key-signature", "mixed"].includes(direction) || !["major", "minor", "both"].includes(tonality)) throw new Error("Unknown practice conditions");

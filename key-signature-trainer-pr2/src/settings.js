@@ -1,4 +1,4 @@
-import { DISPLAY_MODES } from "./facts.js?v=m3.7";
+import { DISPLAY_MODES } from "./facts.js?v=m3.8";
 
 export const DEFAULT_SETTINGS = Object.freeze({ direction: "mixed", tonality: "both", practiceMode: "practice", displayMode: "ja", answerUiMode: "pitch-grid", interaction: "fast" });
 const PARAMETERS = Object.freeze([

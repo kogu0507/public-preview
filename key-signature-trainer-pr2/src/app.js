@@ -1,13 +1,13 @@
-import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.7";
-import { createLessonDraft } from "./lesson-note.js?v=m3.7";
-import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.7";
-import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.7";
-import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.7";
-import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.7";
+import { buildResultInsights, reviewTrials, reviewCard, TIMING_CAUTION } from "./results.js?v=m3.8";
+import { createLessonDraft } from "./lesson-note.js?v=m3.8";
+import { relatedDiagramNode } from "./related-key-diagram.js?v=m3.8";
+import { DISPLAY_MODES, KEY_BY_ID, LONG_KEY_OPTIONS, NATURAL_STEMS, PITCH_GRID_OPTIONS, composeDecomposedKey, composeGridKey, displayPartsHtml, keyDisplayParts, keyDisplayText, pitchDisplayParts, signatureHelperLabel, signatureLabel, stemDisplayText } from "./facts.js?v=m3.8";
+import { renderKeySignatureSvg } from "./signature-renderer.js?v=m3.8";
+import { answerRecords, advanceSession, clampSignature, commitTrial, completeSession, createSession, describeQuestion, formatHumanDuration, outOfSyllabusNoteForAnswer, saveCompletedSession } from "./core.js?v=m3.8";
 
-import { questionsForSettings, conditionLabel } from "./practice-plan.js?v=m3.7";
+import { questionsForSettings, conditionLabel } from "./practice-plan.js?v=m3.8";
 
-import { settingsFromSearch } from "./settings.js?v=m3.7";
+import { settingsFromSearch } from "./settings.js?v=m3.8";
 
 const $ = (selector) => document.querySelector(selector);
 const screens = [$("#start-screen"), $("#quiz-screen"), $("#result-screen")];
