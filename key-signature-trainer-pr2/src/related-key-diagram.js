@@ -1,4 +1,4 @@
-import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.6.1";
+import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.7";
 
 const outsideRange = signature => signature < SIGNATURE_MIN || signature > SIGNATURE_MAX;
 
@@ -21,12 +21,9 @@ export function relatedDiagramNode(targetKey, { document, displayMode = "ja" }) 
   const header = document.createElement("div"); header.className = "relation-header";
   data.columns.forEach(({ signature }) => {
     const cell = document.createElement("span");
-    cell.textContent = outsideRange(signature) ? `（${compactSignatureLabel(signature)}相当）` : compactSignatureLabel(signature);
+    cell.textContent = outsideRange(signature) ? `${compactSignatureLabel(signature)}相当` : compactSignatureLabel(signature);
     if (outsideRange(signature)) {
       cell.className = "relation-outside";
-      const count = document.createElement("span"); count.className = "relation-outside-part"; count.textContent = `（${compactSignatureLabel(signature)}`;
-      const suffix = document.createElement("span"); suffix.className = "relation-outside-part"; suffix.textContent = "相当）";
-      cell.replaceChildren(count, document.createElement("wbr"), suffix);
     }
     header.append(cell);
   });

@@ -118,7 +118,8 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .notation-card #notation-label { color: var(--muted); font-size: .8rem; font-weight: 400; }
 .slot-state { display: inline-block; min-height: 1.2em; font-size: .7rem; font-weight: 700; text-decoration: underline; text-underline-offset: .2em; }
 .answer-next-action { margin: 0; font-size: .8rem; color: var(--accent-dark); }
-.key-accidental { display: inline; position: relative; top: -.36em; font-family: "Segoe UI Symbol", "Apple Symbols", sans-serif; font-size: .78em; font-weight: inherit; color: inherit; }
+.key-tonic { display: inline-block; white-space: nowrap; }
+.key-accidental { display: inline; position: relative; top: -.36em; font-family: "Noto Music", "Noto Sans Symbols 2", "Segoe UI Symbol", "Apple Symbols", sans-serif; font-size: .78em; font-weight: inherit; color: inherit; }
 
 /* Native details retains session-local state; beginSession resets it. */
 .related-neighborhood summary { cursor: pointer; min-height: 2.75rem; padding: .7rem .25rem; font-weight: 750; }
@@ -173,7 +174,7 @@ rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .lesson-note label { font-weight: 700; }
 .fast-answer-preview { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
 .fast-answer-preview > div { min-width: 0; padding: .6rem; border: 1px solid var(--line); border-radius: .6rem; }
-.fast-answer-preview span { display: block; font-size: .8rem; color: var(--muted); }
+.fast-answer-preview > div > span { display: block; font-size: .8rem; color: var(--muted); }
 .fast-answer-preview strong { display: block; min-height: 2rem; line-height: 2; }
 #reset-fast-answer { margin-top: .3rem; min-height: 2.75rem; }
 .lesson-note textarea { display: block; width: 100%; min-height: 7rem; padding: .7rem; border: 1px solid var(--line); border-radius: .6rem; background: white; color: var(--ink); resize: vertical; }

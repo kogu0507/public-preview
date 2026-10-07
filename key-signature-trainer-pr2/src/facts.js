@@ -174,6 +174,14 @@ function escapeHtml(value) {
 }
 
 export function displayPartsHtml(parts, displayMode) {
+  if (displayMode === "en" || displayMode === "en-ruby") {
+    const tonic = /^([A-G])([♯♭]?)(.*)$/.exec(parts.label);
+    if (tonic) {
+      const letter = parts.ruby ? `<ruby lang="en">${tonic[1]}<rt>${escapeHtml(parts.ruby)}</rt></ruby>` : tonic[1];
+      const accidental = tonic[2] ? `<span class="key-accidental">${tonic[2]}</span>` : "";
+      return `<span class="key-tonic">${letter}${accidental}</span>${escapeHtml(tonic[3])}`;
+    }
+  }
   const label = escapeHtml(parts.label).replace(/[♯♭]/g, (symbol) => `<span class="key-accidental">${symbol}</span>`);
   if (!parts.ruby) return label;
   if (displayMode === "en-ruby") return `<ruby lang="en">${label[0]}<rt>${escapeHtml(parts.ruby)}</rt></ruby>${label.slice(1)}`;
