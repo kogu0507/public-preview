@@ -1,4 +1,4 @@
-import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.5";
+import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.6";
 
 const outsideRange = signature => signature < SIGNATURE_MIN || signature > SIGNATURE_MAX;
 
@@ -44,7 +44,7 @@ export function relatedDiagramNode(targetKey, { document, displayMode = "ja" }) 
   const section = document.createElement("section"); section.className = "related-key-component"; section.append(title, diagram);
   if (data.columns.some(({ signature }) => outsideRange(signature))) {
     const note = document.createElement("p"); note.className = "relation-range-note";
-    note.textContent = "※「相当」は通常の調号の範囲外です。重嬰・重変などの臨時記号を含む表記が必要になることがあります。";
+    note.textContent = "※「相当」は通常の調号（♯・♭7つまで）の範囲を超える目安です。これらの調も成立し、臨時記号（重嬰・重変など）を用いて表せます。";
     section.append(note);
   }
   return section;

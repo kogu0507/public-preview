@@ -3,7 +3,7 @@
 .related-key-component .relation-header, .related-key-component .relation-row { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); }
 .related-key-component .relation-header { border-bottom: 3px solid #173d31; background: #e1ebe6; color: #173d31; font-family: Georgia, "Times New Roman", serif; font-size: .82rem; font-weight: 800; }
 .related-key-component .relation-header span { padding: .45rem .1rem .35rem; text-align: center; }
-.related-key-component .relation-header .relation-outside { font-family: inherit; font-size: .62rem; align-self: center; }
+.related-key-component .relation-header .relation-outside { font-family: inherit; font-size: .58rem; white-space: nowrap; align-self: center; }
 .related-key-component .relation-range-note { margin: .4rem 0 0; color: var(--muted); font-size: .72rem; line-height: 1.5; }
 .related-key-component .relation-row + .relation-row { border-top: 1px solid #dfe3df; }
 .related-key-component .relation-key { display: grid; min-width: 0; min-height: 3.35rem; align-content: center; padding: .35rem .12rem; border-right: 1px solid #e5e8e5; text-align: center; }

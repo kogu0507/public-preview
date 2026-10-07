@@ -91,6 +91,14 @@ export const KEY_NAME_OPTIONS = Object.freeze(SIGNATURE_NAMES.flatMap(([, major,
   KEY_BY_ID.get(`${minor[1]}-minor`),
 ]));
 const KEY_BY_SIGNATURE_MODE = new Map(KEY_NAME_OPTIONS.map((key) => [`${key.signature}:${key.mode}`, key]));
+// Diagram-only fifth coordinates extend beyond the ordinary trainer syllabus.
+// A sharp/flat shifts a tonic seven fifths; relative minor is three fifths below.
+// Keep the canonical answer objects and their syllabus flags untouched.
+const MAJOR_NATURAL_FIFTHS = Object.freeze({ C: 0, D: 2, E: 4, F: -1, G: 1, A: 3, B: 5 });
+const RELATED_KEY_BY_FIFTHS_MODE = new Map(ANSWER_KEY_OPTIONS.map(key => {
+  const fifths = MAJOR_NATURAL_FIFTHS[key.stem] + ({ flat: -7, natural: 0, sharp: 7 }[key.accidental]) - (key.mode === "minor" ? 3 : 0);
+  return [`${fifths}:${key.mode}`, key.inSyllabus ? key : Object.freeze({ ...key, signature: fifths })];
+}));
 export const KEY_OPTIONS = Object.freeze({
   major: Object.freeze(SIGNATURE_NAMES.map(([, major]) => KEY_BY_ID.get(`${major[1]}-major`))),
   minor: Object.freeze(SIGNATURE_NAMES.map(([, , minor]) => KEY_BY_ID.get(`${minor[1]}-minor`))),
@@ -215,7 +223,7 @@ export function relatedMajorDiagram(targetKey) {
   const columns = offsets.map((offset) => Object.freeze({ signature: targetKey.signature + offset }));
   const cell = (offset, mode, relation, target = false) => Object.freeze({
     column: offsets.indexOf(offset),
-    key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
+    key: RELATED_KEY_BY_FIFTHS_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
     relation,
     target,
   });
@@ -227,13 +235,13 @@ export function relatedMajorDiagram(targetKey) {
 }
 
 // Natural-minor relationships approved in O-049 checkpoint 28 / Issue #7.
-// Out-of-range neighbors remain null; never clamp to a different musical key.
+// Theoretical neighbors retain exact spelling; never clamp or substitute a key.
 export function relatedMinorDiagram(targetKey) {
   if (targetKey.mode !== "minor" || targetKey.signature == null) return null;
   const offsets = [-1, 0, 1, 2, 3];
   const cell = (offset, mode, relation, target = false) => Object.freeze({
     column: offsets.indexOf(offset),
-    key: KEY_BY_SIGNATURE_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
+    key: RELATED_KEY_BY_FIFTHS_MODE.get(`${targetKey.signature + offset}:${mode}`) ?? null,
     relation, target,
   });
   return Object.freeze({
