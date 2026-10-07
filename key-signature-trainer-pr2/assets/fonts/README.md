@@ -17,6 +17,6 @@ python scripts/subset-fonts.py C:/path/to/source-fonts
 npm test
 ```
 
-Review source hash changes, keep source packages outside the repository, and rerun browser font/layout checks. Source files currently needed by the shipped copy are read from index.html and src/*.js; if future copy lives in nested source directories or CSS content strings, extend the authoring utility accordingly. fonts.test.js checks current source-wide Japanese coverage so missed regeneration fails rather than silently falling back.
+Review source hash changes, keep source packages outside the repository, and rerun browser font/layout checks. Shipped copy is read from index.html, styles.css and all nested src JavaScript/CSS files. fonts.test.js checks current source-wide Japanese coverage so missed regeneration fails rather than silently falling back.
 
 Total WOFF2 bytes: 284972 (about 278 KiB). Music 3004; Sans JP 118796; Serif JP 163172.
