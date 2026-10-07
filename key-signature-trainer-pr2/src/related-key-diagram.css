@@ -14,7 +14,6 @@
 .related-key-component .relation-key.is-empty { background: rgba(255,255,255,.3); }
 .related-key-component .relation-key.is-current { position: relative; z-index: 1; background: #d4ebe0; box-shadow: inset 0 0 0 3px var(--accent); }
 .related-key-component .relation-key.is-current > span { color: var(--accent-dark); font-weight: 850; }
-.related-key-component .relation-key.is-current strong { font-size: .79rem; font-weight: 900; }
 .related-key-component .relation-tonic, .related-key-component .relation-mode { display: inline-block; white-space: nowrap; }
 .related-key-component ruby { white-space: nowrap; ruby-align: center; }
 .related-key-component rt { color: var(--muted); font-size: .52em; font-weight: 600; }
