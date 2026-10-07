@@ -16,5 +16,6 @@
 .related-key-component .relation-key.is-current > span { color: var(--accent-dark); font-weight: 850; }
 .related-key-component .relation-tonic, .related-key-component .relation-mode { display: inline-block; white-space: nowrap; }
 .related-key-component ruby { white-space: nowrap; ruby-align: center; }
+.related-key-component .relation-key ruby[lang="de"] { font-size: .64rem; }
 .related-key-component rt { color: var(--muted); font-size: .52em; font-weight: 600; }
 .related-key-component .relation-key strong { line-height: 1.8; }

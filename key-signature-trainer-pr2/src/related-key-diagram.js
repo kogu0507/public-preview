@@ -2,15 +2,15 @@ import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDis
 
 const outsideRange = signature => signature < SIGNATURE_MIN || signature > SIGNATURE_MAX;
 
-// Keep ruby/tonic intact; wrap only before the mode in narrow cells.
+// German ruby uses one connected key/reading; English may wrap before the mode.
 export function diagramKeyHtml(key, displayMode) {
   const parts = keyDisplayParts(key, displayMode);
-  if (displayMode === "ja") return displayPartsHtml(parts, displayMode);
+  if (displayMode === "ja" || displayMode === "de-ruby") return displayPartsHtml(parts, displayMode);
   const separator = displayMode.startsWith("de") ? "-" : " ";
   const [tonic, mode] = parts.label.split(separator);
   const readings = parts.ruby.split("・");
   return '<span class="relation-tonic">' + displayPartsHtml({ label: tonic, ruby: readings[0] }, displayMode) + '</span><wbr>' +
-    '<span class="relation-mode">' + (separator === " " ? "&nbsp;" : separator) + displayPartsHtml({ label: mode, ruby: displayMode === "de-ruby" ? readings.slice(1).join("・") : "" }, displayMode) + '</span>';
+    '<span class="relation-mode">' + (separator === " " ? "&nbsp;" : separator) + displayPartsHtml({ label: mode, ruby: "" }, displayMode) + '</span>';
 }
 
 export function relatedDiagramNode(targetKey, { document, displayMode = "ja" }) {
