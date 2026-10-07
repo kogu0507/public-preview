@@ -1,4 +1,4 @@
-import { PROTOTYPE_QUESTIONS, describeQuestion } from "./core.js?v=m3.3";
+import { PROTOTYPE_QUESTIONS, describeQuestion } from "./core.js?v=m3.4";
 
 export const MASTER_SETTINGS = Object.freeze({ direction: "mixed", tonality: "both", practiceMode: "exam" });
 const practice = (direction, tonality) => Object.freeze({ direction, tonality, practiceMode: "practice" });

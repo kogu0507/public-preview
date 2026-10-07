@@ -247,14 +247,10 @@ function keyFor(signature, mode) {
   return KEY_BY_SIGNATURE_MODE.get(`${signature}:${mode}`);
 }
 
-export const FACTS = Object.freeze([
-  [-1, "ks-1f", "flat", 1],
-  [0, "ks-0", "natural", 0],
-  [1, "ks-1s", "sharp", 1],
-].map(([signature, id, type, count]) => Object.freeze({
-  id,
+export const FACTS = Object.freeze(SIGNATURE_NAMES.map(([signature]) => Object.freeze({
+  id: signature === 0 ? "ks-0" : `ks-${Math.abs(signature)}${signature > 0 ? "s" : "f"}`,
   signature,
-  accidental: Object.freeze({ type, count }),
+  accidental: Object.freeze({ type: signature === 0 ? "natural" : signature > 0 ? "sharp" : "flat", count: Math.abs(signature) }),
   major: keyFor(signature, "major"),
   minor: keyFor(signature, "minor"),
   notation: Object.freeze({ recipe: "templateTheoryTrebleClef1500", clef: "treble" }),

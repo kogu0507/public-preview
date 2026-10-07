@@ -1,4 +1,6 @@
-import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml } from "./facts.js?v=m3.3";
+import { relatedMajorDiagram, relatedMinorDiagram, compactSignatureLabel, keyDisplayText, keyDisplayParts, displayPartsHtml, SIGNATURE_MIN, SIGNATURE_MAX } from "./facts.js?v=m3.4";
+
+const outsideRange = signature => signature < SIGNATURE_MIN || signature > SIGNATURE_MAX;
 
 // Keep ruby/tonic intact; wrap only before the mode in narrow cells.
 export function diagramKeyHtml(key, displayMode) {
@@ -17,7 +19,12 @@ export function relatedDiagramNode(targetKey, { document, displayMode = "ja" }) 
   const title = document.createElement("p"); title.className = "relation-title"; title.append(keyDisplayNode(targetKey), document.createTextNode("を中心に"));
   const diagram = document.createElement("div"); diagram.className = "relation-diagram"; diagram.setAttribute("role", "group"); diagram.setAttribute("aria-label", `${keyDisplayText(targetKey, displayMode)}を中心にした近親調`);
   const header = document.createElement("div"); header.className = "relation-header";
-  data.columns.forEach(({ signature }) => { const cell = document.createElement("span"); cell.textContent = compactSignatureLabel(signature); header.append(cell); });
+  data.columns.forEach(({ signature }) => {
+    const cell = document.createElement("span");
+    cell.textContent = outsideRange(signature) ? `（${compactSignatureLabel(signature)}相当）` : compactSignatureLabel(signature);
+    if (outsideRange(signature)) cell.className = "relation-outside";
+    header.append(cell);
+  });
   const makeRow = (items, rowLabel) => {
     const row = document.createElement("div"); row.className = "relation-row"; row.setAttribute("aria-label", rowLabel);
     const byColumn = new Map(items.map((item) => [item.column, item]));
@@ -35,5 +42,10 @@ export function relatedDiagramNode(targetKey, { document, displayMode = "ja" }) 
   const rows = ["major", "minor"];
   diagram.append(header, ...rows.map((mode) => makeRow(data[mode], mode === "major" ? "長調" : "短調")));
   const section = document.createElement("section"); section.className = "related-key-component"; section.append(title, diagram);
+  if (data.columns.some(({ signature }) => outsideRange(signature))) {
+    const note = document.createElement("p"); note.className = "relation-range-note";
+    note.textContent = "※「相当」は通常の調号の範囲外です。重嬰・重変などの臨時記号を含む表記が必要になることがあります。";
+    section.append(note);
+  }
   return section;
 }

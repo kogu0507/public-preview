@@ -1,13 +1,21 @@
-import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m3.3";
+import { FACTS, FACT_BY_ID, KEY_BY_ID, SIGNATURE_MAX, SIGNATURE_MIN, factDisplayText, isKeyAnswerInSyllabus, keyDisplayText, signatureLabel } from "./facts.js?v=m3.4";
 
 export const SCHEMA_VERSION = 2;
 export const STORAGE_KEY = "key-signature-trainer:sessions:v2";
 
-export const PROTOTYPE_QUESTIONS = Object.freeze([
+// Preserve the accepted template IDs/order; append every remaining fact/type pair.
+const INITIAL_QUESTIONS = [
   Object.freeze({ id: "q-signature-dual-sharp", type: "signature_to_keys", factId: "ks-1s" }),
   Object.freeze({ id: "q-signature-dual-flat", type: "signature_to_keys", factId: "ks-1f" }),
   Object.freeze({ id: "q-major-signature-flat", type: "major_key_to_signature", factId: "ks-1f" }),
   Object.freeze({ id: "q-minor-signature-natural", type: "minor_key_to_signature", factId: "ks-0" }),
+];
+const QUESTION_TYPES = ["signature_to_keys", "major_key_to_signature", "minor_key_to_signature"];
+export const PROTOTYPE_QUESTIONS = Object.freeze([
+  ...INITIAL_QUESTIONS,
+  ...QUESTION_TYPES.flatMap(type => FACTS
+    .filter(fact => !INITIAL_QUESTIONS.some(question => question.type === type && question.factId === fact.id))
+    .map(fact => Object.freeze({ id: `q-${type}-${fact.id}`, type, factId: fact.id }))),
 ]);
 
 export function clampSignature(value) {
