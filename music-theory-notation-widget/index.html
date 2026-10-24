@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta name="robots" content="noindex,nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="音階と和音を、調号・臨時記号で学ぶ楽典譜例ウィジェット。見本・問題・解答をURLで共有できます。">
+  <title>楽典譜例ウィジェット</title>
+  <link rel="stylesheet" href="./src/style.css">
+  <script type="module" src="./src/app.mjs"></script>
+</head>
+<body>
+  <a class="skip" href="#example">譜例へ移動</a>
+  <main id="app">
+    <header class="site-header"><div class="brand-mark" aria-hidden="true">♮</div><div><p class="eyebrow">MUSIC THEORY / NOTATION STUDY</p><h1>楽典譜例ウィジェット</h1><p class="intro">音階と和音を、ひとつずつ確かめる。</p></div><span class="edition">STUDY TOOLS · 01</span></header>
+    <div id="errors" role="alert" hidden></div>
+    <div class="workspace">
+      <section class="controls card" aria-labelledby="settings-title">
+        <div class="section-label"><span>01</span><h2 id="settings-title">譜例を選ぶ</h2></div>
+        <form id="settings">
+          <label>譜例の種類<select name="kind" id="kind"><option value="scale">音階</option><option value="diatonic-triads">音階固有三和音（7つ）</option><option value="tonic-triad">主和音</option><option value="primary-triads">I・IV・Vの三和音</option></select></label>
+          <label>調<select name="key" id="key"></select></label>
+          <label>音階の形<select name="scaleForm" id="scaleForm"></select></label>
+          <fieldset><legend>記譜方式</legend><label class="radio"><input type="radio" name="notation" value="key-signature">調号あり</label><label class="radio"><input type="radio" name="notation" value="accidentals-only">臨時記号のみ</label></fieldset>
+          <label>補助表示<select name="labels" id="labels"><option value="none">なし</option><option value="note-names">音名（英字）</option><option value="degrees">音度・和音記号</option></select></label>
+          <label>和音の度数表記<select name="degreeStyle" id="degreeStyle"><option value="quality">種類を区別（I ii iii IV…）</option><option value="upper">大文字のみ（I II III IV…）</option></select></label>
+        </form>
+        <p class="small-note">ト音記号・基本位置で表示します。<br>設定はURLに保存されます。</p>
+      </section>
+      <section class="example-column" id="example" aria-labelledby="example-title">
+        <div class="mode-bar" role="group" aria-label="表示モード"><button data-mode="reference">見本</button><button data-mode="question">問題</button><button data-mode="answer">解答</button></div>
+        <article class="score-card card" id="score-card">
+          <div class="score-heading"><div><p class="eyebrow" id="example-subtitle"></p><h2 id="example-title"></h2></div><span id="mode-badge" class="badge"></span></div>
+          <div class="score-tools"><button id="expand-score" aria-expanded="false">全画面で見る</button></div>
+          <p id="prompt" class="prompt"></p>
+          <fieldset id="hint-controls" class="hint-controls" hidden><legend>ヒント</legend><div class="hint-options"><label class="radio"><input id="hint-clef" type="checkbox" data-hint="clef">ト音記号を表示</label><label class="radio"><input id="hint-key-signature" type="checkbox" data-hint="keySignature">調号を表示</label><label class="radio"><input id="hint-notes" type="checkbox" data-hint="notes">音符を表示</label></div><p class="small-note">必要な部分の見本を表示できます。<span id="key-signature-hint-note" hidden>臨時記号のみの方式では調号はありません。</span></p></fieldset>
+          <div id="notation-scroll" role="region" aria-label="譜面と補助表示"><div id="notation-content"><figure><div id="score-wrap"><img id="score" alt="" width="900" height="270" aria-describedby="note-labels"></div><figcaption id="caption"></figcaption></figure><div id="note-labels" class="sr-only"></div></div></div>
+          <p id="explanation" class="explanation"></p>
+          <div class="answer-action"><button id="reveal" class="primary" hidden>解答を表示する <span aria-hidden="true">→</span></button></div>
+          <p id="source-info" class="small-note" hidden></p>
+        </article>
+        <section class="share card" aria-labelledby="share-title"><div class="section-label"><span>02</span><h2 id="share-title">使う・共有する</h2></div><div class="actions"><button id="copy-url">URLをコピー</button><button id="download">SVGを保存</button><button id="print">印刷</button></div><details><summary>ページに埋め込む</summary><label for="embed-code">iframeコード</label><textarea id="embed-code" readonly rows="4" spellcheck="false"></textarea><button id="copy-embed">埋め込みコードをコピー</button><p class="small-note">公開後のURLを使用してください。埋め込み側の高さは内容に応じて調整できます。</p></details></section>
+      </section>
+    </div>
+    <footer>楽典譜例ウィジェット <span>音名の綴りを保った、静的SVGの譜例集。</span></footer>
+    <div id="status" role="status" aria-live="polite"></div>
+  </main>
+  <dialog id="expanded-dialog" aria-label="譜例の拡大表示"></dialog>
+</body>
+</html>
