@@ -1,5 +1,9 @@
 {
   "commonSvg": "common-numbered.svg",
+  "questionSources": {
+    "noteNames": "common-noteNames-targets.svg",
+    "intervals": "common-intervals-targets.svg"
+  },
   "notes": [
     {
       "number": 1,

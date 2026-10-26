@@ -2,22 +2,38 @@
 #lesson table th{width:auto}#question-1 table{table-layout:fixed}#question-1 th:first-child{width:22%}
 #question-1 th,#question-1 td{padding:8px 5px}#question-1 thead th{font-size:.9rem}
 .print-controls,.hint-controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
-.print-controls button,.hint-controls button{font:inherit;border:1px solid #a4baac;background:white;color:#235e4a;border-radius:5px;padding:6px 10px;cursor:pointer}
-.hint-controls button{min-height:44px}.screen-help h4{margin:12px 0 0}.hint-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
+.print-controls button,.hint-controls button,.hint-controls select{font:inherit;border:1px solid #a4baac;background:white;color:#235e4a;border-radius:5px;padding:6px 10px;cursor:pointer}
+.hint-controls{display:grid;grid-template-columns:minmax(0,1fr);max-width:25rem}.hint-controls button,.hint-controls select{min-height:44px;width:100%;text-align:left}.hint-controls select{padding-right:30px;background:#fff}.screen-help h4{margin:12px 0 0}.hint-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
 .format-example{border:1px solid #dce4dc;padding:12px;border-radius:6px;background:#fbfcfa}
 .format-example h3{margin:0 0 8px}.format-example p{font-size:.85rem;margin:8px 0}.format-example figure{margin:6px 0}
 .source-card>figure{margin:10px 0}.task-block .screen-score{margin:12px 0}
 .rewrite-task,.rewrite-answer{break-inside:avoid}.rewrite-task img,.rewrite-answer img{width:100%}
+.question-source{margin:14px 0 20px}.question-source>figure{margin:6px 0}.question-source figcaption,.number-legend{font-size:.8rem;color:#52645a}.number-legend{margin:3px 0}
+.related-key-component{margin:18px 0}.related-key-component figcaption{margin-bottom:8px;color:#24342e}
+.relation-diagram{border:1px solid #c2d2c9;border-radius:6px;overflow:hidden}
+.relation-header,.relation-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
+.relation-header{background:#e1ebe6;border-bottom:2px solid #235e4a;text-align:center;font-size:.82rem;font-weight:bold}
+.relation-header>span{padding:8px 2px}.relation-row+.relation-row{border-top:1px solid #dce4dc}
+.relation-key{min-width:0;min-height:68px;text-align:center;padding:8px 2px;border-right:1px solid #dce4dc;display:grid;align-content:center}
+.relation-key:last-child{border:0}.relation-key>span{font-size:.65rem;color:#52645a}.relation-key strong{font-size:clamp(.65rem,2.8vw,.95rem);line-height:1.6;overflow-wrap:anywhere}
+.relation-key.is-current{background:#d4ebe0;box-shadow:inset 0 0 0 2px #235e4a}.relation-key.is-empty{background:#fafcf9}
 @page{size:A4;margin:14mm}
 @media print{
  :root{font-size:10pt;line-height:1.55;background:white}main{max-width:none}
  .review-banner,.print-controls,.screen-help,.screen-score{display:none!important}
  #lesson[data-edition=six]>section{break-inside:auto;break-before:page;border:0;border-radius:0;padding:0;margin:0}
+ #lesson[data-edition=six]>#question-1{break-before:auto}
+ .question-source{break-inside:avoid;margin:6pt 0 10pt}.question-source>figure{margin:3pt 0}.question-source img{max-height:34mm;object-fit:contain}.question-source .source-link{font-size:7pt}
+ .number-legend{font-size:7pt}.relation-key{min-height:40px}.relation-header>span{padding:4px 1px}
  #lesson h2,#lesson h3{break-after:avoid}.task-block,.format-example,figure,table,.answer-copy{break-inside:avoid}
  #lesson>.source-card{break-inside:avoid;margin:10pt 0;padding:8pt}
  #question-1>table{display:table}.answer-line{min-height:2.4em}
  #answers{break-before:page;border:0;padding:0}#answers .answer-copy{break-before:page}
  #answers .answer-copy:first-of-type{break-before:auto}.print-only{display:block}
- .format-example{padding:8pt}.format-example figure{max-height:26mm}.format-example img{max-height:26mm;object-fit:contain}
+ #question-4 .question-source img,#question-5 .question-source img{max-height:28mm}
+ #question-4 h3,#question-5 h3{margin:12pt 0 6pt}
+ #question-4 .task-block+.task-block,#question-5 .task-block+.task-block{margin-top:12pt}
+ #question-4 .print-only,#question-5 .print-only{margin:8pt 0}
+ .format-example{padding:6pt}.format-example figure{max-height:20mm}.format-example img{max-height:20mm;object-fit:contain}
  .rewrite-task figure,.rewrite-answer figure{margin:10pt 0}
 }
