@@ -1,7 +1,7 @@
 import {createLessonModel} from './lesson-model.mjs';
 import {prepareScoreImage} from './score-presentation.mjs';
 import {noteNames} from './note-names.mjs';
-const root=document.getElementById('lesson'),rev='human-6411699478';
+const root=document.getElementById('lesson'),rev='human-6413288737';
 const assets=new URL('../assets/',import.meta.url),scores=new URL('lessons/pd001-review/',assets),owned=[];
 const full={clef:true,keySignature:true,notes:true},empty={clef:false,keySignature:false,notes:false};
 function n(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
@@ -16,11 +16,24 @@ async function questionScore(task,manifest){
  const panel=n('div',undefined,'task-block');panel.dataset.lessonTask=task.id;
  panel.append(n('h3',task.notation==='key-signature'?'（1）高音部譜表に調号を用いて書きなさい。':'（2）調号を用いず、臨時記号のみで書きなさい。'));
  const screen=await widgetImage(task,manifest,empty,{cls:'screen-score'}),img=screen.querySelector('img');img.dataset.hintState='none';panel.append(screen,await widgetImage(task,manifest,empty,{cls:'print-only'}));
- const controls=n('div',undefined,'hint-controls screen-help');let token=0;
+ const help=n('div',undefined,'screen-help');help.append(n('h4','ヒント'));
+ const controls=n('div',undefined,'hint-controls');controls.setAttribute('role','group');controls.setAttribute('aria-label','ヒント');
  const states=[['ヒントを消す','none',empty],['音部記号のみ','clef',{...empty,clef:true}]];
  if(task.notation==='key-signature')states.push(['音部記号と調号','clef-key',{...empty,clef:true,keySignature:true}]);
- for(const [label,id,state]of states){const b=n('button',label);b.type='button';b.dataset.hint=id;b.setAttribute('aria-pressed',id==='none'?'true':'false');b.onclick=async()=>{const current=++token;const score=await widgetImage(task,manifest,state);if(current!==token)return;img.src=score.querySelector('img').src;img.dataset.hintState=id;for(const button of controls.querySelectorAll('button'))button.setAttribute('aria-pressed',String(button===b));};controls.append(b);}
- const answer=n('button','解答を確認');answer.type='button';answer.onclick=()=>{const target=root.querySelector('#answers');target.open=true;target.scrollIntoView({behavior:'smooth'});};controls.append(answer);panel.append(controls);return panel;
+ const urls=new Map([['none',img.src]]);
+ for(const [,id,state]of states)if(id!=='none')urls.set(id,(await widgetImage(task,manifest,state)).querySelector('img').src);
+ urls.set('answer',(await widgetImage(task,manifest,full)).querySelector('img').src);
+ let hint='none',showAnswer=false;
+ const answer=n('button','完成譜を一時表示（解答）');answer.type='button';answer.dataset.temporaryAnswer='';
+ img.id='score-'+task.id;answer.setAttribute('aria-controls',img.id);
+ function render(){
+  img.src=urls.get(showAnswer?'answer':hint);img.dataset.hintState=showAnswer?'answer':hint;
+  img.alt=showAnswer?'完成譜（解答を一時表示中）':'記譜用五線';
+  answer.textContent=showAnswer?'完成譜を隠す（ヒントに戻る）':'完成譜を一時表示（解答）';answer.setAttribute('aria-pressed',String(showAnswer));
+  for(const button of controls.querySelectorAll('[data-hint]'))button.setAttribute('aria-pressed',String(!showAnswer&&button.dataset.hint===hint));
+ }
+ for(const [label,id]of states){const b=n('button',label);b.type='button';b.dataset.hint=id;b.onclick=()=>{hint=id;showAnswer=false;render();};controls.append(b);}
+ answer.onclick=()=>{showAnswer=!showAnswer;render();};controls.append(answer);render();help.append(controls);panel.append(help);return panel;
 }
 async function main(){
  const responses=await Promise.all([fetch(new URL('lessons.json',assets)),fetch(new URL('scores/manifest.json',assets)),fetch(new URL('bundle.json?rev='+rev,scores))]);if(responses.some(r=>!r.ok))throw Error('教材データを取得できません。');
@@ -33,7 +46,7 @@ async function main(){
  const nameRows=[['日本語',model.names.japanese],['英語',model.names.english],['ドイツ語',model.names.german]],relationRows=[['属調',model.related.dominant.displayName],['下属調',model.related.subdominant.displayName],['平行調',model.related.relative.displayName]];
  const q3=section(3,'調名と関係調');q3.append(n('p','譜例の調名と関係調を答えなさい。'),table(['調名','解答'],nameRows,true),table(['関係調','解答'],relationRows,true));content.append(q3);
  for(const kind of ['scale','diatonic-triads']){
-  const isScale=kind==='scale',q=section(isScale?4:5,isScale?'音階':'三和音');q.append(n('p',isScale?'問3で答えた調の長音階を、1オクターブ上行で書きなさい。例の書式に合わせること。':'問3で答えた調の各音上に、基本形の三和音を第1音から第7音の順に書きなさい。例の書式に合わせること。'));
+  const isScale=kind==='scale',q=section(isScale?4:5,isScale?'音階':'三和音');q.append(n('p',isScale?'問3で答えた調の音階を、例の書式に合わせて書きなさい。短調の場合は、自然短音階・和声的短音階・旋律的短音階（上行形・下行形）を書くこと。':'問4で書いた音階の各音上に、基本形の三和音を例にならって書きなさい。短調の場合は和声的短音階を用いること。'));
   const example=n('div',undefined,'format-example');example.append(n('h3','書式例（ト長調）'));
   for(const task of model.sections.filter(t=>t.kind===kind)){example.append(n('p',task.notation==='key-signature'?'調号あり':'臨時記号のみ'),await widgetImage(task,manifest,full,{example:true}));}q.append(example);
   for(const task of model.sections.filter(t=>t.kind===kind))q.append(await questionScore(task,manifest));content.append(q);

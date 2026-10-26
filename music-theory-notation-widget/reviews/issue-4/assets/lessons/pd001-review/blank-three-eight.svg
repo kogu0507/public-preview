@@ -51,16 +51,11 @@
                         <use xlink:href="#E260-l19nj5e9" transform="translate(735, 900) scale(0.72, 0.72)"/>
                      </g>
                   </g>
-                  <g id="i1vljyrm" class="meterSig">
-                     <use xlink:href="#E083-l19nj5e9" transform="translate(1047, 720) scale(0.72, 0.72)"/>
-                     <use xlink:href="#E088-l19nj5e9" transform="translate(1050, 1080) scale(0.72, 0.72)"/>
-                  </g>
+                  
                   
                </g>
-               <g id="lzosgrv" class="barLine"/>
-               <g id="m1q84ocf" class="barLine">
-                  <path d="M5398 540 L5398 1260" stroke-width="27"/>
-               </g>
+               
+               
             </g>
             <g id="pd001-m2" class="measure">
                <g id="d1iiegxs" class="staff">
@@ -71,9 +66,7 @@
                   <path d="M5411 1260 L8608 1260" stroke-width="13"/>
                   
                </g>
-               <g id="c1ahluu1" class="barLine">
-                  <path d="M8595 540 L8595 1260" stroke-width="27"/>
-               </g>
+               
             </g>
             <g id="pd001-m3" class="measure">
                <g id="u1bb0tuc" class="staff">
@@ -84,9 +77,7 @@
                   <path d="M8608 1260 L12227 1260" stroke-width="13"/>
                   
                </g>
-               <g id="t3elz0m" class="barLine">
-                  <path d="M12214 540 L12214 1260" stroke-width="27"/>
-               </g>
+               
             </g>
             <g id="pd001-m4" class="measure">
                <g id="lcz237t" class="staff">
@@ -97,9 +88,7 @@
                   <path d="M12227 1260 L15802 1260" stroke-width="13"/>
                   
                </g>
-               <g id="k1dict13" class="barLine">
-                  <path d="M15789 540 L15789 1260" stroke-width="27"/>
-               </g>
+               
             </g>
          </g>
          <g id="qqsgymx" class="system">
@@ -122,10 +111,8 @@
                   </g>
                   
                </g>
-               <g id="b13viyd2" class="barLine"/>
-               <g id="c1yevvwh" class="barLine">
-                  <path d="M5395 2700 L5395 3420" stroke-width="27"/>
-               </g>
+               
+               
             </g>
             <g id="pd001-m6" class="measure">
                <g id="u6oscn4" class="staff">
@@ -136,9 +123,7 @@
                   <path d="M5408 3420 L9179 3420" stroke-width="13"/>
                   
                </g>
-               <g id="t1ajik95" class="barLine">
-                  <path d="M9166 2700 L9166 3420" stroke-width="27"/>
-               </g>
+               
             </g>
             <g id="pd001-m7" class="measure">
                <g id="k19a056m" class="staff">
@@ -149,9 +134,7 @@
                   <path d="M9179 3420 L13329 3420" stroke-width="13"/>
                   
                </g>
-               <g id="j1s8kxne" class="barLine">
-                  <path d="M13316 2700 L13316 3420" stroke-width="27"/>
-               </g>
+               
             </g>
             <g id="pd001-m8" class="measure">
                <g id="b1bp6nfw" class="staff">
@@ -162,10 +145,7 @@
                   <path d="M13329 3420 L15803 3420" stroke-width="13"/>
                   
                </g>
-               <g id="au36i87" class="barLine">
-                  <path d="M15628 2700 L15628 3420" stroke-width="27"/>
-                  <path d="M15758 2700 L15758 3420" stroke-width="90"/>
-               </g>
+               
             </g>
             <g id="l1lqnom3" class="systemMilestoneEnd d1blotdo"/>
          </g>

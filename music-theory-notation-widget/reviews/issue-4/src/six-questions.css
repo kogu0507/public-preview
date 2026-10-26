@@ -3,7 +3,7 @@
 #question-1 th,#question-1 td{padding:8px 5px}#question-1 thead th{font-size:.9rem}
 .print-controls,.hint-controls{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
 .print-controls button,.hint-controls button{font:inherit;border:1px solid #a4baac;background:white;color:#235e4a;border-radius:5px;padding:6px 10px;cursor:pointer}
-.hint-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
+.hint-controls button{min-height:44px}.screen-help h4{margin:12px 0 0}.hint-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
 .format-example{border:1px solid #dce4dc;padding:12px;border-radius:6px;background:#fbfcfa}
 .format-example h3{margin:0 0 8px}.format-example p{font-size:.85rem;margin:8px 0}.format-example figure{margin:6px 0}
 .source-card>figure{margin:10px 0}.task-block .screen-score{margin:12px 0}
@@ -21,4 +21,3 @@
  .format-example{padding:8pt}.format-example figure{max-height:26mm}.format-example img{max-height:26mm;object-fit:contain}
  .rewrite-task figure,.rewrite-answer figure{margin:10pt 0}
 }
-
