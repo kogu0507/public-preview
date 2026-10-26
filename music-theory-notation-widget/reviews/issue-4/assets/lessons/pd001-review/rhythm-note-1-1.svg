@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1400" version="1.1" overflow="visible" id="l19nj5e9" data-rhythm-kind="note" data-rhythm-dur="1" data-rhythm-dots="1" color="black">
+   <desc>Engraved by Verovio 6.2.1[undefined]</desc>
+   <defs>
+      <g id="E0A2-l19nj5e9">
+         <path transform="scale(1,-1)" d="M198 133c102 0 207 -45 207 -133c0 -92 -118 -133 -227 -133c-101 0 -178 46 -178 133c0 88 93 133 198 133zM293 -21c0 14 -3 29 -8 44c-7 20 -18 38 -33 54c-20 21 -43 31 -68 31l-20 -2c-15 -5 -27 -14 -36 -28c-4 -9 -6 -17 -8 -24s-3 -16 -3 -27c0 -15 3 -34 9 -57 s18 -41 34 -55c15 -15 36 -23 62 -23c4 0 10 1 18 2c19 5 32 15 40 30s13 34 13 55z"/>
+      </g>
+   </defs>
+   <style type="text/css">#l19nj5e9 g.ending, #l19nj5e9 g.fing, #l19nj5e9 g.reh, #l19nj5e9 g.tempo {font-weight:bold;}#l19nj5e9 g.dir, #l19nj5e9 g.dynam, #l19nj5e9 g.mNum {font-style:italic;}#l19nj5e9 g.label {font-weight:normal;}#l19nj5e9 ellipse, #l19nj5e9 path, #l19nj5e9 polygon, #l19nj5e9 polyline, #l19nj5e9 rect {stroke:currentColor}</style>
+   
+<g transform="translate(112, 604.0000013709068)"><g data-id="m1q84ocf" data-class="note" class="note">
+                        <g data-class="notehead" class="notehead">
+                           <use xlink:href="#E0A2-l19nj5e9" transform="translate(180, 96) scale(0.72, 0.72)"/>
+                        </g>
+                        <g data-id="a1pfogn4" data-class="dots" class="dots">
+                           <ellipse cx="560" cy="96" rx="36" ry="36"/>
+                        </g>
+                     </g></g></svg>

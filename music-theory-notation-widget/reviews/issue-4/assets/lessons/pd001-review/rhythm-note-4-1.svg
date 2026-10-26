@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1400" version="1.1" overflow="visible" id="j1c071kr" data-rhythm-kind="note" data-rhythm-dur="4" data-rhythm-dots="1" color="black">
+   <desc>Engraved by Verovio 6.2.1[undefined]</desc>
+   <defs>
+      <g id="E0A4-j1c071kr">
+         <path transform="scale(1,-1)" d="M0 -39c0 68 73 172 200 172c66 0 114 -37 114 -95c0 -84 -106 -171 -218 -171c-64 0 -96 30 -96 94z"/>
+      </g>
+   </defs>
+   <style type="text/css">#j1c071kr g.ending, #j1c071kr g.fing, #j1c071kr g.reh, #j1c071kr g.tempo {font-weight:bold;}#j1c071kr g.dir, #j1c071kr g.dynam, #j1c071kr g.mNum {font-style:italic;}#j1c071kr g.label {font-weight:normal;}#j1c071kr ellipse, #j1c071kr path, #j1c071kr polygon, #j1c071kr polyline, #j1c071kr rect {stroke:currentColor}</style>
+   
+<g transform="translate(144, 418.1199951171875)"><g data-id="knw3qi6" data-class="note" class="note">
+                        <g data-class="notehead" class="notehead">
+                           <use xlink:href="#E0A4-j1c071kr" transform="translate(180, 459) scale(0.72, 0.72)"/>
+                        </g>
+                        <g data-id="ydh4z9k" data-class="dots" class="dots">
+                           <ellipse cx="496" cy="459" rx="36" ry="36"/>
+                        </g>
+                        <g data-id="xpln01p" data-class="stem" class="stem">
+                           <path d="M397 431 L397 9" stroke-width="18"/>
+                        </g>
+                     </g></g></svg>

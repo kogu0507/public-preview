@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1400" version="1.1" overflow="visible" id="k1c77xk2" data-rhythm-kind="note" data-rhythm-dur="4" data-rhythm-dots="0" color="black">
+   <desc>Engraved by Verovio 6.2.1[undefined]</desc>
+   <defs>
+      <g id="E0A4-k1c77xk2">
+         <path transform="scale(1,-1)" d="M0 -39c0 68 73 172 200 172c66 0 114 -37 114 -95c0 -84 -106 -171 -218 -171c-64 0 -96 30 -96 94z"/>
+      </g>
+   </defs>
+   <style type="text/css">#k1c77xk2 g.ending, #k1c77xk2 g.fing, #k1c77xk2 g.reh, #k1c77xk2 g.tempo {font-weight:bold;}#k1c77xk2 g.dir, #k1c77xk2 g.dynam, #k1c77xk2 g.mNum {font-style:italic;}#k1c77xk2 g.label {font-weight:normal;}#k1c77xk2 ellipse, #k1c77xk2 path, #k1c77xk2 polygon, #k1c77xk2 polyline, #k1c77xk2 rect {stroke:currentColor}</style>
+   
+<g transform="translate(206.9600067138672, 418.1199951171875)"><g data-id="l1noe2ui" data-class="note" class="note">
+                        <g data-class="notehead" class="notehead">
+                           <use xlink:href="#E0A4-k1c77xk2" transform="translate(180, 459) scale(0.72, 0.72)"/>
+                        </g>
+                        <g data-id="y1ytblm" data-class="stem" class="stem">
+                           <path d="M397 431 L397 9" stroke-width="18"/>
+                        </g>
+                     </g></g></svg>

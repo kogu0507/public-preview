@@ -1,4 +1,17 @@
 import {KEYS} from './theory.mjs';
+import {noteNames} from './note-names.mjs';
+
+export function intervalAnswer(pair){return pair.answer.replace(/^(?:上行|下行)・/,'');}
+export function keyAndToneRows(model){
+ const rows=[['調名',model.names]],scale=model.sections.find(t=>t.kind==='scale').answer.events;
+ for(const [label,index]of [['主音',0],['属音',4],['下属音',3],['導音',6]]){
+  const note=scale[index].notes[0];rows.push([label,noteNames({pname:note.letter,alteration:({natural:0,flat:-1,sharp:1})[note.accidental]})]);
+ }
+ return rows.map(([label,names])=>[label,names.japanese,names.english,names.german]);
+}
+export function fifthsReference(){return Array.from({length:15},(_,i)=>{
+ const fifths=i-7;return {label:signatureLabel({fifths}),major:KEYS.find(k=>k.fifths===fifths&&k.family==='major'),minor:KEYS.find(k=>k.fifths===fifths&&k.family==='minor')};
+});}
 
 export function signatureLabel(key){return key.fifths===0?'調号なし':`${key.fifths<0?'♭':'♯'}${Math.abs(key.fifths)}つ`;}
 
@@ -26,3 +39,7 @@ export const RHYTHM_SOURCE=[
  {kind:'rest',dur:2,dots:0},{kind:'rest',dur:4,dots:0}
 ];
 export function rhythmCorrespondence(){return RHYTHM_SOURCE.map(event=>[1,2,4].map(factor=>durationName({...event,dur:event.dur*factor})));}
+export function rhythmCardSteps(event){return [1,2,4].map((factor,index)=>({
+ label:['原譜（3/2）','1/2倍（3/4）','1/4倍（3/8）'][index],name:durationName({...event,dur:event.dur*factor}),
+ svg:`rhythm-${event.kind}-${event.dur*factor}-${event.dots}.svg`
+}));}

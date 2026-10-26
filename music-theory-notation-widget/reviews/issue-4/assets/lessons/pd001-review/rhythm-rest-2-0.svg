@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1000 1400" version="1.1" overflow="visible" id="j17mbwso" data-rhythm-kind="rest" data-rhythm-dur="2" data-rhythm-dots="0" color="black">
+   <desc>Engraved by Verovio 6.2.1[undefined]</desc>
+   <defs>
+      <g id="E4E4-j17mbwso">
+         <path transform="scale(1,-1)" d="M0 10v105c0 9 1 10 10 10h280c9 0 10 -1 10 -10v-105c0 -9 -1 -10 -10 -10h-280c-9 0 -10 1 -10 10z"/>
+      </g>
+   </defs>
+   <style type="text/css">#j17mbwso g.ending, #j17mbwso g.fing, #j17mbwso g.reh, #j17mbwso g.tempo {font-weight:bold;}#j17mbwso g.dir, #j17mbwso g.dynam, #j17mbwso g.mNum {font-style:italic;}#j17mbwso g.label {font-weight:normal;}#j17mbwso ellipse, #j17mbwso path, #j17mbwso polygon, #j17mbwso polyline, #j17mbwso rect {stroke:currentColor}</style>
+   
+<g transform="translate(196, 205)"><g data-id="k1p9jnk9" data-class="rest" class="rest">
+                        <use xlink:href="#E4E4-j17mbwso" transform="translate(196, 540) scale(0.72, 0.72)"/>
+                        <g data-class="ledgerLines" class="ledgerLines">
+                           <path d="M148 540 L460 540" stroke-width="22"/>
+                        </g>
+                     </g></g></svg>

@@ -8,7 +8,12 @@
 .format-example h3{margin:0 0 8px}.format-example p{font-size:.85rem;margin:8px 0}.format-example figure{margin:6px 0}
 .source-card>figure{margin:10px 0}.task-block .screen-score{margin:12px 0}
 .rewrite-task,.rewrite-answer{break-inside:avoid}.rewrite-task img,.rewrite-answer img{width:100%}
-.question-source{margin:14px 0 20px}.question-source>figure{margin:6px 0}.question-source figcaption,.number-legend{font-size:.8rem;color:#52645a}.number-legend{margin:3px 0}
+.question-source{margin:10px 0 0}.source-toolbar{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;font-size:.8rem;color:#52645a}.source-toolbar a{display:inline-flex;align-items:center;justify-content:flex-end;min-height:44px;white-space:nowrap}
+.question-source+table{margin-top:6px}.task-block .question-source+.screen-score,.rewrite-task>.question-source+.rewrite-blank{margin-top:6px}
+#question-3>table:first-of-type{table-layout:fixed}#question-3>table:first-of-type th,#question-3>table:first-of-type td{padding:8px 5px}
+.fifths-scroll{overflow:auto;max-width:100%;overscroll-behavior-x:contain}.fifths-scroll table{min-width:1300px;table-layout:fixed;margin:0;font-size:.85rem}.fifths-scroll th,.fifths-scroll td{text-align:center;white-space:nowrap;padding:10px 5px}.fifths-scroll th:first-child{position:sticky;left:0;z-index:1;background:#f3f6f2}
+.rhythm-cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.rhythm-card{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid #b5c7bc;border-radius:8px;background:#fff;padding:8px 4px;break-inside:avoid}.rhythm-step{text-align:center;min-width:0;padding:0 4px;border-right:1px solid #e0e7df}.rhythm-step:last-child{border:0}.rhythm-step p{font-size:.8rem;margin:3px 0}.rhythm-step figure{margin:2px 0}.rhythm-step img{height:72px;width:100%;object-fit:contain}.rhythm-step .rhythm-name{font-size:.8rem;line-height:1.4}
+@media(max-width:600px){.rhythm-cards{grid-template-columns:minmax(0,1fr)}}
 .related-key-component{margin:18px 0}.related-key-component figcaption{margin-bottom:8px;color:#24342e}
 .relation-diagram{border:1px solid #c2d2c9;border-radius:6px;overflow:hidden}
 .relation-header,.relation-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}
@@ -23,8 +28,8 @@
  .review-banner,.print-controls,.screen-help,.screen-score{display:none!important}
  #lesson[data-edition=six]>section{break-inside:auto;break-before:page;border:0;border-radius:0;padding:0;margin:0}
  #lesson[data-edition=six]>#question-1{break-before:auto}
- .question-source{break-inside:avoid;margin:6pt 0 10pt}.question-source>figure{margin:3pt 0}.question-source img{max-height:34mm;object-fit:contain}.question-source .source-link{font-size:7pt}
- .number-legend{font-size:7pt}.relation-key{min-height:40px}.relation-header>span{padding:4px 1px}
+ .question-source{break-inside:avoid;margin:4pt 0 0}.question-source img{max-height:34mm;object-fit:contain}.source-toolbar{min-height:0;font-size:7pt}.question-source.repeated-reference{display:none}.source-link{font-size:7pt;margin:4pt 0}
+ .rhythm-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6pt}.rhythm-card{padding:4pt 2pt}.rhythm-step img{height:40px}.rhythm-step p,.rhythm-step .rhythm-name{font-size:7pt;margin:2pt 0}.rhythm-step figure{margin:0}.rewrite-task>.question-source{margin:4pt 0 0}.relation-key{min-height:40px}.relation-header>span{padding:4px 1px}
  #lesson h2,#lesson h3{break-after:avoid}.task-block,.format-example,figure,table,.answer-copy{break-inside:avoid}
  #lesson>.source-card{break-inside:avoid;margin:10pt 0;padding:8pt}
  #question-1>table{display:table}.answer-line{min-height:2.4em}
