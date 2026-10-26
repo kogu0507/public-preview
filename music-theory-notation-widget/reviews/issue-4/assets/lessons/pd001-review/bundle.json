@@ -1,72 +1,69 @@
 {
+  "commonSvg": "common-numbered.svg",
   "notes": [
     {
-      "label": "①",
-      "location": "第1小節・音符1個目",
-      "answer": "A",
-      "svg": "note-a.svg"
+      "number": 1,
+      "pname": "A",
+      "alteration": 0
     },
     {
-      "label": "②",
-      "location": "第2小節・音符1個目",
-      "answer": "B♭",
-      "svg": "note-b.svg"
+      "number": 4,
+      "pname": "B",
+      "alteration": -1
     },
     {
-      "label": "③",
-      "location": "第3小節・音符1個目",
-      "answer": "G",
-      "svg": "note-c.svg"
+      "number": 6,
+      "pname": "G",
+      "alteration": 0
     },
     {
-      "label": "④",
-      "location": "第3小節・音符2個目",
-      "answer": "C",
-      "svg": "note-d.svg"
+      "number": 7,
+      "pname": "C",
+      "alteration": 0
     },
     {
-      "label": "⑤",
-      "location": "第5小節・音符1個目",
-      "answer": "D",
-      "svg": "note-e.svg"
+      "number": 12,
+      "pname": "D",
+      "alteration": 0
     },
     {
-      "label": "⑥",
-      "location": "第8小節・音符1個目",
-      "answer": "F",
-      "svg": "note-f.svg"
+      "number": 25,
+      "pname": "F",
+      "alteration": 0
     }
   ],
   "intervals": [
     {
-      "label": "A",
-      "location": "1：第1小節・音符1個目 → 2：第2小節・音符1個目",
-      "answer": "上行・短2度",
-      "explanation": "A4 → B♭4。1半音分で、上行・短2度です。",
-      "svg": "interval-a.svg"
+      "location": "音符1－音符4",
+      "answer": "上行・短2度"
     },
     {
-      "label": "B",
-      "location": "1：第3小節・音符1個目 → 2：第3小節・音符2個目",
-      "answer": "上行・完全4度",
-      "explanation": "G4 → C5。5半音分で、上行・完全4度です。",
-      "svg": "interval-b.svg"
+      "location": "音符6－音符7",
+      "answer": "上行・完全4度"
     },
     {
-      "label": "C",
-      "location": "1：第5小節・音符1個目 → 2：第5小節・音符4個目",
-      "answer": "上行・短3度",
-      "explanation": "D5 → F5。3半音分で、上行・短3度です。",
-      "svg": "interval-c.svg"
+      "location": "音符12－音符15",
+      "answer": "上行・短3度"
     },
     {
-      "label": "D",
-      "location": "1：第6小節・音符3個目 → 2：第7小節・音符1個目",
-      "answer": "下行・短6度",
-      "explanation": "F5 → A4。8半音分で、下行・短6度です。",
-      "svg": "interval-d.svg"
+      "location": "音符19－音符20",
+      "answer": "下行・短6度"
     }
   ],
-  "rewriteSvg": "rewrite-three-four.svg",
-  "blankSvg": "blank-eight.svg"
+  "rewrites": [
+    {
+      "id": "rewrite-three-four",
+      "meter": "3/4",
+      "factor": "1/2",
+      "svg": "rewrite-three-four.svg",
+      "blankSvg": "blank-three-four.svg"
+    },
+    {
+      "id": "rewrite-three-eight",
+      "meter": "3/8",
+      "factor": "1/4",
+      "svg": "rewrite-three-eight.svg",
+      "blankSvg": "blank-three-eight.svg"
+    }
+  ]
 }
