@@ -1,0 +1,72 @@
+{
+  "notes": [
+    {
+      "label": "①",
+      "location": "第1小節・音符1個目",
+      "answer": "A",
+      "svg": "note-a.svg"
+    },
+    {
+      "label": "②",
+      "location": "第2小節・音符1個目",
+      "answer": "B♭",
+      "svg": "note-b.svg"
+    },
+    {
+      "label": "③",
+      "location": "第3小節・音符1個目",
+      "answer": "G",
+      "svg": "note-c.svg"
+    },
+    {
+      "label": "④",
+      "location": "第3小節・音符2個目",
+      "answer": "C",
+      "svg": "note-d.svg"
+    },
+    {
+      "label": "⑤",
+      "location": "第5小節・音符1個目",
+      "answer": "D",
+      "svg": "note-e.svg"
+    },
+    {
+      "label": "⑥",
+      "location": "第8小節・音符1個目",
+      "answer": "F",
+      "svg": "note-f.svg"
+    }
+  ],
+  "intervals": [
+    {
+      "label": "A",
+      "location": "1：第1小節・音符1個目 → 2：第2小節・音符1個目",
+      "answer": "上行・短2度",
+      "explanation": "A4 → B♭4。1半音分で、上行・短2度です。",
+      "svg": "interval-a.svg"
+    },
+    {
+      "label": "B",
+      "location": "1：第3小節・音符1個目 → 2：第3小節・音符2個目",
+      "answer": "上行・完全4度",
+      "explanation": "G4 → C5。5半音分で、上行・完全4度です。",
+      "svg": "interval-b.svg"
+    },
+    {
+      "label": "C",
+      "location": "1：第5小節・音符1個目 → 2：第5小節・音符4個目",
+      "answer": "上行・短3度",
+      "explanation": "D5 → F5。3半音分で、上行・短3度です。",
+      "svg": "interval-c.svg"
+    },
+    {
+      "label": "D",
+      "location": "1：第6小節・音符3個目 → 2：第7小節・音符1個目",
+      "answer": "下行・短6度",
+      "explanation": "F5 → A4。8半音分で、下行・短6度です。",
+      "svg": "interval-d.svg"
+    }
+  ],
+  "rewriteSvg": "rewrite-three-four.svg",
+  "blankSvg": "blank-eight.svg"
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "notation-widget-lessons-v1",
+  "lessons": [
+    {
+      "id": "pd001-rinaldo",
+      "title": "ヘンデル《リナルド》より「私を泣かせてください」",
+      "key": "f-major",
+      "exampleKey": "g-major",
+      "source": {
+        "svg": "lessons/pd001-rinaldo.svg",
+        "alt": "出題楽譜：ヘンデル《リナルド》より「私を泣かせてください」の旋律8小節。高音部譜表、2分の3拍子。",
+        "caption": "PD-001 · 旋律8小節。楽譜を見て調を判断してください。",
+        "credit": "原資料：Friedrich Chrysander編（1874年）、印刷譜61ページ。"
+      }
+    }
+  ]
+}
