@@ -1,8 +1,8 @@
 import {createLessonModel,keyNames} from './lesson-model.mjs';
 import {prepareScoreImage} from './score-presentation.mjs';
-import {lessonRelations,signatureLabel,fifthsWindow,intervalAnswer,keyAndToneRows,fifthsReference,RHYTHM_SOURCE,rhythmCardSteps,formatExampleKeys} from './six-review-support.mjs';
+import {lessonRelations,signatureLabel,fifthsWindow,intervalAnswer,keyAndToneRows,fifthsReference,RHYTHM_SOURCE,rhythmCardSteps,formatExampleKeys} from './six-review-support.mjs?rev=hints-20261027-qc';
 import {noteNames} from './note-names.mjs';
-const root=document.getElementById('lesson'),rev='hints-20261027';
+const root=document.getElementById('lesson'),rev='hints-20261027-qc';
 const assets=new URL('../assets/',import.meta.url),scores=new URL('lessons/pd001-review/',assets),owned=[];
 const full={clef:true,keySignature:true,notes:true},empty={clef:false,keySignature:false,notes:false};
 function n(tag,text,cls){const el=document.createElement(tag);if(text!==undefined)el.textContent=text;if(cls)el.className=cls;return el;}
