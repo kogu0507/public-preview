@@ -5,6 +5,14 @@
 .print-controls button,.hint-controls button,.hint-controls select{font:inherit;border:1px solid #a4baac;background:white;color:#235e4a;border-radius:5px;padding:6px 10px;cursor:pointer}
 .hint-controls{display:grid;grid-template-columns:minmax(0,1fr);max-width:25rem}.hint-controls button,.hint-controls select{min-height:44px;width:100%;text-align:left}.hint-controls select{padding-right:30px;background:#fff}.screen-help h4{margin:12px 0 0}.hint-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
 .format-example{border:1px solid #dce4dc;padding:12px;border-radius:6px;background:#fbfcfa}
+.concept-hint{margin:12px 0}.concept-hint p{line-height:1.7}
+.fifths-language-label{display:block;margin-top:12px;font-size:.9rem}
+#fifths-language,.example-select-label select{font:inherit;background:white;color:#235e4a;border:1px solid #a4baac;border-radius:5px;padding:8px 12px;min-height:44px;max-width:100%}
+#fifths-language{display:block;margin:6px 0}
+.example-select-label{display:grid;gap:6px;font-size:.9rem;margin:8px 0 12px;max-width:25rem}
+.example-family[hidden]{display:none!important}.example-family h4{margin:14px 0 8px}.example-family p{font-size:.85rem}
+.rewrite-controls{display:flex;margin:8px 0 18px}.rewrite-controls button{font:inherit;min-height:44px;border:1px solid #a4baac;background:white;color:#235e4a;border-radius:5px;padding:8px 12px;cursor:pointer}
+.rewrite-controls button[aria-pressed=true]{background:#e3eee4;border-color:#235e4a}
 .format-example h3{margin:0 0 8px}.format-example p{font-size:.85rem;margin:8px 0}.format-example figure{margin:6px 0}
 .source-card>figure{margin:10px 0}.task-block .screen-score{margin:12px 0}
 .rewrite-task,.rewrite-answer{break-inside:avoid}.rewrite-task img,.rewrite-answer img{width:100%}
@@ -25,7 +33,9 @@
 @page{size:A4;margin:14mm}
 @media print{
  :root{font-size:10pt;line-height:1.55;background:white}main{max-width:none}
- .review-banner,.print-controls,.screen-help,.screen-score{display:none!important}
+ .review-banner,.print-controls,.screen-help,.screen-score,.example-select-label{display:none!important}
+ .format-example .example-family[data-example-family=major]{display:block!important}
+ .format-example .example-family[data-example-family=minor]{display:none!important}
  #lesson[data-edition=six]>section{break-inside:auto;break-before:page;border:0;border-radius:0;padding:0;margin:0}
  #lesson[data-edition=six]>#question-1{break-before:auto}
  .question-source{break-inside:avoid;margin:4pt 0 0}.question-source img{max-height:34mm;object-fit:contain}.source-toolbar{min-height:0;font-size:7pt}.question-source.repeated-reference{display:none}.source-link{font-size:7pt;margin:4pt 0}

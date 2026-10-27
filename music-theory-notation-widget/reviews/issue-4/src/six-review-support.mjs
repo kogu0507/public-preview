@@ -14,6 +14,12 @@ export function fifthsReference(){return Array.from({length:15},(_,i)=>{
 });}
 
 export function signatureLabel(key){return key.fifths===0?'調号なし':`${key.fifths<0?'♭':'♯'}${Math.abs(key.fifths)}つ`;}
+export function formatExampleKeys(questionKey){
+ const fifths=questionKey.fifths===1?-1:1;
+ const major=KEYS.find(k=>k.fifths===fifths&&k.family==='major'),minor=KEYS.find(k=>k.fifths===fifths&&k.family==='minor');
+ if(!major||!minor)throw Error('書式例の調が見つかりません。');
+ return {major,minor};
+}
 
 // Five-column layout adapted from key-signature-trainer's related-key-diagram.
 // Names and signatures come from this widget's existing spelling table.
