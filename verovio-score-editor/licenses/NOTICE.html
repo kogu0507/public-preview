@@ -1,0 +1,23 @@
+<!doctype html><html lang="ja"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ライセンスとソース — Verovio Score Editor</title>
+<style>body{font:16px/1.8 system-ui,sans-serif;max-width:850px;margin:32px auto;padding:16px;overflow-wrap:anywhere}li{margin:10px 0}code{white-space:pre-wrap}</style>
+<h1>ライセンス・ソース・ライブラリの差し替え</h1>
+<p><a href="../">エディタへ戻る</a></p>
+<h2>Verovio 6.3.0</h2>
+<p>Copyright © Laurent Pugin and the Verovio contributors. このアプリはVerovioを使用しています。Verovioとその利用はLGPL-3.0-or-laterの対象です。</p>
+<ul><li><a href="LGPL-3.0.txt">GNU LGPL v3</a>／<a href="GPL-3.0.txt">GNU GPL v3</a></li>
+<li><a href="https://github.com/rism-digital/verovio/tree/425dd7b6ba26edcecbe345c10b15586d095743d9">対応するVerovioソース（425dd7b / version-6.3.0）</a>／<a href="https://github.com/rism-digital/verovio/archive/425dd7b6ba26edcecbe345c10b15586d095743d9.zip">ソースZIP</a>。ビルド手順はそのソース内emscriptenと公式Reference bookにあります。</li>
+<li>実行用の <a href="../vendor/verovio-module.mjs">verovio-module.mjs</a> と <a href="../vendor/verovio.mjs">verovio.mjs</a> は、npm verovio@6.3.0の同名ファイルを改変せず同梱しています。WASMとフォント資源はモジュール内に組み込まれています。CDNを読みません。</li></ul>
+<p>ライブラリ部分の改変、および改変をデバッグするためのリバースエンジニアリングを制限しません。エディタ一式をローカルに保存し、vendorの2ファイルを同じ公開APIを持つ変更版へ差し替え、静的HTTPサーバーで配信すると、アプリ本体の再ビルドなしで変更版を利用できます。公開用は /public-preview/verovio-score-editor/ のパスに配置してください。ライブラリの変更・再配布にはそのライセンスの条件が適用されます。</p>
+<h2>内蔵フォント — SIL Open Font License 1.1</h2>
+<p><a href="Verovio-fonts.txt">Verovioのフォント一覧・著者情報</a>。以下は配布元の通知とライセンスです。フォントファイルを変更していません。</p>
+<ul><li><a href="Leipzig-OFL.txt">Leipzig</a> — Etienne Darbellay, Jean-Francois Marti, Laurent Pugin, Klaus Rettinghaus</li>
+<li><a href="Bravura-OFL.txt">Bravura</a>／<a href="Petaluma-OFL.txt">Petaluma</a> — Steinberg Media Technologies</li>
+<li><a href="Gootville-OFL.txt">Gootvilleの通知</a> — Grzegorz Pruchniakowski（<a href="OFL-1.1.txt">OFL本文</a>）</li>
+<li><a href="Leland-OFL.txt">Leland</a> — MuseScore</li><li><a href="Liberation-OFL.txt">Liberation</a> — Liberation Fonts contributors</li></ul>
+<h2>内蔵ライブラリ・配信用コード</h2>
+<ul><li>JSONxx: <a href="JSON-MIT.txt">MIT</a>、<a href="JSONxx-header.txt">著者通知</a></li>
+<li>MidiFile: <a href="MidiFile-BSD.txt">BSD-2-Clause</a>、<a href="MidiFile-header.txt">著者通知</a></li>
+<li>pugixml: <a href="pugixml-source.txt">MIT通知</a></li><li>MINIZ-CPP: <a href="Miniz-MIT.txt">MIT通知</a></li>
+<li>Surge Tuning Library: <a href="Tuning-Library-MIT.txt">MIT</a></li><li>Emscripten生成コード: <a href="Emscripten-MIT-NCSA.txt">MIT/NCSA</a></li><li>Vite生成コード: <a href="Vite-MIT.txt">MITおよび配布元の通知</a></li></ul>
+<p>これらのライブラリのソースは上記Verovioソースにも含まれます。<a href="provenance.json">取得元・照合情報</a>。</p>
+<h2>データの扱い</h2><p>MEIや編集中テキストを外部APIへ送信しません。ブラウザ内で処理し、保存は端末へダウンロードする方式です。ページを配信するGitHub Pagesへの通常の資産取得は行います。自動保存やクラウド同期はありません。</p></html>

@@ -1,0 +1,58 @@
+{
+  "verovio": "6.3.0",
+  "sourceCommit": "425dd7b6ba26edcecbe345c10b15586d095743d9",
+  "source": "https://github.com/rism-digital/verovio/tree/425dd7b6ba26edcecbe345c10b15586d095743d9",
+  "npm": "verovio@6.3.0",
+  "notices": [
+    {
+      "name": "GPL-3.0.txt",
+      "source": "https://github.com/rism-digital/verovio/blob/version-6.3.0/COPYING",
+      "sha": "e72bfddabc15be5718a7cc061ac10e47741d8219"
+    },
+    {
+      "name": "LGPL-3.0.txt",
+      "source": "https://github.com/rism-digital/verovio/blob/version-6.3.0/COPYING.LESSER",
+      "sha": "153d416dc8d2d60076698ec3cbfce34d91436a03"
+    },
+    {
+      "name": "Verovio-fonts.txt",
+      "source": "https://github.com/rism-digital/verovio/blob/version-6.3.0/fonts/README.md",
+      "sha": "85018a859b27a69d795648022da0629b5cc25603"
+    },
+    {
+      "name": "Leipzig-OFL.txt",
+      "source": "https://github.com/rism-digital/leipzig/blob/main/LICENSE.txt",
+      "sha": "9cb387723ea5009cf9793f5cf5ad2edebb0b939e"
+    },
+    {
+      "name": "Bravura-OFL.txt",
+      "source": "https://github.com/steinbergmedia/bravura/blob/master/LICENSE.txt",
+      "sha": "9b2e7b22f70a06559ca50325f47c9da792df9dd0"
+    },
+    {
+      "name": "Petaluma-OFL.txt",
+      "source": "https://github.com/steinbergmedia/petaluma/blob/master/redist/OFL.txt",
+      "sha": "6abc56ead589d73d83c18e19c3f6d00c7feb2990"
+    },
+    {
+      "name": "Leland-OFL.txt",
+      "source": "https://github.com/MuseScoreFonts/Leland/blob/main/LICENSE.txt",
+      "sha": "866158aa9122a42366577fcb092823472d7b7a94"
+    },
+    {
+      "name": "Liberation-OFL.txt",
+      "source": "https://github.com/liberationfonts/liberation-fonts/blob/main/LICENSE",
+      "sha": "aba73e8a403084a93a245ca00e4a0db007886e0a"
+    },
+    {
+      "name": "JSON-MIT.txt",
+      "source": "https://github.com/rism-digital/verovio/blob/version-6.3.0/include/json/LICENSE",
+      "sha": "5c04b5e4b700172b4214c8e3e403516587ff2f0a"
+    },
+    {
+      "name": "Tuning-Library-MIT.txt",
+      "source": "https://github.com/rism-digital/verovio/blob/version-6.3.0/include/tuning-library/LICENSE.md",
+      "sha": "64d1d0775e62eb6ee14eb1acf3bb2b6d11ef4614"
+    }
+  ]
+}

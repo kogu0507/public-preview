@@ -1,0 +1,11 @@
+// -*- mode: c++; c-basic-offset: 4; -*-
+
+// Author: Hong Jiang <hong@hjiang.net>
+// Contributors:
+//   Sean Middleditch <sean@middleditch.us>
+//   rlyeh <https://github.com/r-lyeh>
+
+// Modification: Laurent Pugin <https://github.com/lpugin>
+//    adding precision_ member to Value for ostream precision control
+
+
