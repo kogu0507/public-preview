@@ -1,15 +1,64 @@
 <!doctype html>
-<html lang="ja"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verovio 楽譜・譜例エディタ</title>  <script type="module" crossorigin src="/public-preview/verovio-score-editor/assets/index-tUXQvEEP.js"></script>
-  <link rel="stylesheet" crossorigin href="/public-preview/verovio-score-editor/assets/index-E0z1ZesF.css">
+<html lang="ja">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Verovio Score Editor</title>  <script type="module" crossorigin src="/public-preview/verovio-score-editor/assets/index-1mSHXZf4.js"></script>
+  <link rel="stylesheet" crossorigin href="/public-preview/verovio-score-editor/assets/index-DNxUEpG4.css">
 </head>
-<body><header><p class="eyebrow">VEROVIO SCORE EDITOR · v0.1</p><h1>楽譜・譜例エディタ</h1><p>MEIを編集して、楽譜をSVGで書き出す。</p></header>
-<main><nav role="tablist" aria-label="編集工程"></nav><p id="status" role="status" aria-live="polite">Verovioを準備しています…</p>
-<p id="draft-notice" role="status" hidden>編集中のテキストがあります。まだプレビューに適用されていません。プロジェクト保存には含まれます。</p>
-<details class="file-help"><summary>スマホでの編集・保存について</summary><p>入力後に各「適用」でプレビューを更新します。終了・再読込の前にプロジェクトを保存してください。スマホの保存先はダウンロード一覧／「ファイル」アプリ等で確認します。新しいタブに画像が開いた場合は、ブラウザの共有・保存メニューを使ってください。元の編集タブは残ります。保存できない場合は、OS標準ブラウザで開いて再試行してください。保存完了や保存先をこのアプリから確認することはできません。Android Chrome・iOS Safariの実機動作は未確認です。</p></details>
-<div class="workspace"><section id="controls" aria-label="編集パネル">
-<section id="settings" role="tabpanel"><h2>設定</h2><button id="save-project">プロジェクトを保存</button><label>プロジェクトを開く<input id="project-file" type="file" accept=".json,application/json"></label><p>適用済みデータと未適用テキストをまとめて保存します。</p><label>プリセット<select id="preset"><option value="default">default — 基本の楽譜</option></select></label><button id="load-preset">プリセットを読み直す</button><p>読み直すとメモリ内の編集内容を初期化します。</p><label for="config">config.json（画面設定）</label><textarea id="config" spellcheck="false"></textarea><button id="apply-config">設定を適用</button></section>
-<section id="import" role="tabpanel" hidden><h2>MEIを読み込む</h2><label>MEIファイル<input id="file" type="file" accept=".mei,.xml,application/xml,text/xml"></label><div id="drop" tabindex="0">ここにMEIファイルをドロップ</div><label for="paste">MEI文字列を貼り付け</label><textarea id="paste" spellcheck="false"></textarea><button id="apply-paste">貼り付けたMEIを読み込む</button></section>
-<section id="edit" role="tabpanel" hidden><h2>MEI編集</h2><label for="mei">MEIソース</label><textarea id="mei" spellcheck="false"></textarea><button id="apply-mei">MEIを反映</button><p>音楽内容の正本はこのMEIです。変更後に反映してください。</p></section>
-<section id="css-panel" role="tabpanel" hidden><h2>CSS調整</h2><label for="css">score.css</label><textarea id="css" spellcheck="false"></textarea><button id="apply-css">CSSを反映</button><p>CSSは各SVGの内部に埋め込みます。外部フォント・画像は同梱しません。</p></section>
-<section id="export" role="tabpanel" hidden><h2>SVG・PNG書き出し</h2><label for="options">options.json（Verovio設定）</label><textarea id="options" spellcheck="false"></textarea><button id="apply-options">描画設定を適用</button><div id="downloads"></div><h3>PNG保存</h3><label>出力倍率<select id="png-scale"><option value="1">1x</option><option value="2" selected>2x</option><option value="3">3x</option></select></label><label>背景<select id="png-background"><option value="white">白</option><option value="transparent">透明</option></select></label><div id="png-downloads"></div><p>最後に正常に適用したSVGから生成します。倍率はピクセル寸法の倍率です。PDF印刷・MIDI再生・音符操作盤・exe化は未実装です。</p></section>
-</section><section class="preview-area" aria-label="SVGプレビュー"><div class="preview-heading"><h2>プレビュー</h2><span id="page-count"></span></div><p class="preview-help">表示倍率はconfigのpreviewZoomで調整できます。拡大時は譜面内をスクロールしてください。譜面のレイアウトと書き出し寸法は変わりません。</p><div id="preview" tabindex="0" role="region" aria-label="楽譜ページ（スクロール可能）"></div></section></div></main><footer>終了前にプロジェクトを保存してください。未保存の内容は終了すると失われます。元のプリセットファイルは変更されません。<p>Verovio 6.3.0 — LGPL-3.0-or-later／内蔵フォント SIL OFL。<a href="./licenses/NOTICE.html">ライセンス・ソースと差し替え方法</a></p></footer></body></html>
+<body>
+<header class="app-header">
+  <div class="brand">Verovio <span>Score Editor</span></div>
+  <nav class="menubar" aria-label="メインメニュー">
+    <details id="file-menu" class="menu">
+      <summary>ファイル</summary>
+      <div class="menu-panel">
+        <button id="new-score">新規作成 — 基本サンプル</button>
+        <label>MEIファイルを開く<input id="file" type="file" accept=".mei,.xml,application/xml,text/xml"></label>
+        <button id="open-paste">MEIテキストを読み込む…</button>
+        <div id="drop" tabindex="0">MEIファイルをドロップ</div>
+        <hr>
+        <label>プロジェクトを開く<input id="project-file" type="file" accept=".json,application/json"></label>
+        <button id="save-project">プロジェクトを保存</button>
+        <p>未適用テキストも保存します。終了・再読込前に保存してください。</p>
+        <details class="file-help"><summary>スマホの保存先について</summary><p>ダウンロード一覧／ファイルアプリで確認してください。別タブで開いた場合はブラウザの共有・保存を使い、編集タブへ戻ります。保存完了をこのアプリから確認することはできません。Android Chrome／iOS Safari実機は未確認です。</p></details>
+      </div>
+    </details>
+    <details id="export-menu" class="menu">
+      <summary>書き出し</summary>
+      <div class="menu-panel export-panel">
+        <h2>ページ別SVG</h2><div id="downloads"></div>
+        <h2>ページ別PNG</h2>
+        <div class="png-settings">
+          <label>倍率<select id="png-scale"><option value="1">1x</option><option value="2" selected>2x</option><option value="3">3x</option></select></label>
+          <label>背景<select id="png-background"><option value="white">白</option><option value="transparent">透明</option></select></label>
+        </div>
+        <div id="png-downloads"></div>
+        <p>最後に正常適用したページを保存します。表示倍率・分割位置は書き出しに影響しません。PNG倍率は画素数の倍率です。</p>
+      </div>
+    </details>
+    <button id="open-config">設定</button>
+  </nav>
+</header>
+<main>
+  <div class="status-line"><span id="status-kind" data-kind="busy">準備中</span><p id="status" role="status" aria-live="polite">Verovioを準備しています…</p><span id="draft-notice" hidden>未適用の変更あり</span></div>
+  <div id="workbench">
+    <section class="preview-area" aria-label="楽譜プレビュー">
+      <div class="preview-toolbar"><h1>プレビュー <span id="page-count"></span></h1>
+        <div class="zoom-control"><label for="view-zoom">表示倍率</label><button id="zoom-out" aria-label="表示を縮小">−</button><input id="view-zoom" type="number" min="25" max="200" step="any" value="100" aria-label="表示倍率（パーセント）"><span>%</span><button id="zoom-in" aria-label="表示を拡大">＋</button></div>
+      </div>
+      <div id="preview" tabindex="0" role="region" aria-label="楽譜ページ（縦横スクロール可能）"></div>
+    </section>
+    <div id="splitter" role="separator" tabindex="0" aria-label="プレビューとエディタの高さ" aria-orientation="horizontal" aria-valuemin="160" aria-valuemax="600" aria-valuenow="300"><span></span></div>
+    <section id="controls" class="editor-area" aria-label="テキストエディタ">
+      <div class="editor-toolbar"><nav id="editor-tabs" role="tablist" aria-label="テキストの種類"></nav><div class="update-control"><span id="apply-target">適用対象：MEI</span><button id="update-preview">プレビュー更新</button></div></div>
+      <section id="panel-mei" role="tabpanel"><label for="mei" class="sr-only">MEIソース</label><textarea id="mei" spellcheck="false" wrap="off" aria-label="MEIソース"></textarea></section>
+      <section id="panel-options" role="tabpanel" hidden><label for="options" class="sr-only">Options JSON</label><textarea id="options" spellcheck="false" wrap="off" aria-label="Options JSON"></textarea></section>
+      <section id="panel-css" role="tabpanel" hidden><label for="css" class="sr-only">SVG用CSS</label><textarea id="css" spellcheck="false" wrap="off" aria-label="SVG用CSS"></textarea></section>
+      <section id="panel-config" role="tabpanel" hidden><label for="config" class="sr-only">Config JSON</label><textarea id="config" spellcheck="false" wrap="off" aria-label="Config JSON"></textarea></section>
+    </section>
+  </div>
+</main>
+<dialog id="paste-dialog" aria-labelledby="paste-title">
+  <h2 id="paste-title">MEIテキストを読み込む</h2><label for="paste">MEI文字列</label><textarea id="paste" spellcheck="false" wrap="off"></textarea>
+  <p id="paste-error" class="error" role="alert" hidden></p><div class="dialog-actions"><button id="close-paste">キャンセル</button><button id="apply-paste">読み込む</button></div><p>正常に描画できることを確認した後、MEIを置き換える確認を表示します。</p>
+</dialog>
+<footer><span>MEI直接編集 · 未保存の作業は終了時に失われます。</span><a href="./licenses/NOTICE.html">Verovio 6.3.0／ライセンス</a></footer>
+</body></html>
