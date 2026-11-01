@@ -38,6 +38,7 @@ button:focus-visible,input:focus-visible,summary:focus-visible,textarea:focus-vi
 .legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:.76rem;color:#596c7c;margin-top:14px}.legend i{display:inline-block;width:11px;height:11px;background:#d4ba6c;border:1px solid #8b762b;vertical-align:-1px;margin-right:4px}.legend i.outline{background:white;outline:2px solid #263c52;border:0}
 details{margin-top:20px}summary{cursor:pointer;font-weight:600;padding:7px 0}textarea{display:block;width:100%;min-height:230px;padding:12px;border:1px solid #b8c7d4;border-radius:8px;font-family:ui-monospace,monospace;font-size:.82rem;line-height:1.6;resize:vertical}
 #dataMessage{font-size:.85rem;min-height:1.5em}.error{color:#a52b25}.json-actions{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}.footer{margin-top:22px;font-size:.78rem}
+[hidden]{display:none!important}.share{border-top:1px solid #dbe3e9;margin-top:16px;padding-top:14px}.share p{font-size:.8rem}.share textarea{min-height:76px;font-size:.72rem;overflow-wrap:anywhere}.share-message{min-height:1.5em;color:#445d72}
 @media(max-width:560px){main{padding:15px 12px 30px}h1{font-size:1.5rem;margin-bottom:7px}.intro{font-size:.78rem;line-height:1.7;margin-bottom:7px}.panel{padding:12px;margin-top:12px}.controls{gap:10px}.toggles{margin-top:8px;gap:5px 13px;font-size:.85rem}.volume{font-size:.75rem}.volume input{width:80px}#status{margin-top:6px;font-size:.76rem}.section-head{margin-bottom:9px}.section-head>span{font-size:.7rem}.score{--label-width:78px;gap:2px}.lane-label{font-size:.7rem}.limb-label{font-size:.64rem}.cell{height:35px}.cell.separator{height:42px}.cell.active::before{width:9px;height:9px}.cell.hihat.active::before,.cell.crash.active::before{width:7px;height:7px}.score-foot{font-size:.68rem}.beat-label{font-size:.72rem}.kit{gap:14px;padding:6px}.pad{min-height:101px}.pad.bass{min-height:88px;width:72%}.pad .name{font-size:.94rem}.pad .limb{font-size:.73rem;margin-bottom:3px}.pad .key{font-size:.66rem;margin-top:3px}.legend{font-size:.68rem;gap:10px;margin-top:12px}.layout-control{font-size:.75rem}.layout-control select{font-size:.78rem;max-width:140px}.hint{font-size:.75rem}#patternName{font-size:.8rem;margin-bottom:8px}}
 </style>
 </head>
@@ -71,6 +72,12 @@ details{margin-top:20px}summary{cursor:pointer;font-weight:600;padding:7px 0}tex
  <p class="hint" id="jsonGuide">JSONで<ruby>拍子<rt>ひょうし</rt></ruby>・<ruby>楽器<rt>がっき</rt></ruby>・<ruby>担当<rt>たんとう</rt></ruby>・メモを<ruby>設定<rt>せってい</rt></ruby>できます。<ruby>反映<rt>はんえい</rt></ruby>すると<ruby>停止<rt>ていし</rt></ruby>します。<ruby>形式<rt>けいしき</rt></ruby>は<ruby>同梱<rt>どうこん</rt></ruby>の「<ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>.txt」を<ruby>参照<rt>さんしょう</rt></ruby>してください。</p>
  <label for="patternInput"><ruby>教材<rt>きょうざい</rt></ruby>のJSON</label><textarea id="patternInput" spellcheck="false" aria-describedby="jsonGuide"></textarea>
  <div class="json-actions"><button type="button" id="applyPattern"><ruby>反映<rt>はんえい</rt></ruby></button><span class="hint">1<ruby>小節<rt>しょうせつ</rt></ruby>のみ · <ruby>変更<rt>へんこう</rt></ruby>は<ruby>保存<rt>ほぞん</rt></ruby>されません</span></div><p id="dataMessage" role="status"></p>
+ <div class="share">
+  <button type="button" id="copyLesson"><ruby>教材<rt>きょうざい</rt></ruby>リンクをコピー</button>
+  <p class="hint"><ruby>反映済<rt>はんえいず</rt></ruby>みの<ruby>教材<rt>きょうざい</rt></ruby>と<ruby>現在<rt>げんざい</rt></ruby>のテンポを<ruby>含<rt>ふく</rt></ruby>みます。<ruby>音量<rt>おんりょう</rt></ruby>は<ruby>共有<rt>きょうゆう</rt></ruby>しません。</p>
+  <p id="shareMessage" class="share-message" role="status"></p>
+  <div id="shareFallback" hidden><label for="shareOutput"><ruby>手動<rt>しゅどう</rt></ruby>コピー<ruby>用<rt>よう</rt></ruby>リンク</label><textarea id="shareOutput" readonly rows="3" aria-describedby="shareMessage"></textarea></div>
+ </div>
 </details>
 <p class="footer">BPMは<ruby>四分音符<rt>しぶおんぷ</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さです。<ruby>画面<rt>がめん</rt></ruby>を<ruby>切<rt>き</rt></ruby>り<ruby>替<rt>か</rt></ruby>えると<ruby>停止<rt>ていし</rt></ruby>します。<ruby>採点<rt>さいてん</rt></ruby>はありません。</p>
 </main>
@@ -89,6 +96,8 @@ const DEFAULT_PATTERN={
 };
 const READINGS={'図形譜':'ずけいふ','教材設定':'きょうざいせってい','四分音符':'しぶおんぷ','八分音符':'はちぶおんぷ','音符':'おんぷ','再生':'さいせい','停止':'ていし','準備':'じゅんび','中断':'ちゅうだん','開始':'かいし','画面':'がめん','音量':'おんりょう','入力':'にゅうりょく','手本':'てほん','打点':'だてん','拍目':'はくめ','位置':'いち','楽器':'がっき','音色':'ねいろ','担当':'たんとう','設定':'せってい','反映':'はんえい','教材':'きょうざい','保存':'ほぞん','表示':'ひょうじ','文字':'もじ','以内':'いない','整数':'せいすう','指定':'してい','配列':'はいれつ','項目':'こうもく','確認':'かくにん','重複':'ちょうふく','必要':'ひつよう','対応':'たいおう','変更':'へんこう','同':'おな','使用':'しよう','現在':'げんざい','元':'もと','形式':'けいしき','小節':'しょうせつ','分割':'ぶんかつ','実機配置':'じっきはいち','配置':'はいち','左右':'さゆう','左':'ひだり','右':'みぎ','順序':'じゅんじょ','数':'かず','音':'おと','拍':'はく','中':'ちゅう','例':'れい','操作':'そうさ','再開':'さいかい','上限':'じょうげん','連続':'れんぞく','部分':'ぶぶん','未定義':'みていぎ','基準':'きじゅん','分母':'ぶんぼ','戻':'もど','正常':'せいじょう','切替':'きりかえ','準備中':'じゅんびちゅう','対象':'たいしょう','受':'う','付':'つ','負':'ふ','秒':'びょう'};
 Object.assign(READINGS,{'進':'すす','反復':'はんぷく','最初':'さいしょ','半角小文字':'はんかくこもじ','数字':'すうじ','分子':'ぶんし','元':'もと','使':'つか','方':'かた','空':'から','小文字':'こもじ','定義':'ていぎ'});
+Object.assign(READINGS,{'共有':'きょうゆう','復元':'ふくげん','形式':'けいしき','読込':'よみこみ','長':'なが','超':'こ','未対応':'みたいおう','圧縮':'あっしゅく','手動':'しゅどう','選択':'せんたく','新':'あたら','完了':'かんりょう','検証':'けんしょう','数値':'すうち','構造':'こうぞう','転送':'てんそう','失敗':'しっぱい','成功':'せいこう','先':'さき','利用':'りよう','可能':'かのう','済':'ず','既定':'きてい','生成':'せいせい'});
+Object.assign(READINGS,{'保持':'ほじ','自動':'じどう','短':'みじか'});
 const readingKeys=Object.keys(READINGS).sort((a,b)=>b.length-a.length);
 const $=id=>document.getElementById(id);
 function plain(value){return typeof value==='string'?value:value.map(s=>typeof s==='string'?s:s.text).join('');}
@@ -99,6 +108,9 @@ let pattern=structuredClone(DEFAULT_PATTERN),audio,master,noise,playing=false,st
 let timer=0,frame=0,bpm=60,anchorTime=0,anchorPhase=0,nextTick=0,currentStep=-1;
 const voices=new Set(),hitTimers=new Map(),pads=new Map(),cells=[],memoCells=[];
 let instruments=new Map(),keyMap=new Map();
+const SHARE_BASE='https://kogu0507.github.io/public-preview/dr-practice/';
+const SHARE_LIMITS=Object.freeze({url:8192,bytes:6000,version:1});
+let shareGeneration=0,copying=false;
 function fail(text){throw new Error(text);}
 function object(value){return value!==null&&typeof value==='object'&&!Array.isArray(value);}
 function fields(value,allowed){if(Object.keys(value).some(k=>!allowed.includes(k)))fail('未対応の項目があります。使い方.txtで形式を確認してください。');}
@@ -141,6 +153,72 @@ function validatePattern(text){
  return result;
 }
 function make(tag,className,value){const el=document.createElement(tag);if(className)el.className=className;if(value!==undefined)write(el,value);return el;}
+// v1 is deliberately uncompressed UTF-8 JSON. No decompressor or expansion path exists.
+function encodeBase64URL(bytes){let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function decodeBase64URL(encoded){
+ if(!/^[A-Za-z0-9_-]+$/.test(encoded)||encoded.length%4===1)fail('共有リンクのBase64URL形式を確認してください。');
+ if(Math.floor(encoded.length*3/4)>SHARE_LIMITS.bytes)fail('共有リンクの復元データは6,000バイト以内にしてください。');
+ let binary;try{binary=atob(encoded.replace(/-/g,'+').replace(/_/g,'/')+'='.repeat((4-encoded.length%4)%4));}catch{fail('共有リンクのBase64URL形式を確認してください。');}
+ const bytes=Uint8Array.from(binary,c=>c.charCodeAt(0));if(bytes.length>SHARE_LIMITS.bytes)fail('共有リンクの復元データは6,000バイト以内にしてください。');
+ if(encodeBase64URL(bytes)!==encoded)fail('共有リンクのBase64URL形式を確認してください。');
+ return bytes;
+}
+function shareBaseURL(current=location.href){
+ const url=new URL(current),host=url.hostname.toLowerCase();
+ const local=host==='localhost'||host.endsWith('.localhost')||host.endsWith('.local')||host.includes(':')||/^(0\.|10\.|127\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.)/.test(host)||!host.includes('.');
+ if(url.protocol!=='https:'||local)return SHARE_BASE;
+ url.search='';url.hash='';url.username='';url.password='';return url.href;
+}
+function validateSharedLesson(data){
+ if(!object(data))fail('共有リンクのJSON構造を確認してください。');
+ if(data.v!==SHARE_LIMITS.version)fail('未対応の共有バージョンです。');
+ fields(data,['v','bpm','lesson']);
+ if(!Object.hasOwn(data,'lesson'))fail('共有リンクに教材がありません。');
+ if(!Number.isInteger(data.bpm)||data.bpm<40||data.bpm>160)fail('共有テンポは40～160の整数で指定してください。');
+ return {lesson:validatePattern(JSON.stringify(data.lesson)),bpm:data.bpm};
+}
+function createLessonURL(lesson=pattern,tempo=bpm,current=location.href){
+ // Reuse the editor's validator before serializing. Never share an invalid or stale textarea draft.
+ const valid=validateSharedLesson({v:1,bpm:tempo,lesson});
+ const bytes=new TextEncoder().encode(JSON.stringify({v:1,bpm:valid.bpm,lesson:valid.lesson}));
+ if(bytes.length>SHARE_LIMITS.bytes)fail('共有データが6,000バイトを超えました。教材の文字やメモを短くしてください。');
+ const result=shareBaseURL(current)+'#lesson=1.'+encodeBase64URL(bytes);
+ if(result.length>SHARE_LIMITS.url)fail('共有URLが8,192文字を超えました。教材を短くしてください。');
+ return result;
+}
+function parseLessonHash(hash){
+ if(!hash.startsWith('#lesson='))return null;
+ if(hash.length>SHARE_LIMITS.url)fail('共有URLが8,192文字を超えました。');
+ const payload=hash.slice(8),dot=payload.indexOf('.');
+ if(dot<0||payload.slice(0,dot)!=='1')fail('未対応の共有形式です。圧縮形式には対応していません。');
+ const bytes=decodeBase64URL(payload.slice(dot+1));let text,data;
+ try{text=new TextDecoder('utf-8',{fatal:true}).decode(bytes);}catch{fail('共有リンクのUTF-8形式を確認してください。');}
+ try{data=JSON.parse(text);}catch{fail('共有リンクのJSON形式を確認してください。');}
+ return validateSharedLesson(data);
+}
+function invalidateShare(){shareGeneration++;$('shareFallback').hidden=true;$('shareOutput').value='';ui($('shareMessage'),'');}
+function loadSharedLesson(){
+ try{
+  if(location.hash.startsWith('#lesson=')&&location.href.length>SHARE_LIMITS.url)fail('共有URLが8,192文字を超えました。');
+  const data=parseLessonHash(location.hash);if(!data)return;
+  // Parsing and validation are synchronous: no user action or old load can overtake this commit.
+  stop('共有リンクの教材を反映しました。再生で開始します。');pattern=data.lesson;bpm=data.bpm;
+  $('tempo').value=bpm;$('tempoValue').value=bpm;$('patternInput').value=JSON.stringify(pattern,null,2);$('dataMessage').className='';ui($('dataMessage'),'');invalidateShare();renderPattern();
+ }catch(error){message(error.message+' 現在の教材を保持しました。');}
+}
+async function copyLessonLink(){
+ if(copying)return;let link;
+ invalidateShare();const ticket=shareGeneration;
+ try{link=createLessonURL();}catch(error){$('shareMessage').className='share-message error';ui($('shareMessage'),error.message);return;}
+ copying=true;$('copyLesson').disabled=true;$('shareMessage').className='share-message';ui($('shareMessage'),'コピー中…');
+ try{
+  if(!navigator.clipboard||typeof navigator.clipboard.writeText!=='function')throw new Error('clipboard-unavailable');
+  await navigator.clipboard.writeText(link);
+  if(ticket===shareGeneration)ui($('shareMessage'),'教材リンクをコピーしました。');
+ }catch{
+  if(ticket===shareGeneration){$('shareFallback').hidden=false;$('shareOutput').value=link;$('shareOutput').focus();$('shareOutput').select();ui($('shareMessage'),'自動コピーを利用できません。選択されたリンクを手動でコピーしてください。');}
+ }finally{copying=false;$('copyLesson').disabled=false;}
+}
 function layoutPads(){
  const upper=pattern.instruments.filter(p=>p.sound!=='bass');
  const bass=pattern.instruments.filter(p=>p.sound==='bass');
@@ -235,7 +313,7 @@ function reschedule(){if(!playing)return;const now=audio.currentTime;cancelVoice
 $('start').addEventListener('click',start);$('stop').addEventListener('click',()=>stop());$('layout').addEventListener('change',layoutPads);
 $('tempo').addEventListener('input',()=>{
  const value=Math.max(40,Math.min(160,Number($('tempo').value)));$('tempoValue').value=value;
- if(playing){const now=audio.currentTime;anchorPhase=phaseAt(now);anchorTime=now;}bpm=value;reschedule();
+ if(playing){const now=audio.currentTime;anchorPhase=phaseAt(now);anchorTime=now;}bpm=value;invalidateShare();reschedule();
 });
 $('volume').addEventListener('input',()=>{$('volumeValue').value=$('volume').value;if(master)master.gain.setTargetAtTime(Number($('volume').value)/100,audio.currentTime,.01);});
 for(const id of ['example','metronome'])$(id).addEventListener('change',()=>{if(audio&&!$(id).checked)cancelVoices(v=>v.kind===id);reschedule();});
@@ -245,12 +323,14 @@ window.addEventListener('keydown',e=>{
  const id=keyMap.get(e.key.toLowerCase());if(id){e.preventDefault();hit(id);}
 });
 $('applyPattern').addEventListener('click',()=>{
- try{const next=validatePattern($('patternInput').value);stop('教材を反映しました。再生で開始します。');pattern=next;renderPattern();$('dataMessage').className='';ui($('dataMessage'),'教材を反映しました。');}
+ try{const next=validatePattern($('patternInput').value);stop('教材を反映しました。再生で開始します。');pattern=next;invalidateShare();renderPattern();$('dataMessage').className='';ui($('dataMessage'),'教材を反映しました。');}
  catch(error){$('dataMessage').className='error';ui($('dataMessage'),error.message+' 元の教材はそのままです。');}
 });
 document.addEventListener('visibilitychange',()=>{if(document.hidden)stop('画面の切替により停止しました。再生で再開できます。');});
 window.addEventListener('pagehide',()=>stop());
-$('patternInput').value=JSON.stringify(pattern,null,2);renderPattern();message('再生すると、図形譜とドラムが進みます。');
+$('copyLesson').addEventListener('click',copyLessonLink);
+window.addEventListener('hashchange',loadSharedLesson);
+$('patternInput').value=JSON.stringify(pattern,null,2);renderPattern();message('再生すると、図形譜とドラムが進みます。');loadSharedLesson();
 </script>
 </body>
 </html>
