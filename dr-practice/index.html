@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>ドラム練習</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#263b4b;background:#f3f5f7;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0}main{max-width:980px;margin:auto;padding:24px 22px 40px}
+h1{font-size:1.8rem;margin:0 0 10px}h2{font-size:1.08rem;margin:0}p{line-height:1.8;margin:8px 0}ruby{ruby-position:over}rt{font-size:.55em;font-weight:400;letter-spacing:0}
+.intro,.hint,.footer{color:#596c7c;font-size:.85rem}.intro{margin-bottom:12px}.panel{background:#fff;border:1px solid #dbe3e9;border-radius:14px;padding:18px;margin-top:16px}
+button,input,textarea,select{font:inherit}button,select{border:1px solid #afbfcc;border-radius:8px;background:white;color:inherit;padding:10px 15px;min-height:44px}button{cursor:pointer}
+button:focus-visible,input:focus-visible,summary:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #294f7c;outline-offset:4px}button:disabled{opacity:.5;cursor:default}
+.primary{background:#244e70;color:white;border-color:#244e70;font-weight:650}.controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.transport{display:flex;gap:10px}
+.tempo{display:flex;align-items:center;gap:8px;flex:1;min-width:240px}.tempo>span,.tempo small{white-space:nowrap;flex-shrink:0}.tempo input{width:auto;min-width:80px;flex:1;accent-color:#244e70}.tempo output{font-weight:650;min-width:3ch;font-variant-numeric:tabular-nums}
+.toggles{display:flex;gap:8px 20px;align-items:center;flex-wrap:wrap;margin-top:12px}.toggles label{display:flex;align-items:center;gap:7px;min-height:32px}.toggles input[type=checkbox]{width:18px;height:18px;accent-color:#244e70}
+.volume{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#596c7c}.volume input{width:100px;accent-color:#244e70}
+#status{min-height:1.6em;margin:10px 0 0;font-size:.85rem;color:#445d72}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.section-head>span{font-size:.8rem;color:#596c7c}
+#patternName{font-size:.9rem;color:#596c7c;margin:0 0 10px;overflow-wrap:anywhere}
+.score-scroll{overflow-x:auto;padding-bottom:4px;scrollbar-color:#a5b9ca #f3f5f7}.score{display:grid;grid-template-columns:var(--label-width,110px) repeat(var(--steps),minmax(13px,1fr));gap:3px}
+.score.has-memos{min-width:calc(var(--label-width,110px) + var(--steps)*40px)}
+.corner{font-size:.72rem;color:#596c7c;align-self:center}.beat-label{padding:7px 0;font-size:.83rem;font-weight:650;white-space:nowrap;overflow:hidden}
+.lane-label{align-self:stretch;display:flex;flex-direction:column;justify-content:center;font-size:.8rem;gap:2px;overflow-wrap:anywhere;padding:4px 6px 4px 0}
+.limb-label{font-size:.72rem;font-weight:650;color:#314e65}.instrument-label{font-weight:500}.cell{height:38px;display:grid;place-items:center;border:1px solid #e0e7ed;border-radius:4px;background:#f5f7f9;position:relative}
+.cell.group{border-left:2px solid #a4b7c6}.cell.active::before{content:"";width:12px;height:12px;background:var(--part);border-radius:50%;border:1px solid #0004}
+.cell.hihat.active::before,.cell.crash.active::before{border-radius:1px;transform:rotate(45deg);width:9px;height:9px}
+.cell.current{background:#e2ecf4;border-color:#345b80;box-shadow:inset 0 0 0 1px #345b80}.cell.pulse.active::before{box-shadow:0 0 0 4px white;transform:scale(1.2)}.cell.hihat.pulse.active::before,.cell.crash.pulse.active::before{transform:rotate(45deg) scale(1.2)}
+.separator{border-top:2px solid #8097aa!important;margin-top:7px;padding-top:4px}.cell.separator{height:45px}
+.memo-label{font-size:.75rem;align-self:center;color:#596c7c}.memo{display:flex;align-items:flex-start;justify-content:center;padding:6px 2px;font-size:.82rem;line-height:1.5;overflow-wrap:anywhere;white-space:pre-wrap;min-width:0}.memo.current{background:#e2ecf4}
+.score-foot{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:.76rem;color:#596c7c}
+.layout-control{display:flex;gap:10px;align-items:center;font-size:.82rem;border:0;padding:0;margin:0;flex-wrap:wrap}.layout-control label{display:flex;align-items:center;gap:4px;min-height:36px;white-space:nowrap}.layout-control input{accent-color:#244e70}
+.kit{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:580px;margin:auto;padding:9px 10px 2px}
+.pad{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:116px;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-tap-highlight-color:transparent;border:2px solid var(--part);background:var(--soft);border-radius:50%;position:relative;padding:11px 8px;box-shadow:0 4px 0 #2233440b}
+.pad.bass{border-radius:24px;min-height:92px;width:65%;justify-self:center}.pad .name{font-size:1.06rem;font-weight:650;overflow-wrap:anywhere;max-width:100%}.pad .limb{font-size:.82rem;margin-bottom:5px}.pad .key{font-size:.72rem;color:#596c7c;margin-top:5px}
+.pad.cue{background:var(--part);box-shadow:0 0 0 4px var(--soft),0 0 0 6px var(--part)}.pad.cue::after{content:"●";position:absolute;top:7px;right:14px;font-size:10px}.pad.hit{outline:4px solid #263c52;outline-offset:4px}
+.legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;font-size:.76rem;color:#596c7c;margin-top:14px}.legend i{display:inline-block;width:11px;height:11px;background:#d4ba6c;border:1px solid #8b762b;vertical-align:-1px;margin-right:4px}.legend i.outline{background:white;outline:2px solid #263c52;border:0}
+details{margin-top:20px}summary{cursor:pointer;font-weight:600;padding:7px 0}textarea{display:block;width:100%;min-height:230px;padding:12px;border:1px solid #b8c7d4;border-radius:8px;font-family:ui-monospace,monospace;font-size:.82rem;line-height:1.6;resize:vertical}
+#dataMessage{font-size:.85rem;min-height:1.5em}.error{color:#a52b25}.json-actions{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}.footer{margin-top:22px;font-size:.78rem}
+@media(max-width:560px){main{padding:15px 12px 30px}h1{font-size:1.5rem;margin-bottom:7px}.intro{font-size:.78rem;line-height:1.7;margin-bottom:7px}.panel{padding:12px;margin-top:12px}.controls{gap:10px}.toggles{margin-top:8px;gap:5px 13px;font-size:.85rem}.volume{font-size:.75rem}.volume input{width:80px}#status{margin-top:6px;font-size:.76rem}.section-head{margin-bottom:9px}.section-head>span{font-size:.7rem}.score{--label-width:78px;gap:2px}.lane-label{font-size:.7rem}.limb-label{font-size:.64rem}.cell{height:35px}.cell.separator{height:42px}.cell.active::before{width:9px;height:9px}.cell.hihat.active::before,.cell.crash.active::before{width:7px;height:7px}.score-foot{font-size:.68rem}.beat-label{font-size:.72rem}.kit{gap:14px;padding:6px}.pad{min-height:101px}.pad.bass{min-height:88px;width:72%}.pad .name{font-size:.94rem}.pad .limb{font-size:.73rem;margin-bottom:3px}.pad .key{font-size:.66rem;margin-top:3px}.legend{font-size:.68rem;gap:10px;margin-top:12px}.layout-control{font-size:.75rem}.layout-control select{font-size:.78rem;max-width:140px}.hint{font-size:.75rem}#patternName{font-size:.8rem;margin-bottom:8px}}
+</style>
+</head>
+<body>
+<main>
+<h1>ドラム<ruby>練習<rt>れんしゅう</rt></ruby></h1>
+<p class="intro"><ruby>図形譜<rt>ずけいふ</rt></ruby>とドラムの<ruby>点灯<rt>てんとう</rt></ruby>を<ruby>見<rt>み</rt></ruby>ながら、1<ruby>小節<rt>しょうせつ</rt></ruby>を<ruby>繰<rt>く</rt></ruby>り<ruby>返<rt>かえ</rt></ruby>して<ruby>練習<rt>れんしゅう</rt></ruby>できます。</p>
+<section class="panel" aria-label="再生と音の設定">
+ <div class="controls">
+  <div class="transport"><button id="start" class="primary" type="button">▶ <ruby>再生<rt>さいせい</rt></ruby></button><button id="stop" type="button">■ <ruby>停止<rt>ていし</rt></ruby></button></div>
+  <label class="tempo" for="tempo"><span>テンポ</span><input id="tempo" type="range" min="40" max="160" value="60" step="1"><output id="tempoValue" for="tempo">60</output><small>BPM · ♩</small></label>
+ </div>
+ <div class="toggles">
+  <label><input id="example" type="checkbox" checked><ruby>手本<rt>てほん</rt></ruby>の<ruby>音<rt>おと</rt></ruby></label>
+  <label><input id="metronome" type="checkbox">メトロノーム</label>
+  <label class="volume" for="volume"><ruby>音量<rt>おんりょう</rt></ruby><input id="volume" type="range" min="0" max="50" value="15" step="1"><output id="volumeValue" for="volume">15</output></label>
+ </div>
+ <p id="status" role="status"></p>
+</section>
+<section class="panel" aria-labelledby="scoreTitle">
+ <div class="section-head"><h2 id="scoreTitle"><ruby>図形譜<rt>ずけいふ</rt></ruby></h2><span id="meterSummary"></span></div>
+ <p id="patternName"></p><div class="score-scroll" tabindex="0" aria-label="図形譜。横に長い場合はスクロールできます"><div id="score" class="score"></div></div>
+ <div class="score-foot"><span><ruby>印<rt>しるし</rt></ruby>＝<ruby>打点<rt>だてん</rt></ruby> · <ruby>太線<rt>ふとせん</rt></ruby>＝<ruby>担当<rt>たんとう</rt></ruby>の<ruby>区切<rt>くぎ</rt></ruby>り</span><span id="position"></span></div>
+</section>
+<section class="panel" aria-labelledby="kitTitle">
+ <div class="section-head"><h2 id="kitTitle">ドラム<ruby>配置<rt>はいち</rt></ruby></h2><fieldset class="layout-control" id="layout" aria-label="ドラム配置"><label><input type="radio" name="layout" value="real" checked><ruby>実機配置<rt>じっきはいち</rt></ruby></label><label><input type="radio" name="layout" value="phone">スマホ<ruby>配置<rt>はいち</rt></ruby></label></fieldset></div>
+ <div id="layoutNote" class="hint"></div><div id="kit" class="kit"></div>
+ <div class="legend"><span><i></i><ruby>点灯<rt>てんとう</rt></ruby>＝<ruby>手本<rt>てほん</rt></ruby></span><span><i class="outline"></i><ruby>濃<rt>こ</rt></ruby>い<ruby>枠<rt>わく</rt></ruby>＝<ruby>入力<rt>にゅうりょく</rt></ruby></span></div>
+</section>
+<details class="panel"><summary><ruby>教材設定<rt>きょうざいせってい</rt></ruby></summary>
+ <p class="hint" id="jsonGuide">JSONで<ruby>拍子<rt>ひょうし</rt></ruby>・<ruby>楽器<rt>がっき</rt></ruby>・<ruby>担当<rt>たんとう</rt></ruby>・メモを<ruby>設定<rt>せってい</rt></ruby>できます。<ruby>反映<rt>はんえい</rt></ruby>すると<ruby>停止<rt>ていし</rt></ruby>します。<ruby>形式<rt>けいしき</rt></ruby>は<ruby>同梱<rt>どうこん</rt></ruby>の「<ruby>使<rt>つか</rt></ruby>い<ruby>方<rt>かた</rt></ruby>.txt」を<ruby>参照<rt>さんしょう</rt></ruby>してください。</p>
+ <label for="patternInput"><ruby>教材<rt>きょうざい</rt></ruby>のJSON</label><textarea id="patternInput" spellcheck="false" aria-describedby="jsonGuide"></textarea>
+ <div class="json-actions"><button type="button" id="applyPattern"><ruby>反映<rt>はんえい</rt></ruby></button><span class="hint">1<ruby>小節<rt>しょうせつ</rt></ruby>のみ · <ruby>変更<rt>へんこう</rt></ruby>は<ruby>保存<rt>ほぞん</rt></ruby>されません</span></div><p id="dataMessage" role="status"></p>
+</details>
+<p class="footer">BPMは<ruby>四分音符<rt>しぶおんぷ</rt></ruby>の<ruby>速<rt>はや</rt></ruby>さです。<ruby>画面<rt>がめん</rt></ruby>を<ruby>切<rt>き</rt></ruby>り<ruby>替<rt>か</rt></ruby>えると<ruby>停止<rt>ていし</rt></ruby>します。<ruby>採点<rt>さいてん</rt></ruby>はありません。</p>
+</main>
+<script>
+'use strict';
+// Keep legacy's original file intact. Normalize legacy numeric notes only at import.
+const PRESETS={bass:{color:'#d99062',soft:'#fbf0e9'},snare:{color:'#82a4cf',soft:'#eef3fa'},hihat:{color:'#c3ab61',soft:'#faf6e8'},crash:{color:'#bca06b',soft:'#faf5e9'},tom:{color:'#9c9bc4',soft:'#f3f2f9'}};
+const DEFAULT_PATTERN={
+ name:[{text:'教室',ruby:'きょうしつ'},'の',{text:'基本',ruby:'きほん'},'リズム'],meter:[4,4],subdivisions:4,
+ instruments:[
+  {id:'hh',label:'ハイハット',key:'3',limb:[{text:'右手',ruby:'みぎて'}],sound:'hihat'},
+  {id:'sn',label:'スネア',key:'2',limb:[{text:'左手',ruby:'ひだりて'}],sound:'snare'},
+  {id:'bd',label:'バス',key:'1',limb:[{text:'右足',ruby:'みぎあし'}],sound:'bass'}
+ ],
+ notes:[['bd','hh'],[],['hh'],[],['sn','hh'],[],['hh'],['bd'],['bd','hh'],[],['hh'],['bd'],['sn','hh'],[],['hh'],[]]
+};
+const READINGS={'図形譜':'ずけいふ','教材設定':'きょうざいせってい','四分音符':'しぶおんぷ','八分音符':'はちぶおんぷ','音符':'おんぷ','再生':'さいせい','停止':'ていし','準備':'じゅんび','中断':'ちゅうだん','開始':'かいし','画面':'がめん','音量':'おんりょう','入力':'にゅうりょく','手本':'てほん','打点':'だてん','拍目':'はくめ','位置':'いち','楽器':'がっき','音色':'ねいろ','担当':'たんとう','設定':'せってい','反映':'はんえい','教材':'きょうざい','保存':'ほぞん','表示':'ひょうじ','文字':'もじ','以内':'いない','整数':'せいすう','指定':'してい','配列':'はいれつ','項目':'こうもく','確認':'かくにん','重複':'ちょうふく','必要':'ひつよう','対応':'たいおう','変更':'へんこう','同':'おな','使用':'しよう','現在':'げんざい','元':'もと','形式':'けいしき','小節':'しょうせつ','分割':'ぶんかつ','実機配置':'じっきはいち','配置':'はいち','左右':'さゆう','左':'ひだり','右':'みぎ','順序':'じゅんじょ','数':'かず','音':'おと','拍':'はく','中':'ちゅう','例':'れい','操作':'そうさ','再開':'さいかい','上限':'じょうげん','連続':'れんぞく','部分':'ぶぶん','未定義':'みていぎ','基準':'きじゅん','分母':'ぶんぼ','戻':'もど','正常':'せいじょう','切替':'きりかえ','準備中':'じゅんびちゅう','対象':'たいしょう','受':'う','付':'つ','負':'ふ','秒':'びょう'};
+Object.assign(READINGS,{'進':'すす','反復':'はんぷく','最初':'さいしょ','半角小文字':'はんかくこもじ','数字':'すうじ','分子':'ぶんし','元':'もと','使':'つか','方':'かた','空':'から','小文字':'こもじ','定義':'ていぎ'});
+const readingKeys=Object.keys(READINGS).sort((a,b)=>b.length-a.length);
+const $=id=>document.getElementById(id);
+function plain(value){return typeof value==='string'?value:value.map(s=>typeof s==='string'?s:s.text).join('');}
+function write(node,value){node.replaceChildren();const segments=typeof value==='string'?[value]:value;for(const s of segments){if(typeof s==='string'){node.append(document.createTextNode(s));}else{const ruby=document.createElement('ruby'),rt=document.createElement('rt');ruby.append(document.createTextNode(s.text));rt.textContent=s.ruby;ruby.append(rt);node.append(ruby);}}}
+function ui(node,text){const segments=[];let i=0,buffer='';while(i<text.length){const word=readingKeys.find(key=>text.startsWith(key,i));if(word){if(buffer){segments.push(buffer);buffer='';}segments.push({text:word,ruby:READINGS[word]});i+=word.length;}else{buffer+=text[i++];}}if(buffer)segments.push(buffer);write(node,segments);}
+function message(text){ui($('status'),text);}
+let pattern=structuredClone(DEFAULT_PATTERN),audio,master,noise,playing=false,starting=false,epoch=0;
+let timer=0,frame=0,bpm=60,anchorTime=0,anchorPhase=0,nextTick=0,currentStep=-1;
+const voices=new Set(),hitTimers=new Map(),pads=new Map(),cells=[],memoCells=[];
+let instruments=new Map(),keyMap=new Map();
+function fail(text){throw new Error(text);}
+function object(value){return value!==null&&typeof value==='object'&&!Array.isArray(value);}
+function fields(value,allowed){if(Object.keys(value).some(k=>!allowed.includes(k)))fail('未対応の項目があります。使い方.txtで形式を確認してください。');}
+function rich(value,max,field){
+ if(typeof value==='string'){if(!value.trim()||value.length>max)fail(field+'は1～'+max+'文字で指定してください。');return value;}
+ if(!Array.isArray(value)||value.length<1||value.length>20)fail(field+'は文字列またはルビ配列で指定してください。');
+ for(const s of value){if(typeof s==='string'){if(!s.length)fail(field+'に空の部分があります。');}else{if(!object(s))fail(field+'のルビ形式を確認してください。');fields(s,['text','ruby']);if(typeof s.text!=='string'||!s.text.trim()||typeof s.ruby!=='string'||!s.ruby.trim()||s.ruby.length>max*2)fail(field+'のtextとrubyを確認してください。');}}
+ if(!plain(value).trim()||plain(value).length>max)fail(field+'は1～'+max+'文字で指定してください。');
+ return structuredClone(value);
+}
+function validatePattern(text){
+ if(text.length>32768)fail('JSONは32,768文字以内にしてください。');
+ let data;try{data=JSON.parse(text);}catch{fail('JSONの形式を確認してください。');}
+ if(!object(data))fail('教材はJSONオブジェクトで指定してください。');
+ fields(data,['name','meter','subdivisions','instruments','notes','memos','beatLabels']);
+ // Exactly the former {name,notes} format: B=1/S=2/H=3, 4/4, 16 slots.
+ if(!('meter'in data)&&!('subdivisions'in data)&&!('instruments'in data)){
+  fields(data,['name','notes']);const imported=structuredClone(DEFAULT_PATTERN);imported.name=data.name;
+  if(!Array.isArray(data.notes)||data.notes.length!==16||data.notes.some(n=>!Array.isArray(n)||n.some(v=>!Number.isInteger(v)||v<1||v>3)))fail('旧形式のnotesは16位置、楽器1～3で指定してください。');
+  const ids={1:'bd',2:'sn',3:'hh'};imported.notes=data.notes.map(n=>n.map(id=>ids[id]));data=imported;
+ }
+ const name=rich(data.name,60,'name');
+ if(!Array.isArray(data.meter)||data.meter.length!==2||!Number.isInteger(data.meter[0])||data.meter[0]<1||data.meter[0]>12||![2,4,8,16].includes(data.meter[1]))fail('meterは[1～12の整数, 2・4・8・16の分母]で指定してください。');
+ if(!Number.isInteger(data.subdivisions)||data.subdivisions<1||data.subdivisions>8)fail('subdivisionsは1～8の整数で指定してください。');
+ const length=data.meter[0]*data.subdivisions;if(length>64)fail('1小節の位置数は64以内にしてください。');
+ if(!Array.isArray(data.instruments)||data.instruments.length<1||data.instruments.length>8)fail('instrumentsは1～8楽器で指定してください。');
+ const ids=new Set(),keys=new Set();
+ const parts=data.instruments.map(part=>{
+  if(!object(part))fail('楽器の形式を確認してください。');fields(part,['id','label','key','limb','sound']);
+  if(typeof part.id!=='string'||!/^[a-z0-9_-]{1,24}$/.test(part.id)||ids.has(part.id))fail('楽器idは重複しない半角小文字・数字・_・-で指定してください。');
+  if(typeof part.key!=='string'||!/^[a-z0-9]$/.test(part.key)||keys.has(part.key))fail('keyは重複しない半角小文字または数字1文字で指定してください。');
+  if(typeof part.sound!=='string'||!Object.hasOwn(PRESETS,part.sound))fail('soundはbass、snare、hihat、crash、tomから指定してください。');
+  ids.add(part.id);keys.add(part.key);
+  return {id:part.id,label:rich(part.label,32,'label'),key:part.key,limb:rich(part.limb,24,'limb'),sound:part.sound};
+ });
+ if(!Array.isArray(data.notes)||data.notes.length!==length||data.notes.some(n=>!Array.isArray(n)||n.length>parts.length||n.some(id=>typeof id!=='string'||!ids.has(id))||new Set(n).size!==n.length))fail('notesは'+length+'位置の配列にし、定義した楽器idを重複なく指定してください。');
+ const result={name,meter:data.meter.slice(),subdivisions:data.subdivisions,instruments:parts,notes:data.notes.map(n=>n.slice())};
+ if(data.memos!==undefined){if(!Array.isArray(data.memos)||data.memos.length!==length||data.memos.some(s=>typeof s!=='string'||s.length>24))fail('memosは'+length+'位置の文字列配列（各24文字以内）にしてください。');result.memos=data.memos.slice();}
+ if(data.beatLabels!==undefined){if(!Array.isArray(data.beatLabels)||data.beatLabels.length!==data.meter[0])fail('beatLabelsは分子と同じ数で指定してください。');result.beatLabels=data.beatLabels.map(v=>rich(v,24,'beatLabels'));}
+ return result;
+}
+function make(tag,className,value){const el=document.createElement(tag);if(className)el.className=className;if(value!==undefined)write(el,value);return el;}
+function layoutPads(){
+ const upper=pattern.instruments.filter(p=>p.sound!=='bass');
+ const bass=pattern.instruments.filter(p=>p.sound==='bass');
+ // Physical hihat belongs on the left; reversing the visual columns never changes limbs.
+ upper.sort((a,b)=>(a.sound==='hihat'?-1:0)-(b.sound==='hihat'?-1:0));
+ upper.forEach((p,i)=>{const pad=pads.get(p.id),column=i%2;pad.style.gridColumn=String((document.querySelector('input[name=layout]:checked').value==='phone'?1-column:column)+1);pad.style.gridRow=String(Math.floor(i/2)+1);});
+ bass.forEach((p,i)=>{const pad=pads.get(p.id);pad.style.gridColumn='1 / -1';pad.style.gridRow=String(Math.ceil(upper.length/2)+i+1);});
+ ui($('layoutNote'),document.querySelector('input[name=layout]:checked').value==='phone'?'ハイハットを右に表示。担当は教材の設定のままです。':'ハイハットを左に表示。担当は教材の設定のままです。');
+}
+function renderPattern(){
+ instruments=new Map(pattern.instruments.map(p=>[p.id,p]));keyMap=new Map(pattern.instruments.map(p=>[p.key,p.id]));
+ const score=$('score');score.replaceChildren();cells.length=0;memoCells.length=0;
+ score.style.setProperty('--steps',pattern.notes.length);score.classList.toggle('has-memos',Boolean(pattern.memos));
+ // Preserve readable cells by scrolling for dense patterns, while the default 16 fits desktop.
+ score.style.minWidth=pattern.memos?'':(pattern.notes.length>16?String(110+pattern.notes.length*19)+'px':'');
+ score.append(make('span','corner'));ui(score.firstChild,'担当 / 楽器');
+ for(let beat=0;beat<pattern.meter[0];beat++){const el=make('span','beat-label');el.style.gridColumn='span '+pattern.subdivisions;if(pattern.beatLabels)write(el,pattern.beatLabels[beat]);else ui(el,String(beat+1)+'拍');score.append(el);}
+ let lastLimb='';
+ pattern.instruments.forEach((part,row)=>{
+  const limb=plain(part.limb),separator=row>0&&limb!==lastLimb;lastLimb=limb;
+  const label=make('span','lane-label'+(separator?' separator':''));label.append(make('span','limb-label',part.limb),make('span','instrument-label',part.label));score.append(label);
+  for(let i=0;i<pattern.notes.length;i++){const cell=make('span','cell '+part.sound+(i%pattern.subdivisions===0?' group':'')+(pattern.notes[i].includes(part.id)?' active':'')+(separator?' separator':''));cell.style.setProperty('--part',PRESETS[part.sound].color);cell.dataset.step=i;cell.setAttribute('aria-label',plain(part.limb)+' '+plain(part.label)+' '+(Math.floor(i/pattern.subdivisions)+1)+'拍目・'+(i%pattern.subdivisions+1)+'番目'+(pattern.notes[i].includes(part.id)?' 打点あり':' 打点なし'));score.append(cell);cells.push(cell);}
+ });
+ if(pattern.memos){score.append(make('span','memo-label','メモ'));pattern.memos.forEach((memo,i)=>{const el=make('span','memo',memo);el.dataset.step=i;score.append(el);memoCells.push(el);});}
+ write($('patternName'),pattern.name);ui($('meterSummary'),pattern.meter.join('/')+' · 1拍を'+pattern.subdivisions+'分割');
+ const kit=$('kit');kit.replaceChildren();pads.clear();
+ for(const part of pattern.instruments){const preset=PRESETS[part.sound],pad=make('button','pad '+part.sound);pad.type='button';pad.dataset.part=part.id;pad.style.setProperty('--part',preset.color);pad.style.setProperty('--soft',preset.soft);pad.setAttribute('aria-label',plain(part.limb)+' '+plain(part.label)+' キー '+part.key);pad.append(make('span','limb',part.limb),make('span','name',part.label),make('span','key','キー '+part.key));
+  pad.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'&&e.button!==0)return;e.preventDefault();hit(part.id);});
+  pad.addEventListener('click',e=>{if(e.detail===0)hit(part.id);});
+  kit.append(pad);pads.set(part.id,pad);
+ }
+ layoutPads();currentStep=-2;showStep(-1,false);
+}
+function pulseSeconds(){return Math.min(stepSeconds()*.6,.1);}
+function showStep(step,pulse=false){
+ if(currentStep!==step){currentStep=step;for(const cell of [...cells,...memoCells])cell.classList.toggle('current',Number(cell.dataset.step)===step);ui($('position'),step<0?'1小節を反復':String(Math.floor(step/pattern.subdivisions)+1)+'拍目');}
+ for(const cell of cells)cell.classList.toggle('pulse',pulse&&Number(cell.dataset.step)===step);
+ for(const [id,pad]of pads)pad.classList.toggle('cue',pulse&&step>=0&&pattern.notes[step].includes(id));
+}
+async function ensureAudio(){
+ if(!audio){
+  const Context=window.AudioContext||window.webkitAudioContext;if(!Context)fail('このブラウザーは音の再生に対応していません。');
+  audio=new Context();master=audio.createGain();master.gain.value=Number($('volume').value)/100;master.connect(audio.destination);
+  noise=audio.createBuffer(1,audio.sampleRate*.8,audio.sampleRate);const data=noise.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=Math.random()*2-1;
+  audio.addEventListener('statechange',()=>{if(playing&&audio.state!=='running')stop('音の再生が中断されました。再生で再開できます。');});
+ }
+ if(audio.state!=='running')await audio.resume();if(audio.state!=='running')fail('音を開始できませんでした。もう一度操作してください。');
+}
+function sound(id,time,kind){
+ const preset=id===null?'click':instruments.get(id).sound;
+ const duration={bass:.22,snare:.14,hihat:.065,crash:.6,tom:.24,click:.035}[preset],gain=audio.createGain();let source,filter;
+ if(['bass','tom','click'].includes(preset)){source=audio.createOscillator();source.type='sine';source.frequency.setValueAtTime(preset==='bass'?140:preset==='tom'?220:1100,time);if(preset!=='click')source.frequency.exponentialRampToValueAtTime(preset==='bass'?43:85,time+.17);source.connect(gain);}
+ else{source=audio.createBufferSource();source.buffer=noise;filter=audio.createBiquadFilter();filter.type=preset==='snare'?'bandpass':'highpass';filter.frequency.value=preset==='hihat'?7000:preset==='crash'?3500:1800;filter.Q.value=.7;source.connect(filter);filter.connect(gain);}
+ gain.gain.setValueAtTime(.001,time);gain.gain.linearRampToValueAtTime({bass:.8,snare:.7,hihat:.4,crash:.35,tom:.7,click:.22}[preset],time+.002);gain.gain.exponentialRampToValueAtTime(.001,time+duration);gain.connect(master);
+ const voice={source,gain,filter,time,kind,id};voices.add(voice);source.onended=()=>{voices.delete(voice);source.disconnect();gain.disconnect();if(filter)filter.disconnect();};source.start(time);source.stop(time+duration+.005);
+}
+function cancelVoices(predicate=()=>true){for(const v of Array.from(voices))if(predicate(v)){v.gain.disconnect();try{v.source.stop();}catch{}voices.delete(v);}}
+function stepSeconds(){return 60/bpm*4/pattern.meter[1]/pattern.subdivisions;}
+function phaseAt(time){return anchorPhase+(time-anchorTime)/stepSeconds();}
+function tickTime(tick){return anchorTime+(tick-anchorPhase)*stepSeconds();}
+function schedule(){
+ if(!playing)return;const now=audio.currentTime;
+ if(tickTime(nextTick)<now-.04)nextTick=Math.ceil(phaseAt(now));
+ while(tickTime(nextTick)<now+.075){
+  const time=Math.max(now,tickTime(nextTick)),step=nextTick%pattern.notes.length;
+  if($('example').checked)for(const id of pattern.notes[step])sound(id,time,'example');
+  if($('metronome').checked&&step%pattern.subdivisions===0)sound(null,time,'metronome');
+  nextTick++;
+ }
+}
+function draw(){
+ if(!playing)return;const now=audio.currentTime,phase=phaseAt(now),tick=Math.floor(phase);
+ showStep(phase<0?-1:tick%pattern.notes.length,phase>=0&&(phase-tick)*stepSeconds()<pulseSeconds());frame=requestAnimationFrame(draw);
+}
+async function start(){
+ if(playing||starting)return;const ticket=++epoch;starting=true;$('start').disabled=true;message('音の準備中…');
+ try{await ensureAudio();if(ticket!==epoch||document.hidden)return;cancelVoices();anchorPhase=0;anchorTime=audio.currentTime+.035;nextTick=0;playing=true;message('再生中 · 入力しなくても進みます。');schedule();timer=setInterval(schedule,25);draw();}
+ catch(error){if(ticket===epoch)message(error.message);}
+ finally{if(ticket===epoch){starting=false;$('start').disabled=playing;}}
+}
+function stop(text='停止しました。再生で小節の最初から開始します。'){
+ epoch++;playing=false;starting=false;clearInterval(timer);cancelAnimationFrame(frame);timer=0;frame=0;cancelVoices();
+ for(const timeout of hitTimers.values())clearTimeout(timeout);hitTimers.clear();for(const pad of pads.values())pad.classList.remove('hit');
+ showStep(-1,false);$('start').disabled=false;message(text);
+}
+async function hit(id){
+ const ticket=epoch;try{await ensureAudio();if(ticket!==epoch||document.hidden||!instruments.has(id))return;sound(id,audio.currentTime,'input');
+  const pad=pads.get(id);pad.classList.add('hit');clearTimeout(hitTimers.get(id));hitTimers.set(id,setTimeout(()=>{pad.classList.remove('hit');hitTimers.delete(id);},100));
+ }catch(error){if(ticket===epoch)message(error.message);}
+}
+function reschedule(){if(!playing)return;const now=audio.currentTime;cancelVoices(v=>v.time>now);nextTick=Math.floor(phaseAt(now))+1;schedule();}
+$('start').addEventListener('click',start);$('stop').addEventListener('click',()=>stop());$('layout').addEventListener('change',layoutPads);
+$('tempo').addEventListener('input',()=>{
+ const value=Math.max(40,Math.min(160,Number($('tempo').value)));$('tempoValue').value=value;
+ if(playing){const now=audio.currentTime;anchorPhase=phaseAt(now);anchorTime=now;}bpm=value;reschedule();
+});
+$('volume').addEventListener('input',()=>{$('volumeValue').value=$('volume').value;if(master)master.gain.setTargetAtTime(Number($('volume').value)/100,audio.currentTime,.01);});
+for(const id of ['example','metronome'])$(id).addEventListener('change',()=>{if(audio&&!$(id).checked)cancelVoices(v=>v.kind===id);reschedule();});
+window.addEventListener('keydown',e=>{
+ if(e.repeat||e.ctrlKey||e.altKey||e.metaKey||e.isComposing)return;
+ if(e.target instanceof Element&&e.target.closest('input,textarea,select,[contenteditable="true"]'))return;
+ const id=keyMap.get(e.key.toLowerCase());if(id){e.preventDefault();hit(id);}
+});
+$('applyPattern').addEventListener('click',()=>{
+ try{const next=validatePattern($('patternInput').value);stop('教材を反映しました。再生で開始します。');pattern=next;renderPattern();$('dataMessage').className='';ui($('dataMessage'),'教材を反映しました。');}
+ catch(error){$('dataMessage').className='error';ui($('dataMessage'),error.message+' 元の教材はそのままです。');}
+});
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stop('画面の切替により停止しました。再生で再開できます。');});
+window.addEventListener('pagehide',()=>stop());
+$('patternInput').value=JSON.stringify(pattern,null,2);renderPattern();message('再生すると、図形譜とドラムが進みます。');
+</script>
+</body>
+</html>
+
