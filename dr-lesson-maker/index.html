@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>リズム教材作成</title>
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#253a49;background:#f1f4f6;font-synthesis:none}*{box-sizing:border-box}body{margin:0}main{max-width:1180px;margin:auto;padding:25px 22px 45px}h1{font-size:1.8rem;margin:0 0 14px}h2{font-size:1.1rem;margin:0}h3{font-size:.95rem;margin:0 0 12px}p{line-height:1.8;margin:8px 0}rt{font-size:.54em;font-weight:400;letter-spacing:0}.hint,.intro{color:#5c6f7e;font-size:.84rem}.panel{background:#fff;border:1px solid #dae2e8;border-radius:12px;padding:20px;margin-top:18px}.heading{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap;margin-bottom:16px}.step{color:#6f8291;font-size:.8rem;margin-right:8px}
+button,input,select,textarea{font:inherit;border:1px solid #aebfcb;border-radius:6px;color:inherit;background:#fff}button{padding:9px 14px;min-height:43px;cursor:pointer}.primary{background:#274f6c;color:white;border-color:#274f6c}button:disabled{opacity:.46;cursor:default}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible,.scroll:focus-visible{outline:3px solid #517b9e;outline-offset:3px}
+input:not([type=checkbox]),select{min-height:41px;padding:8px;width:100%;min-width:0}input[type=checkbox]{width:19px;height:19px;accent-color:#315d7d;cursor:pointer}textarea{display:block;width:100%;resize:vertical;padding:12px;line-height:1.6;min-height:190px;font-size:.8rem;font-family:ui-monospace,monospace}textarea[readonly]{background:#f7f9fb}input[aria-invalid=true]{border-color:#a54037;background:#fff7f5}.field{display:flex;flex-direction:column;gap:8px;min-width:0}.field>label{font-size:.86rem;font-weight:600}.basics{display:grid;grid-template-columns:minmax(260px,2.4fr) 1fr 1fr;gap:18px}.dimensions{display:flex;align-items:center;gap:7px}.dimensions input{width:66px}.dimensions select{width:80px}.settings{display:flex;gap:24px;align-items:end;flex-wrap:wrap;margin-top:18px}.settings>.field{max-width:210px}.settings input{max-width:125px}
+.preview{font-size:.88rem;line-height:1.9;color:#3d5d75;min-height:22px;overflow-wrap:anywhere}.preview.invalid,.error{color:#a13a32}.preview.invalid{font-size:.75rem}.pending-note{font-size:.8rem;color:#725d25;min-height:22px}.scroll{overflow-x:auto;max-width:100%;padding-bottom:5px;scrollbar-color:#a8b9c6 #eef2f5}table{border-collapse:collapse;width:100%}th{text-align:left;font-weight:600;background:#f3f6f9;font-size:.78rem;line-height:1.8}th,td{padding:10px 8px;border-bottom:1px solid #dce4eb;vertical-align:top}
+#instrumentTable{min-width:1020px;table-layout:fixed}#instrumentTable .id-col{width:125px}#instrumentTable .label-col{width:215px}#instrumentTable .key-col{width:70px}#instrumentTable .limb-col{width:200px}#instrumentTable .sound-col{width:140px}#instrumentTable .actions-col{width:230px}#instrumentTable .preview{font-size:.76rem;padding-top:5px}.row-actions{display:flex;gap:5px}.row-actions button{padding:6px 10px;min-height:38px;font-size:.8rem}
+#noteTable{table-layout:fixed;min-width:var(--grid-width);width:100%}#noteTable th,#noteTable td{padding:0;text-align:center;vertical-align:middle}#noteTable .row-name{width:150px;position:sticky;left:0;z-index:2;background:#fff;text-align:left;padding:9px 10px;font-size:.85rem;box-shadow:1px 0 #b9c8d3}#noteTable thead .row-name{background:#f3f6f9}#noteTable .beat{height:35px;border-left:2px solid #a8b9c7}#noteTable .position{height:27px;font-size:.72rem;font-weight:400;color:#637786;background:#f8fafb}#noteTable .slot{width:52px;height:47px}#noteTable .slot.group{border-left:2px solid #a8b9c7}#noteTable .slot.checked{background:#e5eff7}#noteTable .slot>label{display:flex;align-items:center;justify-content:center;min-height:46px;width:100%;cursor:pointer}#noteTable .slot>input{font-size:.78rem;padding:7px 4px;border-radius:3px;min-height:38px;width:calc(100% - 4px);margin:3px 2px}#noteTable .beat-input{padding:8px;vertical-align:top}#noteTable .beat-input input{font-size:.8rem}.row-limb{display:block;font-size:.72rem;color:#61788a;margin-bottom:3px}.details{margin-top:14px;border-top:1px solid #e1e7ec;padding-top:9px}summary{cursor:pointer;font-weight:600;font-size:.85rem;min-height:35px;padding-top:6px}.code{font-family:ui-monospace,monospace;background:#eef3f7;padding:1px 4px;border-radius:3px}
+.output-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:22px}.actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.validation{font-size:.87rem;line-height:1.8;min-height:1.7em;margin-bottom:12px}.output-status{font-size:.8rem;color:#586f80;line-height:1.8;min-height:2em}.copy-status{font-size:.82rem;min-height:1.7em;line-height:1.8}.link-preview{min-height:130px;overflow-wrap:anywhere;font-size:.72rem}#copyFallback textarea{min-height:95px}.footer{font-size:.78rem;color:#5c6f7e;margin-top:22px}[hidden]{display:none!important}
+@media(max-width:700px){main{padding:18px 12px 30px}h1{font-size:1.5rem}.panel{padding:15px 12px;margin-top:14px}.basics{grid-template-columns:1fr 1fr;gap:17px 12px}.basics>.field:first-child{grid-column:1 / -1}.settings{gap:16px;margin-top:15px}.settings>.field{max-width:135px}.output-grid{grid-template-columns:1fr;gap:24px}.heading{margin-bottom:13px}h2{font-size:1rem}.intro,.hint{font-size:.78rem}.field>label{font-size:.8rem}.dimensions input{width:60px}.dimensions select{width:70px}.actions button{padding:9px 12px;font-size:.84rem}}
+</style></head><body><main>
+<h1 data-ui="リズム教材作成"></h1><p class="intro" data-ui="1小節のリズムを編集し、ドラム練習用のJSONと教材リンクを生成します。音の確認は練習アプリで行います。"></p>
+<section class="panel" aria-labelledby="basicTitle"><div class="heading"><h2 id="basicTitle"><span class="step">01</span><span data-ui="基本設定"></span></h2></div>
+<div class="basics">
+<div class="field"><label for="lessonName" data-ui="教材名"></label><input id="lessonName" maxlength="4096"><div id="namePreview" class="preview" aria-label="教材名のルビ確認"></div></div>
+<div class="field"><label for="beats" data-ui="拍子（分子 / 分母）"></label><div class="dimensions"><input id="beats" type="number" min="1" max="12" step="1" value="4" aria-label="拍子の分子"><span>/</span><select id="denominator" aria-label="拍子の分母"><option>2</option><option selected>4</option><option>8</option><option>16</option></select></div></div>
+<div class="field"><label for="subdivisions" data-ui="1拍の分割数"></label><input id="subdivisions" type="number" min="1" max="8" step="1" value="4"></div></div>
+<div class="settings"><div class="field"><label for="tempo" data-ui="テンポ（BPM · ♩）"></label><input id="tempo" type="number" min="40" max="160" step="1" value="60"></div><button type="button" id="applyMeter" data-ui="拍子・分割を適用"></button></div>
+<p class="hint" data-ui="BPMは四分音符基準。1拍は分母の音符1個です。すべての拍を同じ数に分割します。"></p><p id="meterStatus" class="pending-note" role="status"></p>
+<details class="details"><summary data-ui="ルビの入力方法"></summary><p class="hint"><span class="code">教室{きょうしつ}の基本{きほん}リズム</span><span data-ui=" のように、漢字の直後に読みを付けます。任意の範囲は "></span><span class="code">｜ハイハット{はいはっと}</span><span data-ui=" のように区切ります。表記プレビューで確認してください。"></span></p></details></section>
+<section class="panel" aria-labelledby="instrumentTitle"><div class="heading"><h2 id="instrumentTitle"><span class="step">02</span><span data-ui="楽器と担当"></span></h2><button type="button" id="addInstrument" data-ui="楽器を追加"></button></div><p class="hint" data-ui="行の順序が図形譜の行順です。idを変更しても打点は保持します。最大8楽器。表は横にスクロールできます。"></p>
+<div class="scroll" tabindex="0" aria-label="楽器設定表。横にスクロールできます"><table id="instrumentTable"><colgroup><col class="id-col"><col class="label-col"><col class="key-col"><col class="limb-col"><col class="sound-col"><col class="actions-col"></colgroup><thead><tr><th scope="col">id</th><th scope="col" data-ui="楽器名（ルビ入力可）"></th><th scope="col">key</th><th scope="col" data-ui="演奏担当（ルビ入力可）"></th><th scope="col" data-ui="音色"></th><th scope="col" data-ui="順序 / 削除"></th></tr></thead><tbody id="instrumentBody"></tbody></table></div></section>
+<section class="panel" aria-labelledby="noteTitle"><div class="heading"><h2 id="noteTitle"><span class="step">03</span><span data-ui="打点とメモ"></span></h2><span id="gridSummary" class="hint"></span></div><p class="hint" data-ui="チェックした楽器を同じ位置で演奏します。空の位置は打点なし。メモは任意、拍名の空欄は番号を使います。表は横にスクロールできます。"></p><div class="scroll" tabindex="0" aria-label="打点表。横にスクロールできます"><table id="noteTable"><thead id="noteHead"></thead><tbody id="noteBody"></tbody></table></div></section>
+<section class="panel" aria-labelledby="outputTitle"><div class="heading"><h2 id="outputTitle"><span class="step">04</span><span data-ui="確認と出力"></span></h2></div><p id="validation" class="validation" role="status"></p><div class="output-grid">
+<div><h3><label for="jsonPreview" data-ui="教材JSON（読取専用）"></label></h3><textarea id="jsonPreview" readonly spellcheck="false" rows="13"></textarea><div class="actions"><button type="button" id="copyJSON" data-ui="JSONをコピー"></button><button type="button" id="saveJSON" data-ui="JSONを保存"></button></div><p class="hint" data-ui="保存先はブラウザーで選択してください。このページには自動保存しません。"></p></div>
+<div><h3><label for="linkPreview" data-ui="練習用リンク（読取専用）"></label></h3><textarea id="linkPreview" readonly spellcheck="false" class="link-preview" rows="5"></textarea><p id="linkStatus" class="output-status"></p><div class="actions"><button type="button" id="copyLink" data-ui="リンクをコピー"></button><button type="button" id="openPractice" class="primary" data-ui="練習アプリで開く"></button></div><p class="hint" data-ui="明示操作で公開練習アプリを別タブに開きます。作成ページは音を再生しません。"></p></div>
+</div><p id="copyStatus" class="copy-status" role="status"></p><div id="copyFallback" hidden><label for="fallbackText" data-ui="手動コピー用の選択欄"></label><textarea id="fallbackText" readonly rows="4"></textarea></div></section>
+<p class="footer" data-ui="1小節のみ。複数小節・拍ごとの混合連符・五線譜・課金機能は対象外です。"></p>
+</main><script>
+'use strict';
+const $=id=>document.getElementById(id);
+const PRESETS={bass:{},snare:{},hihat:{},crash:{},tom:{}};
+const PRACTICE_URL='https://kogu0507.github.io/public-preview/dr-practice/';
+const DEFAULT_PATTERN={name:[{text:'教室',ruby:'きょうしつ'},'の',{text:'基本',ruby:'きほん'},'リズム'],meter:[4,4],subdivisions:4,instruments:[{id:'hh',label:'ハイハット',key:'3',limb:[{text:'右手',ruby:'みぎて'}],sound:'hihat'},{id:'sn',label:'スネア',key:'2',limb:[{text:'左手',ruby:'ひだりて'}],sound:'snare'},{id:'bd',label:'バス',key:'1',limb:[{text:'右足',ruby:'みぎあし'}],sound:'bass'}],notes:[['bd','hh'],[],['hh'],[],['sn','hh'],[],['hh'],['bd'],['bd','hh'],[],['hh'],['bd'],['sn','hh'],[],['hh'],[]]};
+const READINGS={'リズム教材作成':'りずむきょうざいさくせい','教材作成':'きょうざいさくせい','四分音符':'しぶおんぷ','読取専用':'よみとりせんよう','教材名':'きょうざいめい','基本設定':'きほんせってい','図形譜':'ずけいふ','練習用':'れんしゅうよう','演奏担当':'えんそうたんとう','音色':'ねいろ','楽器名':'がっきめい','確認':'かくにん','設定':'せってい','教材':'きょうざい','練習':'れんしゅう','小節':'しょうせつ','編集':'へんしゅう','生成':'せいせい','保存先':'ほぞんさき','保存':'ほぞん','出力':'しゅつりょく','拍子':'ひょうし','分子':'ぶんし','分母':'ぶんぼ','分割数':'ぶんかつすう','分割':'ぶんかつ','適用':'てきよう','基準':'きじゅん','音符':'おんぷ','入力方法':'にゅうりょくほうほう','漢字':'かんじ','直後':'ちょくご','任意':'にんい','範囲':'はんい','表記':'ひょうき','担当':'たんとう','順序':'じゅんじょ','行順':'ぎょうじゅん','追加':'ついか','打点':'だてん','保持':'ほじ','最大':'さいだい','位置':'いち','演奏':'えんそう','拍名':'はくめい','空欄':'くうらん','番号':'ばんごう','空':'から','変更':'へんこう','削除':'さくじょ','順':'じゅん','手動':'しゅどう','選択欄':'せんたくらん','選択':'せんたく','自動':'じどう','操作':'そうさ','明示':'めいじ','公開':'こうかい','作成':'さくせい','再生':'さいせい','複数':'ふくすう','混合連符':'こんごうれんぷ','五線譜':'ごせんふ','課金機能':'かきんきのう','対象外':'たいしょうがい','楽器':'がっき','終了':'しゅうりょう','戻':'もど','有効':'ゆうこう','無効':'むこう','上限':'じょうげん','文字列':'もじれつ','文字':'もじ','整数':'せいすう','数':'かず','全体':'ぜんたい','重複':'ちょうふく','半角小文字':'はんかくこもじ','数字':'すうじ','指定':'してい','配列':'はいれつ','対応':'たいおう','未対応':'みたいおう','項目':'こうもく','形式':'けいしき','閉':'と','括弧':'かっこ','単独':'たんどく','直前':'ちょくぜん','連続':'れんぞく','読み':'よみ','読':'よ','前':'まえ','区切':'くぎ','同':'おな','部分':'ぶぶん','含':'ふく','必要':'ひつよう','以内':'いない','短':'みじか','利用':'りよう','完了':'かんりょう','先':'さき','状態':'じょうたい','現在':'げんざい','未適用':'みてきよう','下表':'かひょう','復元':'ふくげん','新':'あたら','場合':'ばあい','件':'けん','個':'こ','拍':'はく','可':'か','音':'おと','上':'うえ','下':'した','開':'ひら','使':'つか','付':'つ','最初':'さいしょ','済':'ず','進':'すす','共有':'きょうゆう','超':'こ','一':'ひと','開始':'かいし'};
+Object.assign(READINGS,{'表':'ひょう','横':'よこ'});
+const readingKeys=Object.keys(READINGS).sort((a,b)=>b.length-a.length);
+function plain(value){return typeof value==='string'?value:value.map(s=>typeof s==='string'?s:s.text).join('');}
+function write(node,value){node.replaceChildren();for(const p of typeof value==='string'?[value]:value){if(typeof p==='string')node.append(document.createTextNode(p));else{const ruby=document.createElement('ruby'),rt=document.createElement('rt');ruby.append(document.createTextNode(p.text));rt.textContent=p.ruby;ruby.append(rt);node.append(ruby);}}}
+function ui(node,text){let i=0,buffer='';const result=[];while(i<text.length){const word=readingKeys.find(k=>text.startsWith(k,i));if(word){if(buffer){result.push(buffer);buffer='';}result.push({text:word,ruby:READINGS[word]});i+=word.length;}else buffer+=text[i++];}if(buffer)result.push(buffer);write(node,result);}
+function el(tag,cls,text){const node=document.createElement(tag);if(cls)node.className=cls;if(text!==undefined)node.textContent=text;return node;}
+
+/* Standalone copy of the dr-practice v1 validator. */
+function fail(text){throw new Error(text);}
+function object(value){return value!==null&&typeof value==='object'&&!Array.isArray(value);}
+function fields(value,allowed){if(Object.keys(value).some(k=>!allowed.includes(k)))fail('未対応の項目があります。READMEで形式を確認してください。');}
+function rich(value,max,field){
+ if(typeof value==='string'){if(!value.trim()||value.length>max)fail(field+'は1～'+max+'文字で指定してください。');return value;}
+ if(!Array.isArray(value)||value.length<1||value.length>20)fail(field+'は文字列またはルビ配列で指定してください。');
+ for(const s of value){if(typeof s==='string'){if(!s.length)fail(field+'に空の部分があります。');}else{if(!object(s))fail(field+'のルビ形式を確認してください。');fields(s,['text','ruby']);if(typeof s.text!=='string'||!s.text.trim()||typeof s.ruby!=='string'||!s.ruby.trim()||s.ruby.length>max*2)fail(field+'のtextとrubyを確認してください。');}}
+ if(!plain(value).trim()||plain(value).length>max)fail(field+'は1～'+max+'文字で指定してください。');
+ return structuredClone(value);
+}
+function validatePattern(text){
+ if(text.length>32768)fail('JSONは32,768文字以内にしてください。');
+ let data;try{data=JSON.parse(text);}catch{fail('JSONの形式を確認してください。');}
+ if(!object(data))fail('教材はJSONオブジェクトで指定してください。');
+ fields(data,['name','meter','subdivisions','instruments','notes','memos','beatLabels']);
+ // Exactly the former {name,notes} format: B=1/S=2/H=3, 4/4, 16 slots.
+ if(!('meter'in data)&&!('subdivisions'in data)&&!('instruments'in data)){
+  fields(data,['name','notes']);const imported=structuredClone(DEFAULT_PATTERN);imported.name=data.name;
+  if(!Array.isArray(data.notes)||data.notes.length!==16||data.notes.some(n=>!Array.isArray(n)||n.some(v=>!Number.isInteger(v)||v<1||v>3)))fail('旧形式のnotesは16位置、楽器1～3で指定してください。');
+  const ids={1:'bd',2:'sn',3:'hh'};imported.notes=data.notes.map(n=>n.map(id=>ids[id]));data=imported;
+ }
+ const name=rich(data.name,60,'name');
+ if(!Array.isArray(data.meter)||data.meter.length!==2||!Number.isInteger(data.meter[0])||data.meter[0]<1||data.meter[0]>12||![2,4,8,16].includes(data.meter[1]))fail('meterは[1～12の整数, 2・4・8・16の分母]で指定してください。');
+ if(!Number.isInteger(data.subdivisions)||data.subdivisions<1||data.subdivisions>8)fail('subdivisionsは1～8の整数で指定してください。');
+ const length=data.meter[0]*data.subdivisions;if(length>64)fail('1小節の位置数は64以内にしてください。');
+ if(!Array.isArray(data.instruments)||data.instruments.length<1||data.instruments.length>8)fail('instrumentsは1～8楽器で指定してください。');
+ const ids=new Set(),keys=new Set();
+ const parts=data.instruments.map(part=>{
+  if(!object(part))fail('楽器の形式を確認してください。');fields(part,['id','label','key','limb','sound']);
+  if(typeof part.id!=='string'||!/^[a-z0-9_-]{1,24}$/.test(part.id)||ids.has(part.id))fail('楽器idは重複しない半角小文字・数字・_・-で指定してください。');
+  if(typeof part.key!=='string'||!/^[a-z0-9]$/.test(part.key)||keys.has(part.key))fail('keyは重複しない半角小文字または数字1文字で指定してください。');
+  if(typeof part.sound!=='string'||!Object.hasOwn(PRESETS,part.sound))fail('soundはbass、snare、hihat、crash、tomから指定してください。');
+  ids.add(part.id);keys.add(part.key);
+  return {id:part.id,label:rich(part.label,32,'label'),key:part.key,limb:rich(part.limb,24,'limb'),sound:part.sound};
+ });
+ if(!Array.isArray(data.notes)||data.notes.length!==length||data.notes.some(n=>!Array.isArray(n)||n.length>parts.length||n.some(id=>typeof id!=='string'||!ids.has(id))||new Set(n).size!==n.length))fail('notesは'+length+'位置の配列にし、定義した楽器idを重複なく指定してください。');
+ const result={name,meter:data.meter.slice(),subdivisions:data.subdivisions,instruments:parts,notes:data.notes.map(n=>n.slice())};
+ if(data.memos!==undefined){if(!Array.isArray(data.memos)||data.memos.length!==length||data.memos.some(s=>typeof s!=='string'||s.length>24))fail('memosは'+length+'位置の文字列配列（各24文字以内）にしてください。');result.memos=data.memos.slice();}
+ if(data.beatLabels!==undefined){if(!Array.isArray(data.beatLabels)||data.beatLabels.length!==data.meter[0])fail('beatLabelsは分子と同じ数で指定してください。');result.beatLabels=data.beatLabels.map(v=>rich(v,24,'beatLabels'));}
+ return result;
+}
+
+function parseRubyInput(text,max,field){
+ if(typeof text!=='string'||text.length>4096)fail(field+'の入力が長すぎます。');
+ const parts=[];let buffer='',i=0,hasRuby=false;
+ function pushBuffer(){if(buffer){parts.push(buffer);buffer='';}}
+ function addRuby(base,reading){if(!base.trim()||!reading.trim()||/[{}｜]/.test(base)||/[{}｜]/.test(reading))fail(field+'のルビ形式を確認してください。');pushBuffer();parts.push({text:base,ruby:reading});hasRuby=true;}
+ while(i<text.length){
+  const c=text[i];
+  if(c==='｜'){
+   const open=text.indexOf('{',i+1),close=open<0?-1:text.indexOf('}',open+1);if(open<0||close<0)fail(field+'の明示範囲は｜文字{読み}で閉じてください。');
+   addRuby(text.slice(i+1,open),text.slice(open+1,close));i=close+1;
+  }else if(c==='{'){
+   const close=text.indexOf('}',i+1);if(close<0)fail(field+'のルビ括弧が閉じていません。');
+   const match=buffer.match(/[\p{Script=Han}々〆ヶヵ]+$/u);if(!match)fail(field+'のルビ直前に漢字がありません。任意の範囲は｜文字{読み}で指定してください。');
+   const base=match[0];buffer=buffer.slice(0,-base.length);addRuby(base,text.slice(i+1,close));i=close+1;
+  }else if(c==='}')fail(field+'に単独の終了括弧があります。');
+  else{buffer+=c;i++;}
+ }
+ pushBuffer();return rich(hasRuby?parts:text,max,field);
+}
+function toRubyInput(value){return typeof value==='string'?value:value.map(p=>typeof p==='string'?p:'｜'+p.text+'{'+p.ruby+'}').join('');}
+function fieldPreview(input,node,max,field){try{const value=parseRubyInput(input.value,max,field);write(node,value);node.classList.remove('invalid');input.removeAttribute('aria-invalid');return value;}catch(error){ui(node,error.message);node.classList.add('invalid');input.setAttribute('aria-invalid','true');return null;}}
+let uidCount=0;
+const model={meter:[4,4],subdivisions:4,name:toRubyInput(DEFAULT_PATTERN.name),rows:[],notes:[],memos:Array(16).fill(''),beatLabels:Array(4).fill('')};
+for(const p of DEFAULT_PATTERN.instruments)model.rows.push({uid:'row'+(++uidCount),id:p.id,label:toRubyInput(p.label),key:p.key,limb:toRubyInput(p.limb),sound:p.sound});
+model.notes=DEFAULT_PATTERN.notes.map(ids=>new Set(ids.map(id=>model.rows.find(r=>r.id===id).uid)));
+let revision=0,copying=false,validJSON=null,validLink='',currentLesson=null;
+function dimensionsFromFields(){
+ const beats=Number($('beats').value),denom=Number($('denominator').value),sub=Number($('subdivisions').value);
+ if(!$('beats').value||!Number.isInteger(beats)||beats<1||beats>12)fail('分子は1～12の整数で指定してください。');
+ if(![2,4,8,16].includes(denom))fail('分母は2・4・8・16から選択してください。');
+ if(!$('subdivisions').value||!Number.isInteger(sub)||sub<1||sub>8||beats*sub>64)fail('分割数は1～8、全体は64位置以内にしてください。');
+ return {meter:[beats,denom],subdivisions:sub};
+}
+function pendingDimensions(){const v=dimensionsFromFields();return v.meter[0]!==model.meter[0]||v.meter[1]!==model.meter[1]||v.subdivisions!==model.subdivisions;}
+function syncMeterFields(){$('beats').value=model.meter[0];$('denominator').value=model.meter[1];$('subdivisions').value=model.subdivisions;}
+function refreshDimensionsState(){
+ try{const pending=pendingDimensions();$('applyMeter').disabled=!pending;ui($('meterStatus'),pending?'拍子・分割が未適用です。下表は現在の'+model.meter.join('/')+'・'+model.subdivisions+'分割です。':'現在：'+model.meter.join('/')+'、1拍を'+model.subdivisions+'分割、'+model.notes.length+'位置。');}
+ catch(error){$('applyMeter').disabled=true;ui($('meterStatus'),error.message);}
+}
+function applyDimensions(){
+ let next;try{next=dimensionsFromFields();}catch(error){ui($('meterStatus'),error.message);return;}
+ const count=next.meter[0]*next.subdivisions,newNotes=Array.from({length:count},()=>new Set()),newMemos=Array(count).fill(''),newLabels=Array(next.meter[0]).fill('');
+ const oldUnits=model.meter[1]*model.subdivisions,newUnits=next.meter[1]*next.subdivisions;
+ let lostHits=0,lostMemos=0,lostLabels=0;
+ for(let i=0;i<model.notes.length;i++){
+  const numerator=i*newUnits,index=numerator/oldUnits;
+  if(numerator%oldUnits===0&&index<count){newNotes[index]=new Set(model.notes[i]);newMemos[index]=model.memos[i];}
+  else{lostHits+=model.notes[i].size;if(model.memos[i]!=='')lostMemos++;}
+ }
+ model.beatLabels.forEach((text,i)=>{const n=i*next.meter[1],index=n/model.meter[1];if(n%model.meter[1]===0&&index<newLabels.length)newLabels[index]=text;else if(text!=='')lostLabels++;});
+ if(lostHits||lostMemos||lostLabels){
+  if(!confirm('拍子・分割を変更すると、同じ時間位置に置けないデータを削除します。\n打点 '+lostHits+'個、メモ '+lostMemos+'件、拍名 '+lostLabels+'件。\nこの変更を適用しますか？')){syncMeterFields();refreshDimensionsState();refreshOutputs();return;}
+ }
+ model.meter=next.meter;model.subdivisions=next.subdivisions;model.notes=newNotes;model.memos=newMemos;model.beatLabels=newLabels;
+ renderGrid();refreshDimensionsState();refreshOutputs();
+}
+function updateGridNames(){
+ for(const row of model.rows){const target=document.querySelector('[data-row-label="'+row.uid+'"]');if(!target)continue;target.replaceChildren();const limb=el('span','row-limb');try{write(limb,parseRubyInput(row.limb,24,'担当'));}catch{limb.textContent=row.limb;}
+  const label=el('span');try{write(label,parseRubyInput(row.label,32,'楽器名'));}catch{label.textContent=row.label;}target.append(limb,label);
+  for(const box of document.querySelectorAll('input[data-hit-row="'+row.uid+'"]')){const i=Number(box.dataset.index);box.setAttribute('aria-label',(plainLabel(label)||row.id)+' '+(Math.floor(i/model.subdivisions)+1)+'拍目 '+(i%model.subdivisions+1)+'番目');}
+ }
+}
+function plainLabel(node){const clone=node.cloneNode(true);clone.querySelectorAll('rt').forEach(rt=>rt.remove());return clone.textContent;}
+function renderInstrumentTable(){
+ const body=$('instrumentBody');body.replaceChildren();
+ model.rows.forEach((row,index)=>{
+  const tr=el('tr');tr.dataset.uid=row.uid;
+  for(const field of ['id','label','key','limb','sound']){
+   const td=el('td'),input=el(field==='sound'?'select':'input');input.id='inst-'+row.uid+'-'+field;input.dataset.uid=row.uid;input.dataset.field=field;input.setAttribute('aria-label','楽器'+(index+1)+' '+field);
+   if(field==='sound')for(const sound of Object.keys(PRESETS)){const option=el('option','',sound);option.value=sound;input.append(option);}
+   else{input.type='text';input.maxLength=field==='id'?24:field==='key'?1:4096;input.autocomplete='off';input.spellcheck=false;}
+   input.value=row[field];td.append(input);
+   if(field==='label'||field==='limb'){const preview=el('div','preview');preview.dataset.preview=row.uid+':'+field;td.append(preview);fieldPreview(input,preview,field==='label'?32:24,field==='label'?'楽器名':'担当');}
+   tr.append(td);
+  }
+  const td=el('td'),actions=el('div','row-actions');
+  for(const [action,text,disabled]of [['up','↑',index===0],['down','↓',index===model.rows.length-1],['delete','削除',model.rows.length===1]]){
+   const button=el('button');button.type='button';button.dataset.action=action;button.dataset.uid=row.uid;button.disabled=disabled;ui(button,text);button.setAttribute('aria-label','楽器'+(index+1)+' '+(action==='up'?'上へ':action==='down'?'下へ':'削除'));actions.append(button);
+  }
+  td.append(actions);tr.append(td);body.append(tr);
+ });$('addInstrument').disabled=model.rows.length>=8;
+}
+function renderGrid(){
+ const head=$('noteHead'),body=$('noteBody');head.replaceChildren();body.replaceChildren();
+ const table=$('noteTable');table.style.setProperty('--grid-width',(150+model.notes.length*52)+'px');
+ const oldCols=table.querySelector('colgroup');if(oldCols)oldCols.remove();const cols=el('colgroup');const first=el('col');first.style.width='150px';cols.append(first);for(let i=0;i<model.notes.length;i++){const col=el('col');col.style.width='52px';cols.append(col);}table.prepend(cols);
+ const top=el('tr'),corner=el('th','row-name');corner.scope='col';ui(corner,'担当 / 楽器');top.append(corner);
+ for(let beat=0;beat<model.meter[0];beat++){const th=el('th','beat');th.colSpan=model.subdivisions;th.scope='colgroup';ui(th,(beat+1)+'拍');top.append(th);}head.append(top);
+ const positions=el('tr');positions.append(el('th','row-name',''));
+ for(let i=0;i<model.notes.length;i++){const th=el('th','position',''+(i%model.subdivisions+1));th.scope='col';positions.append(th);}head.append(positions);
+ for(const row of model.rows){
+  const tr=el('tr'),name=el('th','row-name');name.scope='row';name.dataset.rowLabel=row.uid;tr.append(name);
+  for(let i=0;i<model.notes.length;i++){const td=el('td','slot'+(i%model.subdivisions===0?' group':'')+(model.notes[i].has(row.uid)?' checked':'')),label=el('label'),box=el('input');box.type='checkbox';box.checked=model.notes[i].has(row.uid);box.dataset.hitRow=row.uid;box.dataset.index=i;label.append(box);td.append(label);tr.append(td);}body.append(tr);
+ }
+ const memoRow=el('tr'),memoHead=el('th','row-name');ui(memoHead,'メモ（任意）');memoHead.scope='row';memoRow.append(memoHead);
+ model.memos.forEach((memo,index)=>{const td=el('td','slot'),input=el('input');input.type='text';input.maxLength=24;input.value=memo;input.dataset.memo=index;input.setAttribute('aria-label','位置'+(index+1)+'のメモ');td.append(input);memoRow.append(td);});body.append(memoRow);
+ const beatRow=el('tr'),beatHead=el('th','row-name');ui(beatHead,'拍名（任意）');beatHead.scope='row';beatRow.append(beatHead);
+ model.beatLabels.forEach((text,index)=>{const td=el('td','beat-input');td.colSpan=model.subdivisions;const input=el('input');input.type='text';input.maxLength=4096;input.value=text;input.dataset.beatLabel=index;input.placeholder=String(index+1);input.setAttribute('aria-label',(index+1)+'拍目の拍名とルビ');td.append(input);const preview=el('div','preview');preview.dataset.beatPreview=index;td.append(preview);if(text)fieldPreview(input,preview,24,'拍名');beatRow.append(td);});body.append(beatRow);
+ ui($('gridSummary'),model.meter.join('/')+' · '+model.notes.length+'位置');updateGridNames();
+}
+function createLesson(){
+ if(pendingDimensions())fail('拍子・分割の変更を先に適用してください。');
+ const bpm=Number($('tempo').value);if(!$('tempo').value||!Number.isInteger(bpm)||bpm<40||bpm>160)fail('テンポは40～160の整数で指定してください。');
+ const instruments=model.rows.map(row=>({id:row.id,label:parseRubyInput(row.label,32,'楽器名'),key:row.key,limb:parseRubyInput(row.limb,24,'担当'),sound:row.sound}));
+ const ids=new Map(model.rows.map(row=>[row.uid,row.id]));
+ const lesson={name:parseRubyInput(model.name,60,'教材名'),meter:model.meter.slice(),subdivisions:model.subdivisions,instruments,notes:model.notes.map(set=>Array.from(set,uid=>ids.get(uid)))};
+ if(model.memos.some(text=>text!==''))lesson.memos=model.memos.slice();
+ if(model.beatLabels.some(text=>text!==''))lesson.beatLabels=model.beatLabels.map((text,index)=>text?parseRubyInput(text,24,'拍名'):String(index+1));
+ return {lesson:validatePattern(JSON.stringify(lesson)),bpm};
+}
+function encodeBase64URL(bytes){let binary='';for(const byte of bytes)binary+=String.fromCharCode(byte);return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function buildLink(lesson,bpm){
+ const bytes=new TextEncoder().encode(JSON.stringify({v:1,bpm,lesson}));if(bytes.length>6000)fail('共有データが6,000バイトを超えました。JSONは保存できますが、リンクは作成できません。');
+ const url=PRACTICE_URL+'#lesson=1.'+encodeBase64URL(bytes);if(url.length>8192)fail('共有URLが8,192文字を超えました。');return url;
+}
+function updateOutputButtons(){$('copyJSON').disabled=copying||!validJSON;$('saveJSON').disabled=!validJSON;$('copyLink').disabled=copying||!validLink;$('openPractice').disabled=!validLink;}
+function refreshOutputs(){
+ revision++;$('copyFallback').hidden=true;$('fallbackText').value='';ui($('copyStatus'),'');
+ validJSON=null;validLink='';currentLesson=null;$('jsonPreview').value='';$('linkPreview').value='';
+ try{
+  const result=createLesson();currentLesson=result.lesson;const pretty=JSON.stringify(result.lesson,null,2);validJSON=pretty.length<=32768?pretty:JSON.stringify(result.lesson);
+  $('jsonPreview').value=validJSON;$('validation').className='validation';ui($('validation'),'教材は有効です。表記と打点を確認して出力してください。');
+  try{validLink=buildLink(result.lesson,result.bpm);$('linkPreview').value=validLink;$('linkStatus').className='output-status';ui($('linkStatus'),'リンク '+validLink.length+'文字 · テンポ '+result.bpm+' BPM · 音量は共有しません。');}
+  catch(error){$('linkStatus').className='output-status error';ui($('linkStatus'),error.message);}
+ }catch(error){$('validation').className='validation error';ui($('validation'),error.message);$('linkStatus').className='output-status';ui($('linkStatus'),'入力を確認するまで、コピー・保存・リンク出力は無効です。');}
+ updateOutputButtons();
+}
+async function copyOutput(kind){
+ const text=kind==='json'?validJSON:validLink;if(!text||copying)return;
+ const ticket=revision;copying=true;updateOutputButtons();ui($('copyStatus'),'コピー中…');
+ try{if(!navigator.clipboard||typeof navigator.clipboard.writeText!=='function')throw new Error('clipboard-unavailable');await navigator.clipboard.writeText(text);if(ticket===revision)ui($('copyStatus'),kind==='json'?'JSONをコピーしました。':'教材リンクをコピーしました。');}
+ catch{if(ticket===revision){$('copyFallback').hidden=false;$('fallbackText').value=text;$('fallbackText').focus();$('fallbackText').select();ui($('copyStatus'),'自動コピーを利用できません。選択された内容を手動でコピーしてください。');}}
+ finally{copying=false;updateOutputButtons();}
+}
+$('lessonName').addEventListener('input',()=>{model.name=$('lessonName').value;fieldPreview($('lessonName'),$('namePreview'),60,'教材名');refreshOutputs();});
+for(const id of ['beats','denominator','subdivisions'])$(id).addEventListener('input',()=>{refreshDimensionsState();refreshOutputs();});
+$('tempo').addEventListener('input',refreshOutputs);$('applyMeter').addEventListener('click',applyDimensions);
+$('instrumentBody').addEventListener('input',event=>{
+ const target=event.target,row=model.rows.find(row=>row.uid===target.dataset.uid);if(!row||!target.dataset.field)return;
+ row[target.dataset.field]=target.value;if(['label','limb'].includes(target.dataset.field)){const preview=document.querySelector('[data-preview="'+row.uid+':'+target.dataset.field+'"]');fieldPreview(target,preview,target.dataset.field==='label'?32:24,target.dataset.field==='label'?'楽器名':'担当');}updateGridNames();refreshOutputs();
+});
+$('instrumentBody').addEventListener('click',event=>{
+ const button=event.target.closest('button[data-action]');if(!button||button.disabled)return;const index=model.rows.findIndex(row=>row.uid===button.dataset.uid);if(index<0)return;const action=button.dataset.action;
+ if(action==='delete'){const row=model.rows[index],hits=model.notes.filter(set=>set.has(row.uid)).length;if(!confirm('この楽器と、その打点'+hits+'個を削除しますか？'))return;model.rows.splice(index,1);for(const set of model.notes)set.delete(row.uid);}
+ else{const next=index+(action==='up'?-1:1);if(next<0||next>=model.rows.length)return;[model.rows[index],model.rows[next]]=[model.rows[next],model.rows[index]];}
+ renderInstrumentTable();renderGrid();refreshOutputs();
+});
+$('addInstrument').addEventListener('click',()=>{
+ if(model.rows.length>=8)return;const uid='row'+(++uidCount);let id='inst'+uidCount;while(model.rows.some(row=>row.id===id))id+='x';
+ const key=Array.from('1234567890abcdefghijklmnopqrstuvwxyz').find(key=>!model.rows.some(row=>row.key===key));
+ model.rows.push({uid,id,label:'タム',key,limb:'右手{みぎて}',sound:'tom'});renderInstrumentTable();renderGrid();refreshOutputs();
+});
+$('noteBody').addEventListener('change',event=>{
+ const target=event.target;if(target.dataset.hitRow){const index=Number(target.dataset.index),uid=target.dataset.hitRow;if(target.checked)model.notes[index].add(uid);else model.notes[index].delete(uid);target.closest('td').classList.toggle('checked',target.checked);refreshOutputs();}
+});
+$('noteBody').addEventListener('input',event=>{
+ const target=event.target;if(target.dataset.memo!==undefined){model.memos[Number(target.dataset.memo)]=target.value;refreshOutputs();}
+ else if(target.dataset.beatLabel!==undefined){const index=Number(target.dataset.beatLabel);model.beatLabels[index]=target.value;const preview=document.querySelector('[data-beat-preview="'+index+'"]');if(target.value)fieldPreview(target,preview,24,'拍名');else{preview.replaceChildren();target.removeAttribute('aria-invalid');}refreshOutputs();}
+});
+$('copyJSON').addEventListener('click',()=>copyOutput('json'));$('copyLink').addEventListener('click',()=>copyOutput('link'));
+$('saveJSON').addEventListener('click',()=>{if(!validJSON)return;const url=URL.createObjectURL(new Blob([validJSON],{type:'application/json;charset=utf-8'})),a=el('a');a.href=url;a.download='dr-lesson.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);ui($('copyStatus'),'JSONの保存を開始しました。保存先はブラウザーで確認してください。');});
+$('openPractice').addEventListener('click',()=>{if(validLink)window.open(validLink,'_blank','noopener,noreferrer');});
+for(const node of document.querySelectorAll('[data-ui]'))ui(node,node.dataset.ui);
+$('lessonName').value=model.name;fieldPreview($('lessonName'),$('namePreview'),60,'教材名');renderInstrumentTable();renderGrid();refreshDimensionsState();refreshOutputs();
+</script></body></html>
+
