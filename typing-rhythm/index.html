@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>タイピング・リズムゲーム</title><link rel="stylesheet" href="styles.css"><script defer src="core.js"></script><script defer src="audio.js"></script><script defer src="app.js"></script></head>
+<body><main>
+ <header><div><p class="eyebrow">指と、ことばと、リズム。</p><h1>タイピング・リズムゲーム</h1></div><p class="intro">文字を見て、担当の指で。<br>線に重なるタイミングで打ってみよう。</p></header>
+ <section class="controls" aria-label="練習の設定">
+  <label>練習曲<select id="sample"><option value="home">はじめの F・J</option><option value="asada">ことば「朝だ」</option><option value="six">6拍と予備拍</option><option value="pickup">アウフタクトとテンポ変化</option></select></label>
+  <label class="file-label">自分のJSONを開く<input id="file" type="file" accept=".json,application/json"></label>
+  <label>練習の速さ<select id="speed"></select></label>
+  <label>音量 <span id="volumeValue">12%</span><input id="volume" type="range" min="0" max="30" value="12"></label>
+  <label class="check"><input id="hitSound" type="checkbox" checked>打鍵音</label>
+ </section>
+ <div class="session-bar"><div><h2 id="chartTitle">教材を読み込んでいます</h2><p id="chartInfo"></p></div><div class="buttons"><button id="start" disabled>練習をはじめる</button><button id="stop" disabled class="secondary">停止</button></div></div>
+ <p id="message" role="status" aria-live="polite">開始するまで音は鳴りません。日本語入力（IME）をOFFにしてください。</p>
+ <p id="warning" class="warning" hidden></p>
+ <div class="support-heading"><h2>文字と指の位置</h2><div><label><input id="showKeys" type="checkbox" checked>簡易キーボードを表示</label><label><input id="showHands" type="checkbox" checked>手の図を表示</label></div></div>
+ <section class="play-area" aria-label="リズムと文字">
+  <div class="readout"><span id="phase">準備</span><span id="progress">拍 0</span><span>自己ベスト <strong id="best">—</strong></span></div>
+  <div id="field" tabindex="0" aria-label="入力エリア。開始するとここに移動します。表示された英字を入力してください。"><canvas id="canvas" aria-label="指別10レーンの落下ノート"></canvas><div id="feedback" aria-live="off">F と J に人差し指を置こう</div></div>
+  <section id="keyGuide" aria-label="レーンにそろえた簡易キーボード"><div id="keyGrid"></div><p class="keyboard-caption">色のついたキーが、この曲で使う文字。F・Jのしるしに人差し指を置こう。</p></section>
+  <section id="handGuide" aria-label="キーの列にそろえた左右の手の図"><svg id="hands" viewBox="0 0 1000 145" preserveAspectRatio="none" role="img" aria-label="各指の先が担当するキーの列につながっています。人差し指は2列を担当します。"></svg></section>
+  <div class="field-help"><span>↓ ノート・キー・指が同じ列につながります</span><span>人差し指は、かっこの2列を担当</span></div>
+ </section>
+ <section class="hint-card" aria-label="ことばのヒント"><span class="eyebrow">ことばのヒント</span><p id="hint">音と指の準備をしよう</p></section>
+ <section id="result" hidden aria-live="polite"><h2>練習おつかれさま！</h2><p class="result-score"><strong id="score">0</strong> / 10,000点</p><p id="resultDetail"></p><p id="saveStatus"></p></section>
+ <footer><p>得点より、正しい指で一つずつ。途中でまちがえても、そのまま続けられます。</p><p><a href="使い方.txt">使い方</a> · <a href="JSON-GUIDE.md">教材JSONガイド</a> · 記録はこのブラウザに保存されます。</p></footer>
+</main></body></html>
