@@ -1,12 +1,15 @@
 /* Shared, dependency-free chart/time/sound model. Browser + Node tests. */
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.RhythmCore=api;})(typeof globalThis!=='undefined'?globalThis:this,function(){
  'use strict';
- const LANES=[['左小指','qaz'],['左薬指','wsx'],['左中指','edc'],['左人差し指 外','rfv'],['左人差し指 内','tgb'],['右人差し指 内','yhn'],['右人差し指 外','ujm'],['右中指','ik'],['右薬指','ol'],['右小指','p']];
+ const LANES=[['左小指','qaz'],['左薬指','wsx'],['左中指','edc'],['左人差し指 外','rfv'],['左人差し指 内','tgb'],['右人差し指 内','yhn'],['右人差し指 外','ujm'],['右中指','ik,'],['右薬指','ol.'],['右小指','p']];
  const EPS=1e-9,MAX_BYTES=5*1024*1024;
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
- const KEYS='qwertyuiopasdfghjklzxcvbnm';
- const DRUMS=Object.freeze(Object.fromEntries(Array.from({length:26},(_,i)=>{const kind=['kick','tom','wood','snare','hat'][i%5],id=kind+'-'+(Math.floor(i/5)+1);return [id,{kind,pitch:Math.pow(2,Math.floor(i/5)/6),label:({kick:'太鼓',tom:'タム',wood:'木',snare:'スネア',hat:'ハット'})[kind]+' '+(Math.floor(i/5)+1)}];})));
+ const KEYS=Object.freeze([... 'qwertyuiopasdfghjklzxcvbnm',',','.','space']);
+ const keyLabel=k=>k==='space'?'スペース':k===','?'、':k==='.'?'。':k.toUpperCase();
+ const keyCode=code=>/^Key[A-Z]$/.test(code)?code.slice(3).toLowerCase():({Comma:',',Period:'.',Space:'space'})[code]||null;
+ const keyLane=k=>k==='space'?-1:LANES.findIndex(l=>l[1].includes(k));
+ const DRUMS=Object.freeze(Object.fromEntries(Array.from({length:29},(_,i)=>{const kind=['kick','tom','wood','snare','hat'][i%5],id=kind+'-'+(Math.floor(i/5)+1);return [id,{kind,pitch:Math.pow(2,Math.floor(i/5)/6),label:({kick:'太鼓',tom:'タム',wood:'木',snare:'スネア',hat:'ハット'})[kind]+' '+(Math.floor(i/5)+1)}];})));
  function standardSounds(preset){return Object.fromEntries([...KEYS].map((k,i)=>[k,preset==='chip'?48+i:Object.keys(DRUMS)[i]]));}
  function soundConfig(s,warnings=[]){
   const obj=v=>v&&typeof v==='object'&&!Array.isArray(v);
@@ -17,7 +20,7 @@
   const map=standardSounds(preset);
   function value(v,where,fallback){if(v==='miss')return v;if(preset==='chip'){if(typeof v!=='number')throw Error(where+': MIDI番号36〜96の整数またはmissが必要です。');if(!Number.isInteger(v)||v<36||v>96)throw Error(where+': MIDI番号は36〜96の整数です。');return v;}if(typeof v!=='string')throw Error(where+': 打楽器IDまたはmissが必要です。');if(!Object.hasOwn(DRUMS,v)){warnings.push(where+': 未対応の音を標準音へ戻しました。');return fallback;}return v;}
   if(Object.hasOwn(s,'default'))for(const k of KEYS)map[k]=value(s.default,'sound.default',map[k]);
-  if(s.keys!==undefined){if(!obj(s.keys))throw Error('sound.keys: オブジェクトが必要です。');for(const [k,v]of Object.entries(s.keys)){if(!/^[a-z]$/.test(k))throw Error('sound.keys: キーは小文字a〜zです。');map[k]=value(v,'sound.keys.'+k,map[k]);}}
+  if(s.keys!==undefined){if(!obj(s.keys))throw Error('sound.keys: オブジェクトが必要です。');for(const [k,v]of Object.entries(s.keys)){if(!KEYS.includes(k))throw Error('sound.keys: キーはa〜z、,、.、spaceです。');map[k]=value(v,'sound.keys.'+k,map[k]);}}
   return {preset,keys:map};
  }
  function upperBound(array,value,get=x=>x){let l=0,r=array.length;while(l<r){const m=(l+r)>>>1;if(get(array[m])<=value)l=m+1;else r=m;}return l;}
@@ -52,7 +55,7 @@
     if(e.e==='tempo'&&e.beat===0)initialCount++;
     if(e.e==='tempoRamp'&&(!finite(e.toBeat)||e.toBeat<=e.beat))fail(i,'toBeat','開始拍より後の有限数が必要です。');
    }else if(e.e==='note'){
-    if(typeof e.key!=='string'||!/^[a-z]$/.test(e.key))fail(i,'key','小文字a〜zの1文字にしてください。');
+    if(typeof e.key!=='string'||!KEYS.includes(e.key))fail(i,'key','a〜z、,、.、spaceのいずれかにしてください。');
     if(noteBeats.has(e.beat))fail(i,'beat','同時に複数のノートは置けません。');noteBeats.add(e.beat);
    }else if(e.e==='hint'){if(typeof e.text!=='string'||e.text.length>2000)fail(i,'text','2,000文字以内の文字列にしてください。');}
    else if(e.e==='barline'){if(e.style!==0&&e.style!==1)fail(i,'style','0または1にしてください。');}
@@ -62,14 +65,14 @@
   if(initialCount!==1)fail(null,'tempo','beat=0に1個のtempoが必要です。');
   if(!noteBeats.size)fail(null,'note','1個以上のノートが必要です。');
   events.sort((a,b)=>a.beat-b.beat||a.index-b.index);const map=timeline(events);
-  const notes=events.filter(e=>e.e==='note').map(e=>({...e,time:map.at(e.beat),lane:LANES.findIndex(l=>l[1].includes(e.key))}));
+  const notes=events.filter(e=>e.e==='note').map(e=>({...e,time:map.at(e.beat),lane:keyLane(e.key)}));
   const hints=events.filter(e=>e.e==='hint').map(e=>({...e,time:map.at(e.beat)}));
   const barlines=events.filter(e=>e.e==='barline').map(e=>({...e,time:map.at(e.beat)}));
   let lastBeat=events.at(-1).beat;for(const s of map.segments)lastBeat=Math.max(lastBeat,s.beat);
   const duration=map.at(lastBeat),countInSeconds=d.countInBeats*60/map.initial;
   if(!Number.isFinite(duration)||!Number.isFinite(countInSeconds)||!Number.isFinite(duration+countInSeconds)||notes.some(n=>!Number.isFinite(n.time)))fail(null,'beat','計算した時刻が大きすぎます。');
-  const sound=soundConfig(d.sound,warnings);for(const key of new Set(notes.map(n=>n.key)))if(sound.keys[key]==='miss')warnings.push(key.toUpperCase()+'は教材で使いますがハズレ音です。sound.keysを確認してください。');
+  const sound=soundConfig(d.sound,warnings);for(const key of new Set(notes.map(n=>n.key)))if(sound.keys[key]==='miss')warnings.push(keyLabel(key)+'は教材で使いますがハズレ音です。sound.keysを確認してください。');
   return {id:d.id,revision:d.revision,title:d.title,countInBeats:d.countInBeats,events,notes,hints,barlines,map,lastBeat,duration,countInSeconds,warnings,sound};
  }
- return {LANES,KEYS,DRUMS,EPS,MAX_BYTES,upperBound,timeline,parseChart,validateChart,soundConfig,standardSounds};
+ return {LANES,KEYS,keyLabel,keyCode,keyLane,DRUMS,EPS,MAX_BYTES,upperBound,timeline,parseChart,validateChart,soundConfig,standardSounds};
 });

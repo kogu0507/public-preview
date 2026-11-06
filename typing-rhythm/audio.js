@@ -1,8 +1,11 @@
 (function(){'use strict';
  class RhythmAudio {
-  constructor(){this.context=null;this.master=null;this.nodes=new Set();this.volume=.12;this.active=false;this.timer=null;this.origin=0;this.generation=0;this.clockMode='未開始';this.scheduled=0;this.lastClock=0;this.hits=0;this.lastSound=null;this.dropped=0;}
-  async prepare(){if(!this.context){this.context=new AudioContext({latencyHint:'interactive'});this.master=this.context.createGain();this.master.gain.value=0;this.master.connect(this.context.destination);}await this.context.resume();if(this.context.state!=='running')throw Error('音声を開始できません。もう一度開始してください。');}
-  setVolume(v){this.volume=v;if(this.master&&this.active)this.master.gain.setValueAtTime(v,this.context.currentTime);}
+  constructor(){this.context=null;this.master=null;this.limiter=null;this.nodes=new Set();this.volume=.12;this.active=false;this.timer=null;this.origin=0;this.generation=0;this.clockMode='未開始';this.scheduled=0;this.lastClock=0;this.hits=0;this.lastSound=null;this.dropped=0;}
+  // Unity below 0.5; dense mixes are gently rounded before the device output.
+  // No oversampling filter: the fixed curve also bounds the rendered samples.
+  static outputStage(c,destination){const curve=new Float32Array(4097);for(let i=0;i<curve.length;i++){const x=i/(curve.length-1)*2-1,a=Math.abs(x);curve[i]=a<=.5?x:Math.sign(x)*(.5+.45*Math.tanh((a-.5)/.45));}const stage=c.createWaveShaper();stage.curve=curve;stage.oversample='none';stage.connect(destination);return stage;}
+  async prepare(){if(!this.context){this.context=new AudioContext({latencyHint:'interactive'});this.master=this.context.createGain();this.master.gain.value=0;this.limiter=RhythmAudio.outputStage(this.context,this.context.destination);this.master.connect(this.limiter);}await this.context.resume();if(this.context.state!=='running')throw Error('音声を開始できません。もう一度開始してください。');}
+  setVolume(v){this.volume=Number.isFinite(v)?Math.max(0,Math.min(1,v)):0;if(this.master&&(this.active||this.nodes.size)){const now=this.context.currentTime,g=this.master.gain;g.cancelScheduledValues(now);g.setValueAtTime(g.value,now);g.linearRampToValueAtTime(this.volume,now+.008);}}
   outputTime(perf=performance.now()){
    const c=this.context;if(!c)return 0;const now=performance.now(),ts=c.getOutputTimestamp?c.getOutputTimestamp():null;
    const mappedNow=ts?ts.contextTime+(now-ts.performanceTime)/1000:NaN;
@@ -30,7 +33,8 @@
    else {const d=RhythmCore.DRUMS[value];if(!d)throw Error('Unknown drum');const p=d.pitch;[start,end,length,level,type]=({kick:[150*p,45*p,.18,.24,'sine'],tom:[260*p,100*p,.14,.20,'sine'],wood:[800*p,600*p,.045,.17,'triangle'],snare:[380*p,170*p,.075,.10,'sawtooth'],hat:[2100*p,1900*p,.025,.055,'square']})[d.kind];}
    source.type=type;source.frequency.setValueAtTime(start,at);source.frequency.exponentialRampToValueAtTime(end,at+length);gain.gain.setValueAtTime(0,at);gain.gain.linearRampToValueAtTime(level,at+.002);gain.gain.exponentialRampToValueAtTime(.0001,at+length);gain.gain.linearRampToValueAtTime(0,at+length+.004);source.connect(gain).connect(destination);source.start(at);source.stop(at+length+.005);return {source,gain,length:length+.005};
   }
-  playVoice(preset,value,at){const voice=RhythmAudio.voice(this.context,this.master,preset,value,at);this.nodes.add(voice.source);voice.source.onended=()=>{this.nodes.delete(voice.source);voice.source.disconnect();voice.gain.disconnect();};}
+  playVoice(preset,value,at){const voice=RhythmAudio.voice(this.context,this.master,preset,value,at);this.nodes.add(voice.source);voice.source.onended=()=>{this.nodes.delete(voice.source);voice.source.disconnect();voice.gain.disconnect();if(!this.active&&this.nodes.size===0){this.master.gain.cancelScheduledValues(0);this.master.gain.value=0;}};}
+  async preview(preset,value){if(this.active)return false;const token=this.generation;await this.prepare();if(token!==this.generation||this.active)return false;if(this.nodes.size>=12){this.dropped++;return false;}const now=this.context.currentTime;this.master.gain.cancelScheduledValues(now);this.master.gain.setValueAtTime(this.volume,now);this.playVoice(preset,value,now+.002);this.hits++;this.lastSound={preset,value};return true;}
   hit(preset,value){if(!this.active)return;if(this.nodes.size>=12){this.dropped++;return;}this.playVoice(preset,value,this.context.currentTime+.002);this.hits++;this.lastSound={preset,value};}
 
   stop(){this.generation++;this.active=false;if(this.timer!==null)clearInterval(this.timer);this.timer=null;if(this.master){this.master.gain.cancelScheduledValues(0);this.master.gain.value=0;}for(const source of this.nodes){try{source.stop();}catch{}source.disconnect();}this.nodes.clear();}

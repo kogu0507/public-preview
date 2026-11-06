@@ -55,4 +55,20 @@ main{max-width:none;width:100%;padding-left:22px;padding-right:22px}
 .primary-controls{position:sticky;top:0;z-index:20;padding:8px 0;background:#10171ef5;backdrop-filter:blur(8px)}
 .is-playing .keyboard-caption,.is-playing .field-help{display:none}
 
-.is-playing .primary-controls{padding-top:4px;padding-bottom:4px}.is-playing #hintBand{height:76px;padding-top:2px;padding-bottom:2px}
+/* Punctuation follows the lower row; Space is a separate thumb key. */
+.key-cell.space-key{grid-column:4 / span 4;grid-row:4;background:#1c2934;color:#e9e0bc;border-color:#e9e0bc;touch-action:none}
+.key-cell[data-key]{touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.key-cell.space-key.pressed{background:#f9dfa0;color:#17212a;border-color:#fff0bb}
+.is-playing .primary-controls>label{display:none}
+.is-playing .primary-controls{min-height:0;padding:2px 0;justify-content:flex-end}
+.is-playing .primary-controls button{padding:4px 12px}
+#soundGrid{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:6px;margin:14px 0 8px}
+.sound-cell{display:flex;flex-direction:column;gap:4px;min-width:0;padding:6px 3px;border:1px solid #425665;border-radius:4px;text-align:center}
+.sound-cell>span{font-weight:700}.sound-cell select{min-width:0;width:100%;font-size:12px;padding:5px 2px}.sound-space{grid-column:4 / span 4;grid-row:4}
+.sound-grid-scroll{max-width:100%;overflow-x:auto;overscroll-behavior-x:contain}.sound-scroll-hint{display:none}
+@media(max-width:900px){#soundGrid{min-width:850px}.sound-scroll-hint{display:block}}
+@media(max-width:750px){.key-cell.space-key{grid-column:3 / span 6}}
+.is-playing .primary-controls{padding-top:1px;padding-bottom:1px}
+.is-playing .readout{padding-top:2px;padding-bottom:2px}
+
+.is-playing .primary-controls{padding-top:1px;padding-bottom:1px}.is-playing #hintBand{height:76px;padding-top:2px;padding-bottom:2px}
