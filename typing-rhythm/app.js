@@ -5,7 +5,7 @@
  const keyElements=new Map(),laneFlashes=new Map(),motion=matchMedia('(prefers-reduced-motion: reduce)');
  const PREVIEW_SECONDS=4,NOTE_HEIGHT=30,FLASH_MS=180;
  function clearPressed(){for(const element of keyElements.values())element.classList.remove('pressed');laneFlashes.clear();}
- function viewGeometry(){const r=canvas.getBoundingClientRect(),lineY=r.height-42;return {width:r.width,height:r.height,lineY,pps:(lineY-60)/PREVIEW_SECONDS,previewSeconds:PREVIEW_SECONDS};}
+ function viewGeometry(){const r=canvas.getBoundingClientRect(),lineY=r.height-2;return {width:r.width,height:r.height,lineY,pps:(lineY-60)/PREVIEW_SECONDS,previewSeconds:PREVIEW_SECONDS};}
  function visualState(time,now=performance.now()){
   let beatStrength=0;if(chart&&active()) {const b=Math.floor(chart.map.inverse(time*speed));if(b>=-chart.countInBeats&&b<=chart.lastBeat){const age=time-chart.map.at(b)/speed;beatStrength=Math.max(0,1-age/.18);}}
   const lanes=Array(10).fill(0);for(const [lane,at]of laneFlashes){const age=now-at;if(age>=FLASH_MS)laneFlashes.delete(lane);else lanes[lane]=motion.matches?1:1-age/FLASH_MS;}
@@ -16,7 +16,8 @@
  function controls(){const running=active()||starting;$('start').disabled=!chart||running;$('start').textContent=state==='完了'||state==='中断'?'もう一度練習する':'練習をはじめる';$('stop').disabled=!running;for(const id of ['sample','file','speed','soundPreset','soundKey','soundValue','restoreSound'])$(id).disabled=running;for(const e of keyElements.values())e.disabled=running;}
  function setState(next){state=next;$('phase').textContent=next;controls();}
  function status(text){$('message').textContent=text;}
- function resetView(){clearPressed();markUsedKeys();currentTime=0;$('result').hidden=true;$('hint').textContent='音と指の準備をしよう';$('feedback').textContent='F と J に人差し指を置こう';$('progress').textContent='拍 0';draw(0);$('beatLight').classList.remove('pulse');}
+ function resetView(){clearPressed();markUsedKeys();currentTime=0;$('result').hidden=true;setHint('F と J に人差し指を置こう');$('progress').textContent='拍 0';draw(0);$('beatLight').classList.remove('pulse');}
+ function setHint(text){const hint=$('hint');if(hint.textContent!==text){hint.textContent=text;hint.scrollTop=0;}}
  function install(next,label){stop('',false);chart=next;sound={preset:chart.sound.preset,keys:{...chart.sound.keys}};syncSoundUI();setState('準備');$('chartTitle').textContent=chart.title;$('chartInfo').textContent=`${chart.notes.length}文字 · 基本 ${chart.map.initial} BPM · 予備拍 ${chart.countInBeats}拍${label?' · '+label:''}`;$('warning').textContent=chart.warnings.join('\n');$('warning').hidden=!chart.warnings.length;resetView();status('準備できました。F と J に指を置いて、練習をはじめましょう。');}
  async function loadSample(name){const token=++loading;try{const response=await fetch('samples/'+name+'.json');if(!response.ok)throw Error('無料曲を読み込めません。HTTP(S)で開いてください。');const next=C.parseChart(await response.text());if(token===loading)install(next,'無料サンプル');}catch(e){if(token===loading){status(e.message);controls();}}}
  async function loadFile(file){const token=++loading;if(!file)return;try{if(file.size>C.MAX_BYTES)throw Error('JSONは5MB以下にしてください。');const next=C.parseChart(await file.text());if(token===loading)install(next,'選択したJSON');}catch(e){if(token===loading)status('読込できませんでした：'+e.message+' 現在の教材はそのままです。');}finally{$('file').value='';}}
@@ -24,23 +25,24 @@
  async function start(){if(!chart||active()||starting)return;starting=true;const token=++generation;controls();try{await audio.prepare();if(token!==generation)return;held.clear();resetView();audio.start(chart,speed,reason=>stop(reason));if(!audio.active){starting=false;controls();return;}starting=false;setState('カウントイン');$('field').focus({preventScroll:true});status('メトロノームに合わせて演奏しよう。文字の下のふちが線につくころに押してみよう。');loop();}catch(e){if(token===generation){starting=false;stop('開始できませんでした：'+e.message);}}}
  function finish(){audio.stop();cancelAnimationFrame(raf);raf=0;held.clear();clearPressed();setState('完了');$('result').hidden=false;$('beatLight').classList.remove('pulse');status('演奏おつかれさま！もう一度でも、別の曲でも。');draw(currentTime);}
  function loop(){if(!active())return;currentTime=audio.songTime();const beat=chart.map.inverse(currentTime*speed);setState(currentTime<0?'カウントイン':'演奏');$('progress').textContent=currentTime<0?`あと ${Math.max(1,Math.ceil(-beat))}拍`:`拍 ${Math.max(0,beat).toFixed(1)}`;
-  const hintIndex=C.upperBound(chart.hints,currentTime*speed,h=>h.time)-1;$('hint').textContent=hintIndex>=0?chart.hints[hintIndex].text:currentTime<0?'まずは拍を聞こう':'文字を見て、指で打とう';
-  $('feedback').textContent=currentTime<0?'拍を聞いて、F と J に人差し指を置こう':'音に合わせて、自分のリズムで';const phase=beat-Math.floor(beat),on=beat>=-chart.countInBeats&&beat<=chart.lastBeat+.2&&phase<.18;$('beatLight').classList.toggle('pulse',on);draw(currentTime);if(currentTime>chart.duration/speed+1){finish();return;}raf=requestAnimationFrame(loop);
+  const hintIndex=C.upperBound(chart.hints,currentTime*speed,h=>h.time)-1;setHint(hintIndex>=0?chart.hints[hintIndex].text:currentTime<0?'まずは拍を聞こう':'');
+  const phase=beat-Math.floor(beat),on=beat>=-chart.countInBeats&&beat<=chart.lastBeat+.2&&phase<.18;$('beatLight').classList.toggle('pulse',on);draw(currentTime);if(currentTime>chart.duration/speed+1){finish();return;}raf=requestAnimationFrame(loop);
  }
  function input(e){if(!active())return;if(e.isComposing||e.key==='Process'){stop('日本語入力（IME）をOFFにして、もう一度開始してください。');return;}if(e.repeat||held.has(e.code)||e.ctrlKey||e.altKey||e.metaKey||!/^Key[A-Z]$/.test(e.code))return;if(e.target!==$('field'))return;e.preventDefault();held.add(e.code);const key=e.code.slice(3).toLowerCase();keyElements.get(key)?.classList.add('pressed');laneFlashes.set(C.LANES.findIndex(l=>l[1].includes(key)),performance.now());if($('hitSound').checked)audio.hit(sound.preset,sound.keys[key]);draw(audio.songTime());}
  function draw(time){
   const {width,height,lineY,pps}=viewGeometry(),dpr=window.devicePixelRatio||1;if(!width||!height)return;if(canvas.width!==Math.round(width*dpr)||canvas.height!==Math.round(height*dpr)){canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);}ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,width,height);const laneWidth=width/10,visual=visualState(time);
+  ctx.save();ctx.beginPath();ctx.rect(0,0,width,lineY);ctx.clip();
   for(let i=0;i<10;i++){ctx.fillStyle=(i===4||i===5)?'#f6f1ce':i<5?(i%2?'#dbe8eb':'#e5eef0'):(i%2?'#f0dfd5':'#f5e8e0');ctx.fillRect(i*laneWidth,0,laneWidth,height);ctx.strokeStyle=i===5?'#61777c':'#bdced0';ctx.lineWidth=i===5?2:1;ctx.setLineDash(i===4||i===6?[5,5]:[]);ctx.beginPath();ctx.moveTo(i*laneWidth,0);ctx.lineTo(i*laneWidth,height);ctx.stroke();ctx.setLineDash([]);}
   // Paint light behind text: restrained teal beat wash, amber input-column afterglow.
-  if(active()){ctx.fillStyle='rgba(25,107,99,'+(visual.reducedMotion ? .035 : visual.beat*.14)+')';ctx.fillRect(0,24,width,height-24);}
-  for(let lane=0;lane<10;lane++)if(visual.lanes[lane]>0){ctx.fillStyle='rgba(239,177,43,'+(visual.lanes[lane]*.34)+')';ctx.fillRect(lane*laneWidth,visual.reducedMotion?lineY-8:24,laneWidth,visual.reducedMotion?12:height-24);}
+  if(active()){ctx.fillStyle='rgba(25,107,99,'+(visual.reducedMotion ? .035 : visual.beat*.14)+')';ctx.fillRect(0,0,width,height);}
+  for(let lane=0;lane<10;lane++)if(visual.lanes[lane]>0){ctx.fillStyle='rgba(239,177,43,'+(visual.lanes[lane]*.34)+')';ctx.fillRect(lane*laneWidth,visual.reducedMotion?lineY-8:0,laneWidth,visual.reducedMotion?12:height);}
   if(chart){const from=time-(height-lineY+NOTE_HEIGHT)/pps,to=time+PREVIEW_SECONDS,fromBeat=chart.map.inverse(from*speed),toBeat=chart.map.inverse(to*speed);ctx.font='11px system-ui';
    for(let b=Math.max(-chart.countInBeats,Math.ceil(fromBeat));b<=Math.min(chart.lastBeat,Math.floor(toBeat));b++){const t=chart.map.at(b)/speed,y=lineY-(t-time)*pps;ctx.strokeStyle='#adbfbe';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();}
    let barStart=Math.max(0,C.upperBound(chart.barlines,from*speed,b=>b.time)-1);for(let i=barStart;i<chart.barlines.length&&chart.barlines[i].time/speed<=to;i++){const b=chart.barlines[i],y=lineY-(b.time/speed-time)*pps;if(y<23||y>height)continue;ctx.strokeStyle=b.style===0?'#57756d':'#b68227';ctx.lineWidth=b.style===0?3:2;ctx.setLineDash(b.style===0?[]:[8,5]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();ctx.setLineDash([]);}
    const notes=chart.notes;const scale=speed;let start=Math.max(0,C.upperBound(notes,from*scale,n=>n.time)-1);for(let i=start;i<notes.length;i++){const n=notes[i],t=n.time/scale;if(t>to)break;const y=lineY-(t-time)*pps;if(y<24||y>height)continue;const x=n.lane*laneWidth+5,w=laneWidth-10;ctx.fillStyle=colors[n.lane];ctx.beginPath();ctx.roundRect(x,y-30,w,30,5);ctx.fill();ctx.fillStyle='#fff';ctx.font='700 '+Math.min(22,laneWidth*.4)+'px system-ui';ctx.textAlign='center';ctx.fillText(n.key.toUpperCase(),x+w/2,y-7);}
   }
-  ctx.fillStyle='#233741';ctx.fillRect(0,0,width,24);ctx.fillStyle='#fff';ctx.font='11px system-ui';ctx.textAlign='center';for(let i=0;i<10;i++)ctx.fillText(['小指','薬指','中指','人差し指 F','内側','内側','人差し指 J','中指','薬指','小指'][i],laneWidth*(i+.5),16);ctx.strokeStyle='#1e5753';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,lineY);ctx.lineTo(width,lineY);ctx.stroke();
-  if(active()){ctx.strokeStyle='rgba(28,155,129,'+(visual.reducedMotion ? .45 : .2+visual.beat*.7)+')';ctx.lineWidth=visual.reducedMotion?4:4+visual.beat*4;ctx.strokeRect(2,26,width-4,height-28);}
+  if(active()){ctx.strokeStyle='rgba(28,155,129,'+(visual.reducedMotion ? .45 : .2+visual.beat*.7)+')';ctx.lineWidth=visual.reducedMotion?4:4+visual.beat*4;ctx.strokeRect(2,2,width-4,height-4);}
+  ctx.restore();ctx.strokeStyle='#1e5753';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,lineY);ctx.lineTo(width,lineY);ctx.stroke();
  }
  function guides(){
   const rows=['qwertyuiop','asdfghjkl ','zxcvbnm   '];

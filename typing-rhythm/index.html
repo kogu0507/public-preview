@@ -15,12 +15,12 @@
  <div class="support-heading"><h2>文字と指の位置</h2><div><label><input id="showKeys" type="checkbox" checked>簡易キーボードを表示</label><label><input id="showHands" type="checkbox" checked>手の図を表示</label></div></div>
  <section class="play-area" aria-label="リズムと文字">
   <div class="readout"><span id="phase">準備</span><span id="progress">拍 0</span><span><span id="beatLight" aria-hidden="true">●</span> 拍の合図</span></div>
-  <div id="field" tabindex="0" aria-label="入力エリア。開始するとここに移動します。表示された英字を入力してください。"><canvas id="canvas" aria-label="指別10レーンの落下ノート"></canvas><div id="feedback" aria-live="off">F と J に人差し指を置こう</div></div>
+  <div id="field" tabindex="0" aria-label="入力エリア。開始するとここに移動します。表示された英字を入力してください。"><canvas id="canvas" aria-label="指別10レーンの落下ノート"></canvas></div>
+  <section id="hintBand" aria-label="ことばのヒント"><p id="hint" aria-live="off">F と J に人差し指を置こう</p></section>
   <section id="keyGuide" aria-label="レーンにそろえた簡易キーボード"><div id="keyGrid"></div><p class="keyboard-caption">色のついたキーが、この曲で使う文字。二重の枠の F・J に人差し指を置こう。</p></section>
   <section id="handGuide" aria-label="キーの列にそろえた左右の手の図"><svg id="hands" viewBox="0 0 1000 235" preserveAspectRatio="xMidYMid meet" role="img" aria-label="各指の先が担当するキーの列につながっています。人差し指は2列を担当します。"></svg></section>
   <div class="field-help"><span>↓ ノート・キー・指が同じ列につながります</span><span>F・Jが基本。中央の列へは同じ人差し指を伸ばす</span></div>
  </section>
- <section class="hint-card" aria-label="ことばのヒント"><span class="eyebrow">ことばのヒント</span><p id="hint">音と指の準備をしよう</p></section>
  <details id="soundSettings"><summary>音を変える</summary><div class="sound-controls"><label>音セット<select id="soundPreset"><option value="chip">ピコピコ</option><option value="drums">ドラム</option></select></label><label>キー<select id="soundKey"></select></label><label>音<select id="soundValue"></select></label><button id="restoreSound" class="secondary">教材の設定に戻す</button></div><p class="small">開始前に変更できます。キーボードのキーを選んでも編集できます。セットを変えると26キーが標準の音になります。</p></details>
  <section id="result" hidden aria-live="polite"><h2>演奏おつかれさま！</h2><p>もう一度でも、別の曲でも。自分のペースで続けよう。</p></section>
  <footer><p>拍を聞いて、担当の指で一つずつ。採点はしません。</p><p><a href="使い方.txt">使い方</a> · <a href="JSON-GUIDE.md">教材JSONガイド</a></p></footer>
