@@ -39,9 +39,10 @@ main{max-width:1060px}
 @media(prefers-reduced-motion:reduce){#beatLight{transition:none}.key-cell.pressed{transform:none}}
 
 /* Read the current word between the timing line and keyboard, separate from canvas lights. */
-#hintBand{height:84px;padding:6px 16px;background:#fffdf5;border-bottom:1px solid #b9c9c7;display:flex;align-items:center;justify-content:center;overflow:hidden}
-#hint{width:100%;max-height:100%;margin:0;text-align:center;font-size:26px;font-weight:650;line-height:1.3;overflow-wrap:anywhere;white-space:pre-wrap;overflow-y:auto;overscroll-behavior:contain}
-@media(max-width:750px){#hintBand{height:76px;padding:6px 10px}#hint{font-size:20px}}
+#hintBand{height:42px;padding:1px 12px;background:#fffdf5;border-bottom:1px solid #b9c9c7;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#hint{width:100%;max-height:100%;margin:0;text-align:center;font-size:20px;font-weight:650;line-height:1.5;padding-top:8px;overflow-wrap:anywhere;white-space:pre-wrap;overflow-y:auto;overscroll-behavior:contain}
+#hint ruby{ruby-position:over}#hint rt{font-size:.5em;line-height:1;font-weight:500}
+@media(max-width:750px){#hintBand{height:42px;padding:1px 8px}#hint{font-size:20px}}
 
 /* Demonstration and mirrored finger palette. */
 :root{color-scheme:dark;--ink:#e8eef4;--muted:#a7b7c6;--paper:#10171e;--line:#425361;--accent:#8be0ca}
@@ -71,4 +72,4 @@ main{max-width:none;width:100%;padding-left:22px;padding-right:22px}
 .is-playing .primary-controls{padding-top:1px;padding-bottom:1px}
 .is-playing .readout{padding-top:2px;padding-bottom:2px}
 
-.is-playing .primary-controls{padding-top:1px;padding-bottom:1px}.is-playing #hintBand{height:76px;padding-top:2px;padding-bottom:2px}
+.is-playing .primary-controls{padding-top:1px;padding-bottom:1px}.is-playing #hintBand{height:42px;padding-top:1px;padding-bottom:1px}
