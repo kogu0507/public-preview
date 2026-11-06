@@ -13,7 +13,7 @@
 .key-cell.left-key,.key-cell.right-key{background:#f8faf8;border-color:#b7c4c3;color:#65777c}
 .key-cell.used.left-key{background:#d3e7ef;border-color:#487e98;color:#1e536d}
 .key-cell.used.right-key{background:#f5dccd;border-color:#b46549;color:#853b22}
-.key-cell.home-key{font-weight:800}.home-mark{position:absolute;bottom:3px;left:0;right:0;text-align:center;font-size:13px;line-height:1}
+.key-cell.home-key{font-weight:800}.key-cell.home-key::after{content:"";position:absolute;inset:2px;border:2px solid currentColor;border-radius:3px;pointer-events:none}
 .key-cell.pressed.left-key,.key-cell.pressed.right-key{background:#f5ca52;color:#273d3e;border-color:#90660e;box-shadow:inset 0 0 0 2px #b17b13;transform:translateY(1px)}
 .key-cell.empty{visibility:hidden}
 .keyboard-caption{font-size:12px;text-align:center;margin:4px 8px 5px;line-height:1.4;color:#445b64}
