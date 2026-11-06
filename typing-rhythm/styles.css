@@ -42,3 +42,17 @@ main{max-width:1060px}
 #hintBand{height:84px;padding:6px 16px;background:#fffdf5;border-bottom:1px solid #b9c9c7;display:flex;align-items:center;justify-content:center;overflow:hidden}
 #hint{width:100%;max-height:100%;margin:0;text-align:center;font-size:26px;font-weight:650;line-height:1.3;overflow-wrap:anywhere;white-space:pre-wrap;overflow-y:auto;overscroll-behavior:contain}
 @media(max-width:750px){#hintBand{height:76px;padding:6px 10px}#hint{font-size:20px}}
+
+/* Demonstration and mirrored finger palette. */
+:root{color-scheme:dark;--ink:#e8eef4;--muted:#a7b7c6;--paper:#10171e;--line:#425361;--accent:#8be0ca}
+body{background:#10171e;color:var(--ink)}header{border-color:#627381}.primary-controls{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap;margin:18px 0 12px}.primary-controls>label{display:flex;flex-direction:column;font-size:13px;gap:5px}.buttons{flex-wrap:wrap}button{background:#a3e6d5;color:#112721;border-color:#83cbb8}button.secondary{background:#1c2a34;color:#e7f5f1;border-color:#698a8a}select,input[type=file]{background:#1a2631;color:#e8eef4;border-color:#596d7e}.file-label{background:#1c2933}#settings{margin:10px 0 12px;border:1px solid #455966;border-radius:6px;padding:9px 12px;background:#17232d}#settings>summary{font-weight:650;cursor:pointer}#settings[inert]{opacity:.65}.controls{gap:14px}#soundSettings{background:#1b2934;border-color:#425665}.warning{background:#43381d;color:#ffedb4}.play-area{background:#17222d;border-color:#778a9d;box-shadow:0 5px 0 #253540}.readout{background:#0c141d;color:#e5f0f5}#hintBand{background:#1b2733;border-color:#4a6172}#hint{color:#f4f5e8}#keyGuide,#handGuide{background:#17222c;border-color:#4a6172}.key-cell.left-key,.key-cell.right-key{background:#1c2934;border-color:var(--finger);color:var(--finger)}.key-cell.used.left-key,.key-cell.used.right-key{background:#293744;border-color:var(--finger);color:var(--finger)}.key-cell.inner-key{background:#253142}.key-cell.pressed.left-key,.key-cell.pressed.right-key{background:#f9dfa0;color:#17212a;border-color:#fff0bb;box-shadow:inset 0 0 0 2px #ae812e}.key-cell.selected-key{outline-color:#eae6bb}.keyboard-caption,.field-help{background:#17222c;color:#afc0ce}.field-help{border-color:#425462}svg text{fill:#c9d6e0}.finger-active{filter:drop-shadow(0 0 10px #fff);stroke:#fff;stroke-width:9}#result{background:#1b2c35;border-color:#8be0ca}a{color:#9be3d4}footer{border-color:#425361}#beatLight{color:#526679}#beatLight.pulse{color:#b1ffe3;text-shadow:0 0 10px #a3f6da}
+@media(max-width:750px){.primary-controls{align-items:stretch}.primary-controls .buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}.primary-controls .buttons #stop{grid-column:1/-1}#settings{padding:9px}}
+
+/* Use the browser width while preserving the shared ten-column geometry. */
+main{max-width:none;width:100%;padding-left:22px;padding-right:22px}
+@media(max-width:750px){main{padding-left:12px;padding-right:12px}}
+
+.primary-controls{position:sticky;top:0;z-index:20;padding:8px 0;background:#10171ef5;backdrop-filter:blur(8px)}
+.is-playing .keyboard-caption,.is-playing .field-help{display:none}
+
+.is-playing .primary-controls{padding-top:4px;padding-bottom:4px}.is-playing #hintBand{height:76px;padding-top:2px;padding-bottom:2px}
