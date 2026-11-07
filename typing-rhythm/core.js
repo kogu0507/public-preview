@@ -6,7 +6,7 @@
  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 
  const KEYS=Object.freeze([... 'qwertyuiopasdfghjklzxcvbnm',',','.','space']);
- const keyLabel=k=>k==='space'?'スペース':k===','?'、':k==='.'?'。':k.toUpperCase();
+ const keyLabel=k=>k==='space'?'スペース':k.toUpperCase();
  const keyCode=code=>/^Key[A-Z]$/.test(code)?code.slice(3).toLowerCase():({Comma:',',Period:'.',Space:'space'})[code]||null;
  const keyLane=k=>k==='space'?-1:LANES.findIndex(l=>l[1].includes(k));
  const DRUMS=Object.freeze(Object.fromEntries(Array.from({length:29},(_,i)=>{const kind=['kick','tom','wood','snare','hat'][i%5],id=kind+'-'+(Math.floor(i/5)+1);return [id,{kind,pitch:Math.pow(2,Math.floor(i/5)/6),label:({kick:'太鼓',tom:'タム',wood:'木',snare:'スネア',hat:'ハット'})[kind]+' '+(Math.floor(i/5)+1)}];})));
