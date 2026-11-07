@@ -57,7 +57,7 @@
    }else if(e.e==='note'){
     if(typeof e.key!=='string'||!KEYS.includes(e.key))fail(i,'key','a〜z、,、.、spaceのいずれかにしてください。');
     if(noteBeats.has(e.beat))fail(i,'beat','同時に複数のノートは置けません。');noteBeats.add(e.beat);
-   }else if(e.e==='hint'){if(typeof e.text!=='string'||e.text.length>2000)fail(i,'text','2,000文字以内の文字列にしてください。');}
+   }else if(e.e==='hint'){if(typeof e.text!=='string'||e.text.length>2000)fail(i,'text','2,000文字以内の文字列にしてください。');if(e.text2!==undefined&&(typeof e.text2!=='string'||e.text2.length>2000))fail(i,'text2','2,000文字以内の文字列にしてください。');}
    else if(e.e==='barline'){if(e.style!==0&&e.style!==1)fail(i,'style','0または1にしてください。');}
    else {warnings.push(`イベント${i+1}: 未対応の「${e.e}」を無視します。対応するアプリ版で確認してください。`);continue;}
    events.push({...e,index:i});

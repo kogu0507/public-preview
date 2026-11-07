@@ -73,3 +73,6 @@ main{max-width:none;width:100%;padding-left:22px;padding-right:22px}
 .is-playing .readout{padding-top:2px;padding-bottom:2px}
 
 .is-playing .primary-controls{padding-top:1px;padding-bottom:1px}.is-playing #hintBand{height:42px;padding-top:1px;padding-bottom:1px}
+
+#hintMain{display:inline}#hintBand.has-secondary #hintMain{display:block}#hintSecond{display:block;font-size:16px;line-height:20px;font-weight:500;color:#d6e5eb}
+#hintBand.has-secondary,.is-playing #hintBand.has-secondary{height:66px}
