@@ -6,6 +6,33 @@
  const canvas=$('canvas'),ctx=canvas.getContext('2d');const fingerColors=['#f38fa8','#e7c46a','#72cfb9','#a9b8ff'],fingerIds=[0,1,2,3,3,3,3,2,1,0],colors=fingerIds.map(i=>fingerColors[i]);
  const keyElements=new Map(),laneFlashes=new Map(),motion=matchMedia('(prefers-reduced-motion: reduce)');
  const PREVIEW_SECONDS=4,NOTE_HEIGHT=30,FLASH_MS=180;
+ const CARD_GAP=2,CARD_PADDING=2;
+ let cardLinks=null,cardLayout=null,cardFont=null,cardLinkBuilds=0,cardLayoutBuilds=0,cardMeasurements=0;
+ function noteMask(note){return note.key==='space'?(1<<4)|(1<<5):1<<note.lane;}
+ function cardsFor(view){
+  if(!chart)return null;
+  if(!cardLinks||cardLinks.chart!==chart){
+   const nextTimes=new Float64Array(chart.notes.length),lanes=new Float64Array(10).fill(Infinity);
+   // A reverse pass includes offscreen successors and Space's two occupied columns.
+   for(let i=chart.notes.length-1;i>=0;i--){const n=chart.notes[i],mask=noteMask(n);let next=Infinity;for(let lane=0;lane<10;lane++)if(mask&(1<<lane))next=Math.min(next,lanes[lane]);nextTimes[i]=next;for(let lane=0;lane<10;lane++)if(mask&(1<<lane))lanes[lane]=n.time;}
+   cardLinks={chart,nextTimes};cardLinkBuilds++;
+  }
+  const fontSize=Math.min(22,view.width/10*.4),font='700 '+fontSize+'px system-ui';
+  if(!cardFont||cardFont.font!==font){
+   ctx.font=font;let ascent=0,descent=0;
+   for(const key of C.KEYS){const m=ctx.measureText(C.keyLabel(key));cardMeasurements++;if(Number.isFinite(m.actualBoundingBoxAscent)&&Number.isFinite(m.actualBoundingBoxDescent)){ascent=Math.max(ascent,m.actualBoundingBoxAscent);descent=Math.max(descent,m.actualBoundingBoxDescent);}}
+   if(!ascent){ascent=fontSize*.8;descent=fontSize*.2;}
+   const measuredMinHeight=Math.ceil((ascent+descent+CARD_PADDING*2)/2)*2;
+   cardFont={font,fontSize,ascent,descent,measuredMinHeight,minHeight:Math.min(NOTE_HEIGHT,measuredMinHeight)};
+  }
+  if(!cardLayout||cardLayout.chart!==chart||cardLayout.font!==cardFont||cardLayout.pps!==view.pps||cardLayout.speed!==speed){
+   const heights=new Float64Array(chart.notes.length);
+   for(let i=0;i<heights.length;i++){const distance=(cardLinks.nextTimes[i]-chart.notes[i].time)/speed*view.pps;heights[i]=Math.max(cardFont.minHeight,Math.min(NOTE_HEIGHT,distance-CARD_GAP));}
+   cardLayout={chart,font:cardFont,pps:view.pps,speed,heights};cardLayoutBuilds++;
+  }
+  return cardLayout;
+ }
+ function cardInfo(view){const layout=cardsFor(view);return layout?{...layout.font,gap:CARD_GAP,linkBuilds:cardLinkBuilds,layoutBuilds:cardLayoutBuilds,measurements:cardMeasurements}:null;}
  function clearPressed(){cancelAnimationFrame(idleFrame);idleFrame=0;held.clear();sources.clear();demoKeys.clear();for(const element of keyElements.values())element.classList.remove('pressed');for(const e of document.querySelectorAll('[data-fingertip-col],[data-thumb]'))e.classList.remove('finger-active');laneFlashes.clear();}
  function fingerCol(lane){return lane===4?3:lane===5?6:lane;}
  function updateGuides(){const keys=new Set([...held,...demoKeys]);const cols=new Set();for(const [key,e]of keyElements){e.classList.toggle('pressed',keys.has(key));if(keys.has(key))cols.add(fingerCol(C.keyLane(key)));}for(const e of document.querySelectorAll('[data-fingertip-col]'))e.classList.toggle('finger-active',cols.has(Number(e.dataset.fingertipCol)));for(const e of document.querySelectorAll('[data-thumb]'))e.classList.toggle('finger-active',keys.has('space'));}
@@ -59,7 +86,7 @@
   if(chart){const from=time-(height-lineY+NOTE_HEIGHT)/pps,to=time+PREVIEW_SECONDS,fromBeat=chart.map.inverse(from*speed),toBeat=chart.map.inverse(to*speed);ctx.font='11px system-ui';
    for(let b=Math.max(-chart.countInBeats,Math.ceil(fromBeat));b<=Math.min(chart.lastBeat,Math.floor(toBeat));b++){const t=chart.map.at(b)/speed,y=lineY-(t-time)*pps;ctx.strokeStyle='#475769';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();}
    let barStart=Math.max(0,C.upperBound(chart.barlines,from*speed,b=>b.time)-1);for(let i=barStart;i<chart.barlines.length&&chart.barlines[i].time/speed<=to;i++){const b=chart.barlines[i],y=lineY-(b.time/speed-time)*pps;if(y<23||y>height)continue;ctx.strokeStyle=b.style===0?'#57756d':'#b68227';ctx.lineWidth=b.style===0?3:2;ctx.setLineDash(b.style===0?[]:[8,5]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(width,y);ctx.stroke();ctx.setLineDash([]);}
-   const notes=chart.notes;const scale=speed;let start=Math.max(0,C.upperBound(notes,from*scale,n=>n.time)-1);for(let i=start;i<notes.length;i++){const n=notes[i],t=n.time/scale;if(t>to)break;const y=lineY-(t-time)*pps;if(y<24||y>height)continue;const space=n.key==='space',x=space?width*.4:n.lane*laneWidth+5,w=space?width*.2:laneWidth-10;ctx.fillStyle=space?'#e9e0bc':colors[n.lane];ctx.beginPath();ctx.roundRect(x,y-30,w,30,5);ctx.fill();ctx.fillStyle='#101923';ctx.font='700 '+Math.min(22,laneWidth*.4)+'px system-ui';ctx.textAlign='center';ctx.fillText(C.keyLabel(n.key),x+w/2,y-7);}
+   const notes=chart.notes,layout=cardsFor({width,pps});ctx.font=layout.font.font;ctx.textAlign='center';ctx.textBaseline='alphabetic';const scale=speed;let start=Math.max(0,C.upperBound(notes,from*scale,n=>n.time)-1);for(let i=start;i<notes.length;i++){const n=notes[i],t=n.time/scale;if(t>to)break;const y=lineY-(t-time)*pps;if(y<24||y>height)continue;const h=layout.heights[i],space=n.key==='space',x=space?width*.4:n.lane*laneWidth+5,w=space?width*.2:laneWidth-10;ctx.fillStyle=space?'#e9e0bc':colors[n.lane];ctx.beginPath();ctx.roundRect(x,y-h,w,h,Math.min(5,h/4));ctx.fill();ctx.fillStyle='#101923';ctx.fillText(C.keyLabel(n.key),x+w/2,y-h/2+(layout.font.ascent-layout.font.descent)/2);}
   }
   if(active()){ctx.strokeStyle='rgba(114,238,208,'+(visual.reducedMotion ? .45 : .2+visual.beat*.7)+')';ctx.lineWidth=visual.reducedMotion?4:4+visual.beat*4;ctx.strokeRect(2,2,width-4,height-4);}
   ctx.restore();if(active()){ctx.fillStyle='rgba(114,238,208,'+(.08+visual.beat*.82)+')';ctx.fillRect(0,lineY-8,width,8);}$('motionLabel').textContent=visual.reducedMotion?'拍は線の近くに小さく表示します':'拍に合わせて演奏面も光ります';ctx.strokeStyle='#b7ecdf';ctx.lineWidth=4;ctx.beginPath();ctx.moveTo(0,lineY);ctx.lineTo(width,lineY);ctx.stroke();
@@ -95,6 +122,6 @@
  function syncSoundUI(){if(!sound)return;$('soundPreset').value=sound.preset;for(const [key,select]of soundEditors){const options=sound.preset==='chip'?[['miss','ハズレ音'],...Array.from({length:61},(_,i)=>[String(36+i),'MIDI '+(36+i)])]:[['miss','ハズレ音'],...Object.entries(C.DRUMS).map(([id,d])=>[id,d.label])];select.replaceChildren(...options.map(([value,label])=>{const o=document.createElement('option');o.value=value;o.textContent=label;return o;}));select.value=String(sound.keys[key]);}}
  function soundGrid(){for(const key of C.KEYS){const col=C.keyLane(key),cell=document.createElement('label');cell.className='sound-cell'+(key==='space'?' sound-space':'');if(key!=='space'){const row=key===','||key==='.'?2:key===' '?3:['qwertyuiop','asdfghjkl','zxcvbnm'].findIndex(r=>r.includes(key));cell.style.gridColumn=String(col+1);cell.style.gridRow=String(row+1);}const name=document.createElement('span');name.textContent=C.keyLabel(key);const select=document.createElement('select');select.dataset.soundKey=key;select.setAttribute('aria-label',C.keyLabel(key)+'の音');select.onchange=()=>{sound.keys[key]=sound.preset==='chip'&&select.value!=='miss'?Number(select.value):select.value;};cell.append(name,select);soundEditors.set(key,select);$('soundGrid').append(cell);}}
  soundGrid();$('soundPreset').onchange=e=>{sound={preset:e.target.value,keys:C.standardSounds(e.target.value)};syncSoundUI();};$('restoreSound').onclick=()=>{sound={preset:chart.sound.preset,keys:{...chart.sound.keys}};syncSoundUI();};
- window.RhythmApp={loadChart:data=>{const next=C.validateChart(data);loading++;install(next,'JSON');},getState:()=>({state,starting,speed,mode,demoKeys:[...demoKeys],title:chart?.title,time:currentTime,sound:sound?{preset:sound.preset,keys:{...sound.keys}}:null,audio:{active:audio.active,nodes:audio.nodes.size,timer:audio.timer!==null,clock:audio.clockMode,scheduled:audio.scheduled,demoScheduled:audio.demoScheduled||0,hits:audio.hits,lastSound:audio.lastSound,dropped:audio.dropped,context:audio.context?.state||null}}),getView:()=>({...viewGeometry(),visual:visualState(currentTime)}),get chart(){return chart;},audio,start,stop,draw};
+ window.RhythmApp={loadChart:data=>{const next=C.validateChart(data);loading++;install(next,'JSON');},getState:()=>({state,starting,speed,mode,demoKeys:[...demoKeys],title:chart?.title,time:currentTime,sound:sound?{preset:sound.preset,keys:{...sound.keys}}:null,audio:{active:audio.active,nodes:audio.nodes.size,timer:audio.timer!==null,clock:audio.clockMode,scheduled:audio.scheduled,demoScheduled:audio.demoScheduled||0,hits:audio.hits,lastSound:audio.lastSound,dropped:audio.dropped,context:audio.context?.state||null}}),getView:()=>{const view=viewGeometry();return {...view,visual:visualState(currentTime),cards:cardInfo(view)};},get chart(){return chart;},audio,start,stop,draw};
  loadSample('home');
 })();
