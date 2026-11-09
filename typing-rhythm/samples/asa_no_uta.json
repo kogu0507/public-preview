@@ -1,0 +1,1173 @@
+{
+  "schemaVersion": 1,
+  "id": "asano-uta",
+  "revision": "2",
+  "title": "朝の歌",
+  "countInBeats": 4,
+  "events": [
+    {
+      "e": "tempo",
+      "beat": 0,
+      "bpm": 80
+    },
+    {
+      "e": "hint",
+      "beat": 0,
+      "text": "あ、|朝{あさ}だ。",
+      "text2": "a, asa da."
+    },
+    {
+      "e": "barline",
+      "beat": 0,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 0,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 2,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 4,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 4,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 5,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 5.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 6,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 6.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 7,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 7,
+      "text": "ああ、|朝{あさ}か。",
+      "text2": "aa, asa ka."
+    },
+    {
+      "e": "barline",
+      "beat": 8,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 8,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 9,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 10,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 12,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 12,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 13,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 13.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 14,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 14.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 15,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 15,
+      "text": "|良い{いい}、|朝{あさ}だ。",
+      "text2": "ii, asa da."
+    },
+    {
+      "e": "barline",
+      "beat": 16,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 16,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 16.5,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 18,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 20,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 20,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 21,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 21.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 22,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 22.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 23,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 23,
+      "text": "いい、|朝{あさ}か。",
+      "text2": "ii asa ka."
+    },
+    {
+      "e": "barline",
+      "beat": 24,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 24,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 24.5,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 26,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 28,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 28,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 29,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 29.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 30,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 30.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 31,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 31,
+      "text": "|浅田{あさだ}、|朝{あさ}だよ",
+      "text2": "asada, asa da yo"
+    },
+    {
+      "e": "barline",
+      "beat": 32,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 32,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 33,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 33.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 34,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 34.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 35,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 36,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 36,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 37,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 37.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 38,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 38.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 39,
+      "key": "y"
+    },
+    {
+      "e": "note",
+      "beat": 39.5,
+      "key": "o"
+    },
+    {
+      "e": "hint",
+      "beat": 39,
+      "text": "|朝{あさ}だよ|浅田{あさだ}。",
+      "text2": "asa da yo asada."
+    },
+    {
+      "e": "barline",
+      "beat": 40,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 40,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 41,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 41.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 42,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 42.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 43,
+      "key": "y"
+    },
+    {
+      "e": "note",
+      "beat": 43.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 44,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 44,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 45,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 45.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 46,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 46.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 47,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 47,
+      "text": "|朝{あさ}だ、|朝{あさ}か。",
+      "text2": "asa da, asa ka."
+    },
+    {
+      "e": "barline",
+      "beat": 48,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 48,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 49,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 49.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 50,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 50.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 51,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 52,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 52,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 53,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 53.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 54,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 54.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 55,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 55,
+      "text": "|笹田{ささだ}|紗々{ささ}だ。",
+      "text2": "sasada sasa da."
+    },
+    {
+      "e": "barline",
+      "beat": 56,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 56,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 56.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 57,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 57.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 58,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 58.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 59,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 59.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 60,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 60,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 60.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 61,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 61.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 62,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 63,
+      "text": "|浅田{あさだ}も|笹田{ささだ}も",
+      "text2": "asada mo sasada mo"
+    },
+    {
+      "e": "barline",
+      "beat": 64,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 64,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 65,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 65.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 66,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 66.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 67,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 67.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 68,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 68,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 68.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 69,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 69.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 70,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 70.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 71,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 71.5,
+      "key": "o"
+    },
+    {
+      "e": "hint",
+      "beat": 71,
+      "text": "さささもだだだも",
+      "text2": "sasasa mo dadada mo"
+    },
+    {
+      "e": "barline",
+      "beat": 72,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 72,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 72.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 73,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 73.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 74,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 74.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 75,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 75.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 76,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 76,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 76.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 77,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 77.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 78,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 78.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 79,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 79.5,
+      "key": "o"
+    },
+    {
+      "e": "hint",
+      "beat": 79,
+      "text": "ふぁふぁふぁもがががも",
+      "text2": "fafafa mo gagaga mo"
+    },
+    {
+      "e": "barline",
+      "beat": 80,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 80,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 80.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 81,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 81.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 82,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 82.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 83,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 83.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 84,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 84,
+      "key": "g"
+    },
+    {
+      "e": "note",
+      "beat": 84.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 85,
+      "key": "g"
+    },
+    {
+      "e": "note",
+      "beat": 85.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 86,
+      "key": "g"
+    },
+    {
+      "e": "note",
+      "beat": 86.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 87,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 87.5,
+      "key": "o"
+    },
+    {
+      "e": "hint",
+      "beat": 87,
+      "text": "さあ、|朝{あさ}だ。",
+      "text2": "saa, asa da."
+    },
+    {
+      "e": "barline",
+      "beat": 88,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 88,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 88.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 89,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 90,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 92,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 92,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 93,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 93.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 94,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 94.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 95,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 95,
+      "text": "|浅田{あさだ}、|朝{あさ}だ。あさだ",
+      "text2": "asada, asa da. asa da"
+    },
+    {
+      "e": "barline",
+      "beat": 96,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 96,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 97,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 97.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 98,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 98.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 99,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 100,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 100,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 101,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 101.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 102,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 102.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 103,
+      "key": "."
+    },
+    {
+      "e": "barline",
+      "beat": 104,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 104,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 106,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 106.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 108,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 108,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 108.5,
+      "key": "a"
+    },
+    {
+      "e": "hint",
+      "beat": 109,
+      "text": "|浅田{あさだ}、|浅田{あさだ}、まだ|朝{あさ}だ。",
+      "text2": "asada, asada, mada asa da."
+    },
+    {
+      "e": "barline",
+      "beat": 112,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 112,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 113,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 113.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 114,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 114.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 115,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 116,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 116,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 117,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 117.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 118,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 118.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 119,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 120,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 120,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 121,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 122,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 123,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 124,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 124,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 125,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 125.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 126,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 126.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 127,
+      "key": "."
+    },
+    {
+      "e": "barline",
+      "beat": 128,
+      "style": 0
+    }
+  ]
+}
