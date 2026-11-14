@@ -1,0 +1,1230 @@
+{
+  "schemaVersion": 1,
+  "id": "ima-no-uta",
+  "revision": "1",
+  "title": "今、居間。",
+  "countInBeats": 4,
+  "events": [
+    {
+      "e": "tempo",
+      "beat": 0,
+      "bpm": 80
+    },
+    {
+      "e": "barline",
+      "beat": 0,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 0,
+      "key": "i"
+    },
+    {
+      "e": "hint",
+      "beat": 0,
+      "text": "|今{いま}、",
+      "text2": "ima,"
+    },
+    {
+      "e": "note",
+      "beat": 1,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 1.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 2,
+      "key": ","
+    },
+    {
+      "e": "hint",
+      "beat": 3,
+      "text": "どこ。",
+      "text2": "doko."
+    },
+    {
+      "e": "barline",
+      "beat": 4,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 4,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 4.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 5,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 5.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 6,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 7,
+      "text": "|今{いま}、",
+      "text2": "ima,"
+    },
+    {
+      "e": "barline",
+      "beat": 8,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 8,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 9,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 9.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 10,
+      "key": ","
+    },
+    {
+      "e": "hint",
+      "beat": 11,
+      "text": "|居間{いま}。",
+      "text2": "ima."
+    },
+    {
+      "e": "barline",
+      "beat": 12,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 12,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 13,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 13.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 14,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 15,
+      "text": "|今{いま}|居間{いま}",
+      "text2": "ima ima"
+    },
+    {
+      "e": "barline",
+      "beat": 16,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 16,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 17,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 17.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 18,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 19,
+      "key": "m"
+    },
+    {
+      "e": "hint",
+      "beat": 19,
+      "text": "なのか。",
+      "text2": "nanoka."
+    },
+    {
+      "e": "note",
+      "beat": 19.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 20,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 20,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 20.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 21,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 21.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 22,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 22.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 23,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 23,
+      "text": "|今{いま}|居間{いま}",
+      "text2": "ima ima"
+    },
+    {
+      "e": "barline",
+      "beat": 24,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 24,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 25,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 25.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 26,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 27,
+      "key": "m"
+    },
+    {
+      "e": "hint",
+      "beat": 27,
+      "text": "だよ。",
+      "text2": "dayo."
+    },
+    {
+      "e": "note",
+      "beat": 27.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 28,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 28,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 28.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 29,
+      "key": "y"
+    },
+    {
+      "e": "note",
+      "beat": 29.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 30,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 31,
+      "text": "|今{いま}まで",
+      "text2": "ima made"
+    },
+    {
+      "e": "barline",
+      "beat": 32,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 32,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 33,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 33.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 34,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 34.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 35,
+      "key": "d"
+    },
+    {
+      "e": "hint",
+      "beat": 35,
+      "text": "どこに。",
+      "text2": "doko ni."
+    },
+    {
+      "e": "note",
+      "beat": 35.5,
+      "key": "e"
+    },
+    {
+      "e": "barline",
+      "beat": 36,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 36,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 36.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 37,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 37.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 38,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 38.5,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 39,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 39,
+      "text": "|今{いま}まで",
+      "text2": "ima made"
+    },
+    {
+      "e": "barline",
+      "beat": 40,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 40,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 41,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 41.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 42,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 42.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 43,
+      "key": "d"
+    },
+    {
+      "e": "hint",
+      "beat": 43,
+      "text": "|居間{いま}に。",
+      "text2": "ima ni."
+    },
+    {
+      "e": "note",
+      "beat": 43.5,
+      "key": "e"
+    },
+    {
+      "e": "barline",
+      "beat": 44,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 44,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 45,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 45.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 46,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 46.5,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 47,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 47,
+      "text": "|今{いま}までと|同{おな}じ",
+      "text2": "ima made to onaji"
+    },
+    {
+      "e": "barline",
+      "beat": 48,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 48,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 49,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 49.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 50,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 50.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 51,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 51.5,
+      "key": "e"
+    },
+    {
+      "e": "barline",
+      "beat": 52,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 52,
+      "key": "t"
+    },
+    {
+      "e": "note",
+      "beat": 52.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 53,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 54,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 54.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 55,
+      "key": "j"
+    },
+    {
+      "e": "hint",
+      "beat": 55,
+      "text": "|居間{いま}のまま。",
+      "text2": "ima no mama."
+    },
+    {
+      "e": "note",
+      "beat": 55.5,
+      "key": "i"
+    },
+    {
+      "e": "barline",
+      "beat": 56,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 56,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 57,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 57.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 58,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 58.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 59,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 59.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 60,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 60,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 60.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 61,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 63,
+      "text": "いまいま",
+      "text2": "ima ima"
+    },
+    {
+      "e": "barline",
+      "beat": 64,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 64,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 65,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 65.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 66,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 67,
+      "key": "m"
+    },
+    {
+      "e": "hint",
+      "beat": 67,
+      "text": "いまいま",
+      "text2": "ima ima"
+    },
+    {
+      "e": "note",
+      "beat": 67.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 68,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 68,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 69,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 69.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 70,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 71,
+      "key": "m"
+    },
+    {
+      "e": "hint",
+      "beat": 71,
+      "text": "|忌々{いまいま}しい。",
+      "text2": "ima ima sii."
+    },
+    {
+      "e": "note",
+      "beat": 71.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 72,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 72,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 73,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 73.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 74,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 75,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 75.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 76,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 76,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 76.5,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 77,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 78,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 79,
+      "text": "まあいい。",
+      "text2": "maa ii."
+    },
+    {
+      "e": "barline",
+      "beat": 80,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 80,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 80.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 81,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 82,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 83,
+      "key": "i"
+    },
+    {
+      "e": "barline",
+      "beat": 84,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 84,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 85,
+      "text": "まあいいよ。",
+      "text2": "maa ii yo."
+    },
+    {
+      "e": "note",
+      "beat": 86,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 86.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 87,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 88,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 88,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 89,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 90,
+      "key": "y"
+    },
+    {
+      "e": "note",
+      "beat": 90.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 91,
+      "key": "."
+    },
+    {
+      "e": "barline",
+      "beat": 92,
+      "style": 0
+    },
+    {
+      "e": "hint",
+      "beat": 92,
+      "text": "それで",
+      "text2": "sorede"
+    },
+    {
+      "e": "note",
+      "beat": 93,
+      "key": "s"
+    },
+    {
+      "e": "note",
+      "beat": 93.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 94,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 94.5,
+      "key": "e"
+    },
+    {
+      "e": "note",
+      "beat": 95,
+      "key": "d"
+    },
+    {
+      "e": "hint",
+      "beat": 95,
+      "text": "|今{いま}は、",
+      "text2": "ima ha,"
+    },
+    {
+      "e": "note",
+      "beat": 95.5,
+      "key": "e"
+    },
+    {
+      "e": "barline",
+      "beat": 96,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 96,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 97,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 97.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 98,
+      "key": "h"
+    },
+    {
+      "e": "note",
+      "beat": 98.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 99,
+      "key": ","
+    },
+    {
+      "e": "hint",
+      "beat": 99,
+      "text": "どこ。",
+      "text2": "doko."
+    },
+    {
+      "e": "barline",
+      "beat": 100,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 100,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 100.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 101,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 101.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 102,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 103,
+      "text": "|今{いま}も、",
+      "text2": "ima mo,"
+    },
+    {
+      "e": "barline",
+      "beat": 104,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 104,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 105,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 105.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 106,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 106.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 107,
+      "key": ","
+    },
+    {
+      "e": "hint",
+      "beat": 107,
+      "text": "|居間{いま}。",
+      "text2": "ima."
+    },
+    {
+      "e": "barline",
+      "beat": 108,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 108,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 109,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 109.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 110,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 111,
+      "text": "|今{いま}までと|同{おな}じ",
+      "text2": "ima made to onaji"
+    },
+    {
+      "e": "barline",
+      "beat": 112,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 112,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 113,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 113.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 114,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 114.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 115,
+      "key": "d"
+    },
+    {
+      "e": "note",
+      "beat": 115.5,
+      "key": "e"
+    },
+    {
+      "e": "barline",
+      "beat": 116,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 116,
+      "key": "t"
+    },
+    {
+      "e": "note",
+      "beat": 116.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 117,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 118,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 118.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 119,
+      "key": "j"
+    },
+    {
+      "e": "hint",
+      "beat": 119,
+      "text": "|居間{いま}のまま。",
+      "text2": "ima no mama."
+    },
+    {
+      "e": "note",
+      "beat": 119.5,
+      "key": "i"
+    },
+    {
+      "e": "barline",
+      "beat": 120,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 120,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 121,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 121.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 122,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 122.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 123,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 123.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 124,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 124,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 124.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 125,
+      "key": "."
+    },
+    {
+      "e": "barline",
+      "beat": 128,
+      "style": 0
+    }
+  ]
+}
