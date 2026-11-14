@@ -1,0 +1,1287 @@
+{
+  "schemaVersion": 1,
+  "id": "awa-no-uta",
+  "revision": "1",
+  "title": "泡の歌",
+  "countInBeats": 4,
+  "events": [
+    {
+      "e": "tempo",
+      "beat": 0,
+      "bpm": 80
+    },
+    {
+      "e": "barline",
+      "beat": 0,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 0,
+      "key": "m"
+    },
+    {
+      "e": "hint",
+      "beat": 0,
+      "text": "もこもこ|泡{あわ}。",
+      "text2": "moko moko awa."
+    },
+    {
+      "e": "note",
+      "beat": 0.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 1,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 1.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 2,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 2.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 3,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 3.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 4,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 4,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 5,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 5.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 6,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 7,
+      "text": "もこもこ|泡{あわ}。",
+      "text2": "moko moko awa."
+    },
+    {
+      "e": "barline",
+      "beat": 8,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 8,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 8.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 9,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 9.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 10,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 10.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 11,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 11.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 12,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 12,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 13,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 13.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 14,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 15,
+      "text": "ぶくぶく|泡{あわ}。",
+      "text2": "buku buku awa."
+    },
+    {
+      "e": "barline",
+      "beat": 16,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 16,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 16.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 17,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 17.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 18,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 18.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 19,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 19.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 20,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 20,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 21,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 21.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 22,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 23,
+      "text": "ぶくぶく|泡{あわ}。",
+      "text2": "buku buku awa."
+    },
+    {
+      "e": "barline",
+      "beat": 24,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 24,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 24.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 25,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 25.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 26,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 26.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 27,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 27.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 28,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 28,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 29,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 29.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 30,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 31,
+      "text": "ふわふわ|泡{あわ}。",
+      "text2": "fuwa fuwa awa."
+    },
+    {
+      "e": "barline",
+      "beat": 32,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 32,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 32.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 33,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 33.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 34,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 34.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 35,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 35.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 36,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 36,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 37,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 37.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 38,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 39,
+      "text": "ふわふわ|泡{あわ}。",
+      "text2": "fuwa fuwa awa."
+    },
+    {
+      "e": "barline",
+      "beat": 40,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 40,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 40.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 41,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 41.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 42,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 42.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 43,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 43.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 44,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 44,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 45,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 45.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 46,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 47,
+      "text": "ぬるぬる|泡{あわ}。",
+      "text2": "nuru nuru awa."
+    },
+    {
+      "e": "barline",
+      "beat": 48,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 48,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 48.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 49,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 49.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 50,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 50.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 51,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 51.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 52,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 52,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 53,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 53.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 54,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 55,
+      "text": "ぬるぬる|泡{あわ}。",
+      "text2": "nuru nuru awa."
+    },
+    {
+      "e": "barline",
+      "beat": 56,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 56,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 56.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 57,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 57.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 58,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 58.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 59,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 59.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 60,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 60,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 61,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 61.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 62,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 63,
+      "text": "あわは、|色々{いろいろ}",
+      "text2": "awa ha, iro iro"
+    },
+    {
+      "e": "barline",
+      "beat": 64,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 64,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 65,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 65.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 66,
+      "key": "h"
+    },
+    {
+      "e": "note",
+      "beat": 66.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 67,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 68,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 68,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 69,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 69.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 70,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 71,
+      "key": "r"
+    },
+    {
+      "e": "hint",
+      "beat": 71,
+      "text": "|色{いろ}も、|色々{いろいろ}",
+      "text2": "iro mo, iro iro"
+    },
+    {
+      "e": "note",
+      "beat": 71.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 72,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 72,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 73,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 73.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 74,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 74.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 75,
+      "key": ","
+    },
+    {
+      "e": "barline",
+      "beat": 76,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 76,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 77,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 77.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 78,
+      "key": "i"
+    },
+    {
+      "e": "note",
+      "beat": 79,
+      "key": "r"
+    },
+    {
+      "e": "hint",
+      "beat": 79,
+      "text": "もこもこ",
+      "text2": "moko moko"
+    },
+    {
+      "e": "note",
+      "beat": 79.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 80,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 80,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 80.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 81,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 81.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 82,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 82.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 83,
+      "key": "k"
+    },
+    {
+      "e": "hint",
+      "beat": 83,
+      "text": "ぶくぶく",
+      "text2": "buku buku"
+    },
+    {
+      "e": "note",
+      "beat": 83.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 84,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 84,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 84.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 85,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 85.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 86,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 86.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 87,
+      "key": "k"
+    },
+    {
+      "e": "hint",
+      "beat": 87,
+      "text": "ふわふわ",
+      "text2": "fuwa fuwa"
+    },
+    {
+      "e": "note",
+      "beat": 87.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 88,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 88,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 88.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 89,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 89.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 90,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 90.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 91,
+      "key": "w"
+    },
+    {
+      "e": "hint",
+      "beat": 91,
+      "text": "ぬるぬる",
+      "text2": "nuru nuru"
+    },
+    {
+      "e": "note",
+      "beat": 91.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 92,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 92,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 92.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 93,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 93.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 94,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 94.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 95,
+      "key": "r"
+    },
+    {
+      "e": "hint",
+      "beat": 95,
+      "text": "もこもこ|泡{あわ}。",
+      "text2": "moko moko awa."
+    },
+    {
+      "e": "note",
+      "beat": 95.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 96,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 96,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 96.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 97,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 97.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 98,
+      "key": "m"
+    },
+    {
+      "e": "note",
+      "beat": 98.5,
+      "key": "o"
+    },
+    {
+      "e": "note",
+      "beat": 99,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 99.5,
+      "key": "o"
+    },
+    {
+      "e": "barline",
+      "beat": 100,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 100,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 101,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 101.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 102,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 103,
+      "text": "ぶくぶく|泡{あわ}。",
+      "text2": "buku buku awa."
+    },
+    {
+      "e": "barline",
+      "beat": 104,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 104,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 104.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 105,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 105.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 106,
+      "key": "b"
+    },
+    {
+      "e": "note",
+      "beat": 106.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 107,
+      "key": "k"
+    },
+    {
+      "e": "note",
+      "beat": 107.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 108,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 108,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 109,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 109.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 110,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 111,
+      "text": "ふわふわ|泡{あわ}。",
+      "text2": "fuwa fuwa awa."
+    },
+    {
+      "e": "barline",
+      "beat": 112,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 112,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 112.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 113,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 113.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 114,
+      "key": "f"
+    },
+    {
+      "e": "note",
+      "beat": 114.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 115,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 115.5,
+      "key": "a"
+    },
+    {
+      "e": "barline",
+      "beat": 116,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 116,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 117,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 117.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 118,
+      "key": "."
+    },
+    {
+      "e": "hint",
+      "beat": 119,
+      "text": "ぬるぬる|泡{あわ}。",
+      "text2": "nuru nuru awa."
+    },
+    {
+      "e": "barline",
+      "beat": 120,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 120,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 120.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 121,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 121.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 122,
+      "key": "n"
+    },
+    {
+      "e": "note",
+      "beat": 122.5,
+      "key": "u"
+    },
+    {
+      "e": "note",
+      "beat": 123,
+      "key": "r"
+    },
+    {
+      "e": "note",
+      "beat": 123.5,
+      "key": "u"
+    },
+    {
+      "e": "barline",
+      "beat": 124,
+      "style": 0
+    },
+    {
+      "e": "note",
+      "beat": 124,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 125,
+      "key": "w"
+    },
+    {
+      "e": "note",
+      "beat": 125.5,
+      "key": "a"
+    },
+    {
+      "e": "note",
+      "beat": 126,
+      "key": "."
+    },
+    {
+      "e": "barline",
+      "beat": 128,
+      "style": 0
+    }
+  ]
+}
